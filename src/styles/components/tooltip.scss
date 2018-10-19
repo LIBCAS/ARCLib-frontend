@@ -1,0 +1,43 @@
+$c-tooltip: $c-primary !important;
+$c-tooltip-text: $c-white !important;
+
+.tooltip {
+  background-color: $c-tooltip;
+  opacity: 1;
+  filter: alpha(opacity=100);
+
+  &,
+  * {
+    color: $c-tooltip-text;
+  }
+
+  &.place-top {
+    &:after {
+      border-top-color: $c-tooltip;
+    }
+  }
+
+  &.place-right {
+    &:after {
+      border-right-color: $c-tooltip;
+    }
+  }
+
+  &.place-bottom {
+    &:after {
+      border-bottom-color: $c-tooltip;
+    }
+  }
+
+  &.place-left {
+    &:after {
+      border-left-color: $c-tooltip;
+    }
+  }
+
+  &.without-beak {
+    &:after {
+      border: 0px !important;
+    }
+  }
+}

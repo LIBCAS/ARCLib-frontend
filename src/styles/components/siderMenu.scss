@@ -1,0 +1,51 @@
+.sider-menu {
+  background-color: $c-white;
+
+  .logo {
+    width: 100%;
+    height: 64px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    background-color: $c-primary;
+
+    &.icon {
+      justify-content: center;
+
+      .icon {
+        color: $c-white;
+      }
+    }
+
+    .title {
+      color: $c-white;
+      margin: 0;
+      padding: 0;
+      padding-left: 24px;
+    }
+  }
+
+  .menu {
+    padding: 1em 0;
+
+    .menu-item,
+    .ant-menu-inline {
+      margin: 0;
+      height: 50px;
+      line-height: 50px;
+      color: $c-text;
+    }
+
+    .menu-item:hover,
+    .ant-menu-inline:hover {
+      color: $c-secondary;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-desktop) {
+  .sider-menu {
+    display: none;
+  }
+}

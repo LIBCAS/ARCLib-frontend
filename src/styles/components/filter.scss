@@ -1,0 +1,66 @@
+.sort-order {
+  .field {
+    min-width: 200px;
+    margin: 0px 0.5em;
+  }
+
+  @media (max-width: $breakpoint-mini) {
+    .field {
+      min-width: 0px;
+    }
+  }
+}
+
+.table-col-filter {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+
+  .text-field {
+    width: 50% !important;
+    min-width: 150px !important;
+
+    &.full {
+      width: 100% !important;
+    }
+  }
+
+  .number-field {
+    width: 50% !important;
+    min-width: 150px !important;
+
+    &.full {
+      width: 100% !important;
+    }
+  }
+
+  .select-field {
+    width: 50% !important;
+    min-width: 150px !important;
+
+    &.full {
+      width: 100% !important;
+    }
+  }
+
+  .datetimepicker-field {
+    width: 50% !important;
+    min-width: 150px !important;
+  }
+
+  @media screen and (max-width: $breakpoint-tablet) {
+    .text-field,
+    .number-field,
+    .select-field,
+    .datetimepicker-field {
+      min-width: 100px !important;
+
+      &.full {
+        width: 100% !important;
+      }
+    }
+  }
+}

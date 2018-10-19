@@ -1,0 +1,16 @@
+.ant-breadcrumb {
+  span {
+    & > span {
+      font-size: 16px;
+      color: $c-text;
+
+      &.link {
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

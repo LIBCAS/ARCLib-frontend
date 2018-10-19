@@ -1,0 +1,266 @@
+.app-header {
+  padding: 0;
+
+  .ant-menu {
+    &-item {
+      &-selected {
+        background-color: $c-blue-primary !important;
+      }
+    }
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .top,
+    .bottom {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .top {
+      padding: 0 1em;
+      height: 100%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      &.with-menu-button {
+        justify-content: space-between;
+      }
+
+      .right {
+        height: 100%;
+        line-height: 100%;
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .title {
+      color: $c-white;
+      margin: 0;
+      margin-right: 1em;
+
+      &.title-hidden {
+        display: none;
+      }
+    }
+
+    .menu {
+      &-all {
+        display: none;
+        width: 100%;
+
+        &-button {
+          display: none;
+        }
+
+        li {
+          margin: 0 !important;
+          height: 45px !important;
+          line-height: 45px !important;
+        }
+      }
+    }
+  }
+
+  &.center {
+    .content {
+      padding: 0 1em;
+      flex-direction: row;
+      justify-content: flex-end;
+
+      .title {
+        position: absolute;
+        left: 50vw;
+        -moz-transform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        transform: translateX(-50%);
+        margin-right: 0;
+      }
+    }
+  }
+
+  .item-language {
+    display: none;
+  }
+}
+
+$c-max-width-with-menu: $breakpoint-desktop;
+
+@media (max-width: $c-max-width-with-menu) {
+  .app-header {
+    &.with-menu {
+      height: auto;
+    }
+
+    .content {
+      .top {
+        &.with-menu-button {
+          justify-content: flex-end;
+        }
+
+        &.with-menu {
+          padding: 1em;
+          height: auto;
+        }
+
+        .menu-button {
+          display: none;
+        }
+
+        .title {
+          display: block;
+
+          &.title-hidden {
+            display: block;
+          }
+        }
+      }
+
+      .menu,
+      .dropdown-user {
+        display: none;
+      }
+
+      .menu-all {
+        display: block;
+
+        &-button {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: $breakpoint-mobile) and (max-width: $c-max-width-with-menu) {
+  .app-header.normal {
+    .content {
+      .top {
+        .title {
+          position: absolute;
+          left: 50vw;
+          -moz-transform: translateX(-50%);
+          -webkit-transform: translateX(-50%);
+          -o-transform: translateX(-50%);
+          -ms-transform: translateX(-50%);
+          transform: translateX(-50%);
+        }
+      }
+    }
+
+    /* IE */
+    &.ie {
+      .content {
+        .top {
+          .title {
+            position: absolute;
+            left: 50vw;
+            top: 32px;
+            -moz-transform: translate(-50%, -50%);
+            -webkit-transform: translate(-50%, -50%);
+            -o-transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-500) {
+  .app-header {
+    .button-language {
+      display: none;
+    }
+
+    &.center {
+      .button-language {
+        display: block;
+      }
+    }
+
+    .item-language {
+      display: block;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .app-header {
+    .content {
+      .top {
+        justify-content: space-between;
+
+        &.with-menu-button {
+          justify-content: space-between;
+        }
+
+        .title {
+          position: static;
+          left: 0;
+          -moz-transform: none;
+          -webkit-transform: none;
+          -o-transform: none;
+          -ms-transform: none;
+          transform: none;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mini) {
+  .app-header {
+    .content {
+      justify-content: flex-end;
+
+      .title {
+        display: none;
+
+        &.title-hidden {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-200) {
+  .app-header {
+    .content {
+      .top {
+        justify-content: flex-end;
+
+        .title {
+          display: none;
+
+          &.title-hidden {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* MOZILLA FIREFOX */
+@-moz-document url-prefix() {
+  .menu {
+    margin-top: -50px;
+  }
+}

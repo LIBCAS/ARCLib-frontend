@@ -1,0 +1,20 @@
+/* LAYOUT */
+
+.layout {
+  min-height: 100vh;
+}
+
+/* CONTAINER */
+
+.container {
+  width: 100%;
+  padding: 1em;
+
+  &.form {
+    max-width: 500px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

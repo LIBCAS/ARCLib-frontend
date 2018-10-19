@@ -1,0 +1,44 @@
+.table {
+  margin: 0;
+
+  &-responsive {
+    margin: 0;
+    margin-bottom: 1em;
+    min-height: 40px;
+    border: none;
+  }
+
+  &-with-filter {
+    min-height: 350px;
+  }
+
+  tbody {
+    tr {
+      cursor: pointer;
+
+      &.odd {
+        background-color: $c-grey-very-light;
+      }
+
+      &.even {
+        background-color: $c-white;
+      }
+
+      &:hover {
+        background-color: $c-grey-light;
+      }
+
+      &.no-hover:hover {
+        background-color: $c-white;
+        cursor: auto;
+      }
+
+      .td-checkbox {
+        .checkbox {
+          margin: 0;
+          margin-top: 1px;
+        }
+      }
+    }
+  }
+}

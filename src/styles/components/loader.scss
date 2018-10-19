@@ -1,0 +1,23 @@
+.loader {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(#fff, 0.9);
+  z-index: 1000000;
+
+  & > div {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+
+    & > svg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.no-role {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .no-role-text {
+    color: $c-error;
+    margin: 0;
+    text-align: center;
+
+    @media (max-width: $breakpoint-mini) {
+      font-size: 15px;
+    }
+  }
+}
