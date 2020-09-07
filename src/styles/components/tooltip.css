@@ -1,0 +1,10 @@
+.ant-tooltip-inner {
+  max-width: 80vw;
+  word-break: normal;
+  text-align: center; }
+
+.ant-tooltip.width-300 > .ant-tooltip-content > .ant-tooltip-inner {
+  width: 300px; }
+
+.ant-tooltip.break-all > .ant-tooltip-content > .ant-tooltip-inner {
+  word-break: break-all; }

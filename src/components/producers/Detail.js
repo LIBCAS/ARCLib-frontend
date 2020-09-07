@@ -7,6 +7,7 @@ import { map } from "lodash";
 import Button from "../Button";
 import { TextField, Validation } from "../form";
 import { saveProducer } from "../../actions/producerActions";
+import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
 
 const Detail = ({ handleSubmit, texts, language, history }) => (
   <div>
@@ -30,7 +31,7 @@ const Detail = ({ handleSubmit, texts, language, history }) => (
           <Field
             {...{
               key,
-              id: `producer-detail-${key}`,
+              id: `producer-detail-${field.name}`,
               ...field
             }}
           />
@@ -67,7 +68,10 @@ export default compose(
     }) => async formData => {
       const response = await saveProducer({
         ...producer,
-        ...formData
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+          "name",
+          "transferAreaPath"
+        ])
       });
 
       if (response === 200) {

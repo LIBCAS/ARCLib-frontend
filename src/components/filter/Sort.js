@@ -50,6 +50,13 @@ export default compose(
       setFilter({
         sort: get(options, "[0].value", "")
       });
+    },
+    componentWillUnmount() {
+      const { setFilter } = this.props;
+
+      setFilter({
+        sort: ""
+      });
     }
   })
 )(Sort);

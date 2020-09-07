@@ -48,7 +48,7 @@ export default compose(
         getStorages();
         setFail(null);
         closeDialog();
-        history.push("/storage-administration");
+        history.push("/logical-storage-administration");
       } else {
         setFail(texts.DELETE_FAILED);
       }

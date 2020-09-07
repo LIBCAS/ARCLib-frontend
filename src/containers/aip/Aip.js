@@ -6,10 +6,12 @@ import { get } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/aip/Detail";
-import { getAip } from "../../actions/aipActions";
+import { clearAip, getAip } from "../../actions/aipActions";
 import { setDialog } from "../../actions/appActions";
+import { getStorages } from "../../actions/storageActions";
+import { isSuperAdmin } from "../../utils";
 
-const Aip = ({ aip, texts, history, ...props }) => (
+const Aip = ({ aip, texts, history, storages, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [
@@ -18,21 +20,27 @@ const Aip = ({ aip, texts, history, ...props }) => (
       ]
     }}
   >
-    {aip && <Detail {...{ aip, texts, history, ...props }} />}
+    {aip && <Detail {...{ aip, texts, history, storages, ...props }} />}
   </PageWrapper>
 );
 
 export default compose(
   withRouter,
-  connect(({ aip: { aip } }) => ({ aip }), {
+  connect(({ aip: { aip }, storage: { storages } }) => ({ aip, storages }), {
+    clearAip,
     getAip,
-    setDialog
+    setDialog,
+    getStorages
   }),
   lifecycle({
     componentWillMount() {
-      const { match, getAip } = this.props;
+      const { match, clearAip, getAip, getStorages, user } = this.props;
 
+      clearAip();
       getAip(match.params.id);
+      if (isSuperAdmin(user)) {
+        getStorages();
+      }
     }
   })
 )(Aip);

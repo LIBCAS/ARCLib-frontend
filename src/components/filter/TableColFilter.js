@@ -4,45 +4,43 @@ import { compose, lifecycle } from "recompose";
 import { isEmpty } from "lodash";
 
 import TextFilter from "./TextFilter";
+import TextEQFilter from "./TextEQFilter";
 import NumberFilter from "./NumberFilter";
 import EnumFilter from "./EnumFilter";
 import DateTimeFilter from "./DateTimeFilter";
 import { setFilter } from "../../actions/appActions";
-import {
-  filterTypes,
-  filterBoolOptions,
-  filterOptionAll,
-  filterOperationsTypes
-} from "../../enums";
+import { filterTypes, filterBoolOptions, filterOptionAll, filterOperationsTypes } from "../../enums";
 
-const TableColFilter = ({
-  type,
-  valueOptions,
-  handleUpdate,
-  index,
-  texts,
-  language
-}) => (
+const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, language, textClassName }) => (
   <div {...{ className: "table-col-filter" }}>
     {type === filterTypes.TEXT ? (
       <TextFilter
         {...{
           index,
           handleUpdate,
-          className: "flex-row-nowrap",
-          textClassName: "text-field",
-          selectClassName: "select-field"
+          className: "flex-col",
+          textClassName: `text-field full ${textClassName}`,
+          selectClassName: "select-field full"
+        }}
+      />
+    ) : type === filterTypes.TEXT_EQ ? (
+      <TextEQFilter
+        {...{
+          index,
+          handleUpdate,
+          className: "flex-col",
+          textClassName: `text-field full ${textClassName}`
         }}
       />
     ) : type === filterTypes.NUMBER ? (
-      <div {...{ className: "flex-row-nowrap" }}>
+      <div {...{ className: "flex-col" }}>
         <NumberFilter
           {...{
             index,
             number: 1,
             placeholder: texts.GTE,
             handleUpdate,
-            className: "number-field"
+            className: "number-field full"
           }}
         />
         <NumberFilter
@@ -51,12 +49,11 @@ const TableColFilter = ({
             number: 2,
             placeholder: texts.LTE,
             handleUpdate,
-            className: "number-field"
+            className: "number-field full"
           }}
         />
       </div>
-    ) : (type === filterTypes.ENUM && !isEmpty(valueOptions)) ||
-    type === filterTypes.BOOL ? (
+    ) : (type === filterTypes.ENUM && !isEmpty(valueOptions)) || type === filterTypes.BOOL ? (
       <EnumFilter
         {...{
           index,
@@ -65,19 +62,20 @@ const TableColFilter = ({
           options:
             type === filterTypes.ENUM
               ? [filterOptionAll[language], ...valueOptions]
-              : filterBoolOptions[language],
+              : [filterOptionAll[language], ...filterBoolOptions[language]],
           defaultValue: ""
         }}
       />
     ) : type === filterTypes.DATETIME ? (
-      <div {...{ className: "flex-row-nowrap" }}>
+      <div {...{ className: "flex-col" }}>
         <DateTimeFilter
           {...{
             index,
             number: 1,
             placeholder: texts.FROM,
             handleUpdate,
-            className: "datetimepicker-field"
+            className: "datetimepicker-field full",
+            debounced: true
           }}
         />
         <DateTimeFilter
@@ -86,8 +84,9 @@ const TableColFilter = ({
             number: 2,
             placeholder: texts.TO,
             handleUpdate,
-            className: "datetimepicker-field",
-            alignRight: true
+            className: "datetimepicker-field full",
+            alignRight: true,
+            debounced: true
           }}
         />
       </div>
@@ -98,10 +97,7 @@ const TableColFilter = ({
 );
 
 export default compose(
-  connect(
-    ({ app: { filter, texts, language } }) => ({ filter, texts, language }),
-    { setFilter }
-  ),
+  connect(({ app: { filter, texts, language } }) => ({ filter, texts, language }), { setFilter }),
   lifecycle({
     componentWillMount() {
       const { setFilter, filter, index, field, type } = this.props;
@@ -131,10 +127,7 @@ export default compose(
                 {
                   index,
                   field,
-                  operation:
-                    type === filterTypes.TEXT
-                      ? filterOperationsTypes.CONTAINS
-                      : filterOperationsTypes.EQ,
+                  operation: type === filterTypes.TEXT ? filterOperationsTypes.CONTAINS : filterOperationsTypes.EQ,
                   value: ""
                 }
               ]

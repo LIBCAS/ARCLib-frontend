@@ -1,9 +1,16 @@
 import * as c from "./constants";
 import fetch from "../utils/fetch";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 import { createFilterPagerParams } from "../utils";
 
 export const getUsers = () => async (dispatch, getState) => {
+  dispatch({
+    type: c.USERS,
+    payload: {
+      users: null
+    }
+  });
+
   try {
     const response = await fetch("/api/user", {
       params: createFilterPagerParams(getState)
@@ -20,14 +27,25 @@ export const getUsers = () => async (dispatch, getState) => {
       });
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
 export const getUser = id => async dispatch => {
+  dispatch(showLoader());
+
+  dispatch({
+    type: c.USERS,
+    payload: {
+      user: null
+    }
+  });
+
   try {
     const response = await fetch(`/api/user/${id}`);
 
@@ -44,9 +62,13 @@ export const getUser = id => async dispatch => {
       });
     }
 
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -59,10 +81,12 @@ export const deleteUser = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -93,15 +117,17 @@ export const saveUser = body => async dispatch => {
     }
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const getUserRoles = id => async () => {
+export const getUserRoles = id => async dispatch => {
   try {
     const response = await fetch(`/api/user/${id}/roles`);
 
@@ -111,9 +137,11 @@ export const getUserRoles = id => async () => {
       return roles;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -130,10 +158,31 @@ export const saveUserRoles = (userId, body) => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const getUserRolesToAssign = () => async dispatch => {
+  try {
+    const response = await fetch("/api/user/roles");
+
+    if (response.status === 200) {
+      const roles = await response.json();
+
+      return roles;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

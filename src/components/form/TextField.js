@@ -1,5 +1,6 @@
 import React from "react";
 import { FormGroup, ControlLabel } from "react-bootstrap";
+import { compose, defaultProps } from "recompose";
 
 import TextField from "../TextField";
 import ErrorBlock from "../ErrorBlock";
@@ -12,15 +13,24 @@ const FormTextField = ({
   type,
   className,
   placeholder,
-  disabled
+  disabled,
+  rows
 }) => (
-  <FormGroup {...{ className, controlId: id || "textfield" }}>
+  <FormGroup {...{ className, controlId: id }}>
     {label && <ControlLabel>{label}</ControlLabel>}
     <TextField
-      {...{ ...input, type, placeholder, disabled, className: "width-full" }}
+      {...{
+        ...input,
+        type,
+        placeholder,
+        disabled,
+        rows,
+        className: "width-full",
+        id
+      }}
     />
     {touched && <ErrorBlock {...{ label: error }} />}
   </FormGroup>
 );
 
-export default FormTextField;
+export default compose(defaultProps({ id: "textfield" }))(FormTextField);

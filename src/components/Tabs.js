@@ -1,23 +1,42 @@
 import React from "react";
-import { map } from "lodash";
-import { Tabs, Tab } from "react-bootstrap";
+import { compose, defaultProps, withProps } from "recompose";
+import { map, noop } from "lodash";
+import { Tabs } from "antd";
 
-const TabsComponent = ({ id, animation, onSelect, items, className }) => (
+const { TabPane } = Tabs;
+
+const TabsComponent = ({
+  id,
+  onChange,
+  animated,
+  items,
+  className,
+  defaultActiveKey
+}) => (
   <Tabs
     {...{
-      defaultActiveKey: 1,
-      animation,
-      id: id || "tabs",
+      defaultActiveKey,
+      animated,
+      id,
       className,
-      onSelect: tab => {
-        if (onSelect) onSelect(tab);
-      }
+      onChange: tab => onChange(Number(tab))
     }}
   >
     {map(items, ({ title, content }, key) => (
-      <Tab {...{ key, eventKey: key + 1, title }}>{content}</Tab>
+      <TabPane {...{ key, tab: title }}>{content}</TabPane>
     ))}
   </Tabs>
 );
 
-export default TabsComponent;
+export default compose(
+  defaultProps({
+    onChange: noop,
+    items: [],
+    animated: true,
+    defaultActiveKey: 0,
+    id: "tabs"
+  }),
+  withProps(({ defaultActiveKey }) => ({
+    defaultActiveKey: `${defaultActiveKey}`
+  }))
+)(TabsComponent);

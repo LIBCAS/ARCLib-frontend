@@ -5,10 +5,7 @@ import { hasValue } from "./index";
 export const createFilter = filterItemsUncleared => {
   const filterItems = lodashFilter(
     filterItemsUncleared,
-    param =>
-      hasValue(param.field) &&
-      hasValue(param.operation) &&
-      hasValue(param.value)
+    param => hasValue(param.field) && hasValue(param.operation) && hasValue(param.value)
   );
 
   let filter = {};
@@ -30,10 +27,26 @@ export const createFilter = filterItemsUncleared => {
 export const createSortOrderParams = getState => {
   const { sort, order } = getFilter(getState);
 
-  return {
-    sort: hasValue(sort) ? sort : undefined,
-    order: hasValue(order) ? order : undefined
-  };
+  return hasValue(sort) && hasValue(order)
+    ? {
+        sort,
+        order
+      }
+    : hasValue(sort)
+      ? {
+          sort
+        }
+      : hasValue(order)
+        ? {
+            order
+          }
+        : {};
+};
+
+export const createPagerParams = getState => {
+  const { page, pageSize } = getPager(getState);
+
+  return hasValue(page) && hasValue(pageSize) ? { page, pageSize } : {};
 };
 
 export const createFilterParams = getState => {
@@ -46,13 +59,10 @@ export const createFilterParams = getState => {
 };
 
 export const createFilterPagerParams = getState => {
-  const { filter: { filter }, pager: { page, pageSize } } = getFilterPager(
-    getState
-  );
+  const { filter } = getFilter(getState);
 
   return {
-    page: hasValue(page) ? page : undefined,
-    pageSize: hasValue(pageSize) ? pageSize : undefined,
+    ...createPagerParams(getState),
     ...createSortOrderParams(getState),
     ...createFilter(filter)
   };
@@ -61,8 +71,3 @@ export const createFilterPagerParams = getState => {
 export const getFilter = getState => getState().app.filter;
 
 export const getPager = getState => getState().app.pager;
-
-export const getFilterPager = getState => ({
-  filter: getFilter(getState),
-  pager: getPager(getState)
-});

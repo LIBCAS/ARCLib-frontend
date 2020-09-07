@@ -2,7 +2,7 @@ import React from "react";
 import { map, get } from "lodash";
 
 import Table from "../table/Table";
-import { formatTime } from "../../utils";
+import { formatDateTime } from "../../utils";
 
 const IngestWorkflows = ({ history, ingestWorkflows, texts }) => (
   <Table
@@ -17,8 +17,8 @@ const IngestWorkflows = ({ history, ingestWorkflows, texts }) => (
       items: map(ingestWorkflows, item => ({
         onClick: () => history.push(`/ingest-workflows/${item.externalId}`),
         items: [
-          { label: formatTime(item.created) },
-          { label: formatTime(item.updated) },
+          { label: formatDateTime(item.created) },
+          { label: formatDateTime(item.updated) },
           { label: get(item, "externalId", "") },
           { label: get(item, "sip.authorialPackage.authorialId", "") },
           {

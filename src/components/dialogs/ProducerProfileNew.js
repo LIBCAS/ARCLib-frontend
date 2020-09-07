@@ -14,7 +14,10 @@ import {
   newProducerProfile,
   getProducerProfiles
 } from "../../actions/producerProfileActions";
-import { isSuperAdmin } from "../../utils";
+import {
+  isSuperAdmin,
+  removeStartEndWhiteSpaceInSelectedFields
+} from "../../utils";
 
 const ProducerProfileNew = ({
   handleSubmit,
@@ -216,7 +219,7 @@ export default compose(
             workflowDefinitions,
             item => item.id === workflowDefinition
           ),
-          ...formData
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"])
         })
       ) {
         getProducerProfiles();

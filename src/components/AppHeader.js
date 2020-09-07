@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose, withState } from "recompose";
-import { map, findIndex, get, concat } from "lodash";
+import { map, findIndex, get, concat, isEmpty, forEach } from "lodash";
 import classNames from "classnames";
 import { Glyphicon } from "react-bootstrap";
 import { Layout, Menu, Dropdown, Icon } from "antd";
@@ -41,7 +41,8 @@ const AppHeader = ({
   changeLanguage,
   texts,
   collapsed,
-  setCollapsed
+  setCollapsed,
+  user
 }) => {
   const isIE = navigator.appVersion.toString().indexOf(".NET") > 0;
 
@@ -49,8 +50,26 @@ const AppHeader = ({
     { url: "/", label: texts.SIGN_OUT, onClick: () => signOut() }
   ];
 
-  const allItems = concat(
-    noRoleStyle ? [] : menuItems,
+  let allItems = [];
+
+  if (!noRoleStyle) {
+    forEach(menuItems, ({ items, ...item }) => {
+      if (!isEmpty(items)) {
+        allItems.push({ ...item, className: `${item.className} disabled` });
+        forEach(items, item =>
+          allItems.push({
+            ...item,
+            label: <span {...{ style: { marginLeft: 24 } }}>{item.label}</span>
+          })
+        );
+      } else {
+        allItems.push(item);
+      }
+    });
+  }
+
+  allItems = concat(
+    allItems,
     {
       label: languagesLabels[language],
       onClick: () => changeLanguage(),
@@ -134,7 +153,8 @@ const AppHeader = ({
                         {map(dropdownMenuItems, (menuItem, i) => (
                           <Menu.Item
                             {...{
-                              key: i
+                              key: i,
+                              className: menuItem.className
                             }}
                           >
                             {menuItem.label}
@@ -146,8 +166,15 @@ const AppHeader = ({
                     trigger: ["click"]
                   }}
                 >
-                  <Button {...{ size: "large", ghost: true }}>
+                  <Button
+                    {...{
+                      size: "large",
+                      ghost: true,
+                      className: "user-button"
+                    }}
+                  >
                     <Icon {...{ type: "user" }} />
+                    {get(user, "username") ? ` ${get(user, "username")}` : ""}
                   </Button>
                 </Dropdown>
               </div>
@@ -160,6 +187,9 @@ const AppHeader = ({
                 }}
               >
                 <Glyphicon {...{ glyph: "menu-hamburger" }} />
+                <span {...{ style: { marginLeft: 10 } }}>
+                  {get(user, "username") ? ` ${get(user, "username")}` : ""}
+                </span>
               </Button>
             </div>
           </div>

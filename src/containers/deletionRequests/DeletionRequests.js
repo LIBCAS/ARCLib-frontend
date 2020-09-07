@@ -7,13 +7,14 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/deletionRequests/Table";
 import { getDeletionRequests } from "../../actions/deletionRequestActions";
 
-const DeletionRequests = ({ history, deletionRequests, texts }) => (
+const DeletionRequests = ({ history, deletionRequests, texts, user }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.DELETION_REQUESTS }] }}>
     <Table
       {...{
         history,
         deletionRequests,
-        texts
+        texts,
+        user
       }}
     />
   </PageWrapper>

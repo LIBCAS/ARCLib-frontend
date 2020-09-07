@@ -37,6 +37,7 @@
     "vkbeautify": "^0.99.3"
   },
   "devDependencies": {
+    "cross-env": "5.2.0",
     "node-sass-chokidar": "^0.0.1",
     "npm-run-all": "^4.0.2",
     "prettier": "^1.3.1",
@@ -44,7 +45,7 @@
   },
   "proxy": {
     "/api": {
-      "target": "http://10.132.0.9:8080",
+      "target": "http://34.76.18.45:8080",
       "secure": false,
       "changeOrigin": true
     }
@@ -54,8 +55,9 @@
     "watch-css":
       "npm run build-css && node-sass-chokidar src/styles/ -o src/styles/ --watch --recursive",
     "start-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css start-js",
-    "build": "npm run build-css && react-scripts build",
+    "start": "cross-env REACT_APP_PROD_VERSION=false npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && cross-env REACT_APP_PROD_VERSION=false react-scripts build",
+    "build-prod": "npm run build-css && cross-env REACT_APP_PROD_VERSION=true react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }

@@ -7,9 +7,14 @@ export const orderTypes = {
 
 export const filterTypes = {
   TEXT: "TEXT",
+  TEXT_CONTAINS: "TEXT_CONTAINS",
+  TEXT_CONTAINS_STARTWITH_ENDWITH: "TEXT_CONTAINS_STARTWITH_ENDWITH",
+  TEXT_EQ: "TEXT_EQ",
+  TEXT_EQ_NEQ: "TEXT_EQ_NEQ",
   NUMBER: "NUMBER",
   BOOL: "BOOL",
   ENUM: "ENUM",
+  DATE: "DATE",
   DATETIME: "DATETIME"
 };
 
@@ -33,6 +38,17 @@ export const filterTypeOperations = {
     filterOperationsTypes.ENDWITH,
     filterOperationsTypes.CONTAINS
   ],
+  [filterTypes.TEXT_CONTAINS]: [filterOperationsTypes.CONTAINS],
+  [filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH]: [
+    filterOperationsTypes.STARTWITH,
+    filterOperationsTypes.ENDWITH,
+    filterOperationsTypes.CONTAINS
+  ],
+  [filterTypes.TEXT_EQ]: [filterOperationsTypes.EQ],
+  [filterTypes.TEXT_EQ_NEQ]: [
+    filterOperationsTypes.EQ,
+    filterOperationsTypes.NEQ
+  ],
   [filterTypes.NUMBER]: [
     filterOperationsTypes.EQ,
     filterOperationsTypes.NEQ,
@@ -43,6 +59,14 @@ export const filterTypeOperations = {
   ],
   [filterTypes.BOOL]: [filterOperationsTypes.EQ],
   [filterTypes.ENUM]: [filterOperationsTypes.EQ],
+  [filterTypes.DATE]: [
+    filterOperationsTypes.EQ,
+    filterOperationsTypes.NEQ,
+    filterOperationsTypes.GT,
+    filterOperationsTypes.LT,
+    filterOperationsTypes.GTE,
+    filterOperationsTypes.LTE
+  ],
   [filterTypes.DATETIME]: [
     filterOperationsTypes.EQ,
     filterOperationsTypes.NEQ,

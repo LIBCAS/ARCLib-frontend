@@ -1,9 +1,23 @@
 import React from "react";
 import Loader from "react-loader-spinner";
 
-const LoaderComponent = () => (
+const LoaderComponent = ({ text }) => (
   <div {...{ className: "loader" }}>
-    <Loader {...{ type: "TailSpin", className: "loader-component" }} />
+    <div>
+      <Loader {...{ type: "TailSpin", className: "loader-component" }} />
+      {text && (
+        <div
+          style={{
+            wordBreak: "break-word",
+            maxWidth: "80%",
+            fontSize: 24,
+            marginTop: 12
+          }}
+        >
+          {text}
+        </div>
+      )}
+    </div>
   </div>
 );
 

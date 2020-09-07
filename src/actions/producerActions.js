@@ -1,12 +1,19 @@
 import * as c from "./constants";
 import fetch from "../utils/fetch";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 import { createFilterPagerParams } from "../utils";
 
 export const getProducers = (withFilter = true) => async (
   dispatch,
   getState
 ) => {
+  dispatch({
+    type: c.PRODUCER,
+    payload: {
+      producers: null
+    }
+  });
+
   try {
     const response = await fetch("/api/producer", {
       params: withFilter ? createFilterPagerParams(getState) : undefined
@@ -25,14 +32,25 @@ export const getProducers = (withFilter = true) => async (
       return producers;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
 export const getProducer = id => async dispatch => {
+  dispatch(showLoader());
+
+  dispatch({
+    type: c.PRODUCER,
+    payload: {
+      producer: null
+    }
+  });
+
   try {
     const response = await fetch(`/api/producer/${id}`);
 
@@ -46,12 +64,17 @@ export const getProducer = id => async dispatch => {
         }
       });
 
+      dispatch(showLoader(false));
       return producer;
     }
 
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -64,10 +87,12 @@ export const deleteProducer = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -95,10 +120,12 @@ export const saveProducer = body => async dispatch => {
     }
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

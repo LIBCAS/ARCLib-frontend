@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { map, isEmpty } from "lodash";
+import { map, isEmpty, find, get } from "lodash";
 import { Select } from "antd";
 
 import { setFilter } from "../../actions/appActions";
@@ -29,7 +29,8 @@ const EnumFilter = ({
         });
         if (handleUpdate) handleUpdate();
       },
-      defaultValue
+      defaultValue,
+      value: get(find(get(filter, "filter"), f => f.index === index), "value")
     }}
   >
     {map(

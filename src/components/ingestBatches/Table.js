@@ -5,20 +5,11 @@ import { connect } from "react-redux";
 
 import Table from "../table/TableWithFilter";
 import Button from "../Button";
-import {
-  cancelBatch,
-  resumeBatch,
-  suspendBatch,
-  getBatches
-} from "../../actions/batchActions";
+import Tooltip from "../Tooltip";
+import { cancelBatch, resumeBatch, suspendBatch, getBatches } from "../../actions/batchActions";
 import { setDialog } from "../../actions/appActions";
-import {
-  filterTypes,
-  ingestBatchState,
-  ingestBatchStateOptions,
-  ingestBatchStateTexts
-} from "../../enums";
-import { formatTime } from "../../utils";
+import { filterTypes, ingestBatchState, ingestBatchStateOptions, ingestBatchStateTexts } from "../../enums";
+import { formatDateTime } from "../../utils";
 
 const IngestBatchesTable = ({
   history,
@@ -35,20 +26,45 @@ const IngestBatchesTable = ({
   <Table
     {...{
       thCells: [
+        { label: texts.ID },
         { label: texts.PRODUCER },
+        { label: texts.TRANSFER_AREA_PATH },
         { label: texts.CREATED },
         { label: texts.UPDATED },
         { label: texts.STATE },
+        { label: texts.PENDING_INCIDENTS },
         { label: "" }
       ],
       items: map(batches, item => ({
         onClick: () => history.push(`/ingest-batches/${item.id}`),
         items: [
-          { label: get(item, "producerProfile.producer.name", "") },
-          { label: formatTime(item.created) },
-          { label: formatTime(item.updated) },
+          {
+            label: (
+              <Tooltip
+                {...{
+                  title: get(item, "id", ""),
+                  content: `${get(item, "id", "").substring(0, 5)}...`,
+                  placement: "right",
+                  overlayClassName: "width-300"
+                }}
+              />
+            )
+          },
+          { label: get(item, "producer.name", "") },
+          { label: get(item, "transferAreaPath", "") },
+          { label: formatDateTime(item.created) },
+          { label: formatDateTime(item.updated) },
           {
             label: get(ingestBatchStateTexts[language], get(item, "state"), "")
+          },
+          {
+            label: get(item, "pendingIncidents") ? (
+              <span {...{ className: "color-red" }}>
+                <strong>{texts.YES}</strong>
+              </span>
+            ) : (
+              texts.NO
+            )
           },
           {
             label: (
@@ -72,18 +88,14 @@ const IngestBatchesTable = ({
                         const ok = await resumeBatch(item.id);
 
                         if (ok) {
-                          getBatches();
+                          await getBatches();
                         }
 
                         setDialog("Info", {
                           content: (
-                            <h3
-                              {...{ className: ok ? "color-green" : "invalid" }}
-                            >
+                            <h3 {...{ className: ok ? "color-green" : "invalid" }}>
                               <strong>
-                                {ok
-                                  ? texts.BATCH_HAS_SUCCESSFULLY_RESUMED
-                                  : texts.BATCH_FAILED_TO_RESUME}
+                                {ok ? texts.BATCH_HAS_SUCCESSFULLY_RESUMED : texts.BATCH_FAILED_TO_RESUME}
                               </strong>
                             </h3>
                           ),
@@ -126,10 +138,17 @@ const IngestBatchesTable = ({
       })),
       filterItems: [
         {
+          type: filterTypes.TEXT_EQ,
+          field: "id",
+          handleUpdate,
+          textClassName: "width-65 min-width-65 max-width-65"
+        },
+        {
           type: filterTypes.TEXT,
           field: "producerName",
           handleUpdate
         },
+        null,
         {
           type: filterTypes.DATETIME,
           field: "created",
@@ -145,6 +164,11 @@ const IngestBatchesTable = ({
           field: "state",
           handleUpdate,
           valueOptions: ingestBatchStateOptions[language]
+        },
+        {
+          type: filterTypes.BOOL,
+          field: "pendingIncidents",
+          handleUpdate
         },
         null
       ]

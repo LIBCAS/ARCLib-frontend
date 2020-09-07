@@ -8,9 +8,13 @@ import Button from "../Button";
 import Table from "./RoleTable";
 import Tabs from "../Tabs";
 import { TextField, SelectField, Validation } from "../form";
-import { setDialog } from "../../actions/appActions";
+import { setDialog, showLoader } from "../../actions/appActions";
 import { getProducers } from "../../actions/producerActions";
-import { saveUser, getUser } from "../../actions/usersActions";
+import {
+  saveUser,
+  getUser,
+  getUserRolesToAssign
+} from "../../actions/usersActions";
 import { isSuperAdmin } from "../../utils";
 
 const Detail = ({
@@ -20,7 +24,9 @@ const Detail = ({
   texts,
   language,
   handleSubmit,
-  producers
+  producers,
+  getUserRolesToAssign,
+  showLoader
 }) => (
   <div>
     <Tabs
@@ -30,7 +36,7 @@ const Detail = ({
           {
             title: texts.USER,
             content: (
-              <div {...{ className: "margin-top-small" }}>
+              <div>
                 <form {...{ onSubmit: handleSubmit }}>
                   {map(
                     [
@@ -73,7 +79,7 @@ const Detail = ({
                       <Field
                         {...{
                           key,
-                          id: `users-detail-${key}`,
+                          id: `users-detail-${field.name}`,
                           ...field
                         }}
                       />
@@ -105,7 +111,12 @@ const Detail = ({
                   {...{
                     className: "margin-vertical-small",
                     primary: true,
-                    onClick: () => setDialog("UserRoleNew")
+                    onClick: async () => {
+                      showLoader();
+                      const roles = await getUserRolesToAssign();
+                      setDialog("UserRoleNew", { roles });
+                      showLoader(false);
+                    }
                   }}
                 >
                   {texts.NEW_ROLE}
@@ -142,7 +153,9 @@ export default compose(
       setDialog,
       getProducers,
       getUser,
-      saveUser
+      saveUser,
+      getUserRolesToAssign,
+      showLoader
     }
   ),
   withHandlers({

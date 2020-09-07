@@ -1,0 +1,17 @@
+.error-page {
+  width: 100%;
+
+  .error-page-title {
+    color: $c-error;
+    margin-top: 0px;
+    font-size: 3.5em;
+  }
+
+  .error-page-text {
+    white-space: nowrap;
+    overflow-x: auto;
+    margin: 0px 1em 0px 1em;
+    padding-bottom: 1em;
+    font-size: 18px;
+  }
+}

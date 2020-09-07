@@ -6,18 +6,11 @@ import "codemirror/mode/xml/xml";
 import { ControlLabel } from "react-bootstrap";
 import { get } from "lodash";
 
-const SyntaxHighlighter = ({
-  lineNumbers,
-  mode,
-  value,
-  label,
-  disabled,
-  ...rest
-}) => (
+const SyntaxHighlighter = ({ lineNumbers, mode, label, disabled, ...rest }) => (
   <div
     {...{
       id: "syntax-highlighter-container",
-      className: "syntax-highlighter-container"
+      className: "syntax-highlighter-container",
     }}
   >
     {label && <ControlLabel>{label}</ControlLabel>}
@@ -25,8 +18,8 @@ const SyntaxHighlighter = ({
       {...{
         className: classNames("syntax-highlighter", { disabled }),
         options: { lineNumbers, mode, readOnly: disabled },
-        defaultValue: value,
-        ...rest
+        defaultValue: rest.value,
+        ...rest,
       }}
     />
     <div {...{ id: "syntax-highlighter-handle", className: "handle" }}>
@@ -48,7 +41,7 @@ export default compose(
         "[0]"
       );
 
-      const onDrag = e => {
+      const onDrag = (e) => {
         if (codeMirror) {
           const currentY = e.y || get(e, "touches[0].pageY");
           codeMirror.setAttribute(
@@ -68,7 +61,7 @@ export default compose(
         window.removeEventListener("touchend", onRelease);
       };
 
-      const onDown = e => {
+      const onDown = (e) => {
         startY = e.y || get(e, "touches[0].pageY");
         startH = container.getBoundingClientRect().height;
 
@@ -80,6 +73,6 @@ export default compose(
 
       handle.addEventListener("mousedown", onDown);
       handle.addEventListener("touchstart", onDown);
-    }
+    },
   })
 )(SyntaxHighlighter);

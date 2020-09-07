@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
+import { compose, lifecycle, withState } from "recompose";
 import { withRouter } from "react-router-dom";
 
 import PageWrapper from "../../components/PageWrapper";
@@ -13,8 +13,8 @@ const IngestBatch = ({ history, batch, texts, ...props }) => (
     {...{
       breadcrumb: [
         { label: texts.INGEST_BATCHES, url: "/ingest-batches" },
-        { label: texts.INGEST_BATCH }
-      ]
+        { label: texts.INGEST_BATCH },
+      ],
     }}
   >
     {batch && <Detail {...{ history, batch, texts, ...props }} />}
@@ -27,14 +27,42 @@ export default compose(
     ({ batch: { batch }, incident: { incidents } }) => ({ batch, incidents }),
     {
       getBatch,
-      getIncidents
+      getIncidents,
     }
   ),
+  withState("timeoutId", "setTimeoutId", null),
   lifecycle({
-    componentWillMount() {
-      const { match, getBatch } = this.props;
+    async componentDidMount() {
+      const { match, getBatch, getIncidents, setTimeoutId } = this.props;
 
-      getBatch(match.params.id);
-    }
+      this.mounted = true;
+
+      const id = match.params.id;
+
+      const enableUrl = `/ingest-batches/${id}`;
+
+      const batchOk = await getBatch(id, true, true, enableUrl);
+      const incidentsOk = await getIncidents(id, true, enableUrl);
+
+      const updateItems = async () => {
+        const batchOk = await getBatch(id, false, false, enableUrl);
+        const incidentsOk = await getIncidents(id, false, enableUrl);
+
+        if (batchOk && incidentsOk && this.mounted) {
+          setTimeoutId(setTimeout(updateItems, 10000));
+        }
+      };
+
+      if (batchOk && incidentsOk && this.mounted) {
+        setTimeoutId(setTimeout(updateItems, 10000));
+      }
+    },
+    componentWillUnmount() {
+      const { timeoutId } = this.props;
+
+      this.mounted = false;
+
+      clearTimeout(timeoutId);
+    },
   })
 )(IngestBatch);

@@ -9,12 +9,8 @@ import classNames from "classnames";
 import AppHeader from "./AppHeader";
 import SiderMenu from "./SiderMenu";
 import BreadCrumb from "./BreadCrumb";
-import {
-  isAdmin,
-  isSuperAdmin,
-  isDeletionAcknowledge,
-  isArchivist
-} from "../utils";
+import { isAdmin, isSuperAdmin, isArchivist, isProduction } from "../utils";
+import * as storage from "../utils/storage";
 
 const { Content } = Layout;
 
@@ -23,104 +19,175 @@ const PageWrapper = ({
   noCardStyle,
   noRoleStyle,
   className,
+  style,
+  mainLayoutStyle,
+  menuStyle,
   history,
   breadcrumb,
   children,
   user,
   texts,
   collapsed,
-  setCollapsed
+  setCollapsed,
 }) => {
   const menuItems = filter(
     [
       {
         url: "/users",
         label: texts.USERS,
-        show: isAdmin(user) || isSuperAdmin(user)
+        show: isAdmin(user) || isSuperAdmin(user),
       },
       { url: "/producers", label: texts.PRODUCERS, show: isSuperAdmin(user) },
       { url: "/producer-profiles", label: texts.PRODUCER_PROFILES, show: true },
-
       {
         url: "/ingest",
         label: texts.INGEST,
-        show: isSuperAdmin(user) || isArchivist(user)
+        show: isSuperAdmin(user) || isArchivist(user),
       },
       { url: "/ingest-routines", label: texts.INGEST_ROUTINES, show: true },
       { url: "/ingest-batches", label: texts.INGEST_BATCHES, show: true },
       {
         url: "/validation-profiles",
         label: texts.VALIDATION_PROFILES,
-        show: true
+        show: true,
       },
       { url: "/sip-profiles", label: texts.SIP_PROFILES, show: true },
-
       {
-        url: "/storage-administration",
-        label: texts.STORAGE_ADMINISTRATION,
-        show: isSuperAdmin(user)
+        label: texts.ARCHIVAL_STORAGE,
+        items: [
+          {
+            url: "/archival-storage-administration",
+            label: texts.ARCHIVAL_STORAGE_ADMINISTRATION,
+          },
+          {
+            url: "/logical-storage-administration",
+            label: texts.LOGICAL_STORAGE_ADMINISTRATION,
+          },
+        ],
+        show: isSuperAdmin(user),
       },
       {
         url: "/workflow-definitions",
         label: texts.WORKFLOW_DEFINITIONS,
-        show: true
+        show: true,
       },
-
       {
         url: "/deletion-requests",
         label: texts.DELETION_REQUESTS,
-        show: isDeletionAcknowledge(user)
+        show: true,
       },
       { url: "/search-queries", label: texts.SEARCH_QUERIES, show: true },
-      { url: "/aip-search", label: texts.AIP_SEARCH, show: true }
+      {
+        url: "/aip-search",
+        onClick: () => storage.set("directedFromMenu", true),
+        label: texts.AIP_SEARCH,
+        show: true,
+      },
+      {
+        label: texts.PRESERVATION_PLANNING,
+        items: filter(
+          [
+            {
+              label: texts.ISSUE_DICTIONARY,
+              url: "/issue-dictionary",
+              show: true,
+            },
+            {
+              label: texts.FORMATS,
+              url: "/formats",
+              show: true,
+            },
+            {
+              label: texts.RISKS,
+              url: "/risks",
+              show: true,
+            },
+            {
+              label: texts.TOOLS,
+              url: "/tools",
+              show: true,
+            },
+            {
+              label: texts.NOTIFICATIONS,
+              url: "/notifications",
+              show: isSuperAdmin(user),
+            },
+          ],
+          "show"
+        ),
+        show: true,
+      },
+      {
+        url: "/reports",
+        label: texts.REPORTS,
+        show: isSuperAdmin(user),
+      },
     ],
     "show"
   );
 
   return (
-    <Layout {...{ className: "layout" }}>
-      <SiderMenu
+    <div>
+      {!isProduction() && (
+        <div {...{ className: "test-stripe" }}>{texts.TEST_ENVIRONMENT}</div>
+      )}
+      <Layout
         {...{
-          menuItems,
-          collapsed,
-          setCollapsed,
-          className: classNames({ hidden: authStyle || noRoleStyle })
+          className: classNames("layout", { test: !isProduction() }),
+          style: mainLayoutStyle,
         }}
-      />
-      <Layout>
-        <AppHeader
+      >
+        <SiderMenu
           {...{
-            authStyle,
-            noRoleStyle,
             menuItems,
             collapsed,
-            setCollapsed
+            setCollapsed,
+            className: classNames({ hidden: authStyle || noRoleStyle }),
+            menuStyle,
           }}
         />
-        <Content {...{ className: `container ${className}` }}>
-          {!noCardStyle && !authStyle ? (
-            <Card
-              {...{
-                title: !isEmpty(breadcrumb) ? (
-                  <BreadCrumb
-                    {...{
-                      history,
-                      items: breadcrumb
-                    }}
-                  />
-                ) : (
-                  ""
-                )
-              }}
-            >
-              {children}
-            </Card>
-          ) : (
-            children
-          )}
-        </Content>
+        <Layout>
+          <AppHeader
+            {...{
+              authStyle,
+              noRoleStyle,
+              menuItems,
+              collapsed,
+              setCollapsed,
+            }}
+          />
+          <Content
+            {...{
+              className: classNames(`container ${className}`, {
+                test: !isProduction(),
+              }),
+              style,
+            }}
+          >
+            {!noCardStyle && !authStyle ? (
+              <Card
+                {...{
+                  title: !isEmpty(breadcrumb) ? (
+                    <BreadCrumb
+                      {...{
+                        history,
+                        items: breadcrumb,
+                      }}
+                    />
+                  ) : (
+                    ""
+                  ),
+                }}
+              >
+                {children}
+              </Card>
+            ) : (
+              children
+            )}
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </div>
   );
 };
 

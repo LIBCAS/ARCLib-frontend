@@ -2,6 +2,7 @@ import React from "react";
 import { map, get } from "lodash";
 
 import Table from "../table/Table";
+import Tooltip from "../Tooltip";
 import PrettyJSONTableCell from "../table/PrettyJSONTableCell";
 import { storageTypes } from "../../enums";
 
@@ -12,14 +13,24 @@ const StorageAdministrationTable = ({ history, storages, texts }) => (
         { label: texts.NAME },
         { label: texts.HOST },
         { label: texts.PORT },
-        { label: texts.PRIORITY },
+        {
+          label: (
+            <Tooltip
+              {...{
+                title:
+                  texts.HIGHER_PRIORITY_STORAGE_IS_PREFERRED_DURING_READ_OPERATION,
+                content: texts.PRIORITY
+              }}
+            />
+          )
+        },
         { label: texts.STORAGE_TYPE },
         { label: texts.CONFIGURATION_FILE },
-        { label: texts.WRITE_ONLY },
         { label: texts.REACHABLE }
       ],
       items: map(storages, (item, i) => ({
-        onClick: () => history.push(`/storage-administration/${item.id}`),
+        onClick: () =>
+          history.push(`/logical-storage-administration/${item.id}`),
         items: [
           { label: get(item, "name", "") },
           { label: get(item, "host", "") },
@@ -30,13 +41,11 @@ const StorageAdministrationTable = ({ history, storages, texts }) => (
             label: (
               <PrettyJSONTableCell
                 {...{
-                  id: `storage-administration-table-config-${i}`,
                   json: get(item, "config", "")
                 }}
               />
             )
           },
-          { label: get(item, "writeOnly") ? texts.YES : texts.NO },
           { label: get(item, "reachable") ? texts.YES : texts.NO }
         ]
       }))

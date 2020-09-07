@@ -3,8 +3,34 @@
 
   .ant-menu {
     &-item {
+      &.disabled {
+        cursor: auto;
+
+        &:hover {
+          color: rgba(255, 255, 255, 0.65);
+        }
+      }
+
       &-selected {
         background-color: $c-blue-primary !important;
+      }
+    }
+  }
+
+  /* IE */
+  &.center {
+    &.ie {
+      .content {
+        .title {
+          position: absolute;
+          left: 50vw;
+          top: 32px;
+          -moz-transform: translate(-50%, -50%);
+          -webkit-transform: translate(-50%, -50%);
+          -o-transform: translate(-50%, -50%);
+          -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+        }
       }
     }
   }
@@ -56,6 +82,12 @@
       }
     }
 
+    .user {
+      &-button {
+        max-width: 275px;
+      }
+    }
+
     .menu {
       &-all {
         display: none;
@@ -63,6 +95,7 @@
 
         &-button {
           display: none;
+          max-width: 275px;
         }
 
         li {
@@ -150,40 +183,27 @@ $c-max-width-with-menu: $breakpoint-desktop;
   .app-header.normal {
     .content {
       .top {
-        .title {
-          position: absolute;
-          left: 50vw;
-          -moz-transform: translateX(-50%);
-          -webkit-transform: translateX(-50%);
-          -o-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-          transform: translateX(-50%);
-        }
-      }
-    }
-
-    /* IE */
-    &.ie {
-      .content {
-        .top {
-          .title {
-            position: absolute;
-            left: 50vw;
-            top: 32px;
-            -moz-transform: translate(-50%, -50%);
-            -webkit-transform: translate(-50%, -50%);
-            -o-transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-          }
-        }
+        justify-content: space-between;
       }
     }
   }
 }
 
 @media (max-width: $breakpoint-500) {
-  .app-header {
+  .app-header.normal {
+    .content {
+      .top {
+        justify-content: flex-end;
+        .title {
+          display: none;
+        }
+        .right,
+        .menu-all-button {
+          max-width: 100%;
+        }
+      }
+    }
+
     .button-language {
       display: none;
     }
@@ -255,12 +275,5 @@ $c-max-width-with-menu: $breakpoint-desktop;
         }
       }
     }
-  }
-}
-
-/* MOZILLA FIREFOX */
-@-moz-document url-prefix() {
-  .menu {
-    margin-top: -50px;
   }
 }

@@ -10,7 +10,10 @@ import DialogContainer from "./DialogContainer";
 import ErrorBlock from "../ErrorBlock";
 import { TextField, SelectField, Validation } from "../form";
 import { saveUser, getUsers } from "../../actions/usersActions";
-import { isSuperAdmin } from "../../utils";
+import {
+  isSuperAdmin,
+  removeStartEndWhiteSpaceInSelectedFields
+} from "../../utils";
 
 const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
   <DialogContainer
@@ -50,7 +53,7 @@ const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
           text ? (
             <p {...{ key }}>{text}</p>
           ) : (
-            <Field {...{ key, id: `user-new-${key}`, ...field }} />
+            <Field {...{ key, id: `user-new-${field.name}`, ...field }} />
           )
       )}
     </form>
@@ -86,7 +89,7 @@ export default compose(
       if (
         await saveUser({
           id: uuidv1(),
-          ...formData,
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["username"]),
           producer: isSuperAdmin(user)
             ? find(producers, item => item.id === producer)
             : get(user, "producer")

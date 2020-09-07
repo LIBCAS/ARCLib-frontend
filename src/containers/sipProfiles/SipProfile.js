@@ -6,7 +6,10 @@ import { get } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/sipProfiles/Detail";
-import { getSipProfile } from "../../actions/sipProfileActions";
+import {
+  clearSipProfile,
+  getSipProfile
+} from "../../actions/sipProfileActions";
 
 const SipProfile = ({ history, sipProfile, texts, ...props }) => (
   <PageWrapper
@@ -24,11 +27,7 @@ const SipProfile = ({ history, sipProfile, texts, ...props }) => (
           sipProfile,
           texts,
           initialValues: {
-            name: get(sipProfile, "name", ""),
-            pathToXml: get(sipProfile, "pathToSipId.pathToXml", ""),
-            xpathToId: get(sipProfile, "pathToSipId.xpathToId", ""),
-            sipMetadataPath: get(sipProfile, "sipMetadataPath", ""),
-            packageType: get(sipProfile, "packageType", "")
+            ...sipProfile
           },
           ...props
         }}
@@ -40,12 +39,14 @@ const SipProfile = ({ history, sipProfile, texts, ...props }) => (
 export default compose(
   withRouter,
   connect(({ sipProfile: { sipProfile } }) => ({ sipProfile }), {
+    clearSipProfile,
     getSipProfile
   }),
   lifecycle({
     componentWillMount() {
-      const { match, getSipProfile } = this.props;
+      const { match, clearSipProfile, getSipProfile } = this.props;
 
+      clearSipProfile();
       getSipProfile(match.params.id);
     }
   })

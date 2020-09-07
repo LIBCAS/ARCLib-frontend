@@ -4,6 +4,13 @@ body {
   -webkit-font-smoothing: antialiased;
   font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
   color: $c-text;
+  overflow: hidden;
+}
+
+@media (max-width: $breakpoint-desktop) {
+  body {
+    overflow: auto;
+  }
 }
 
 /* FLEX */
@@ -126,6 +133,10 @@ body {
       margin-top: 1em;
     }
 
+    &-very-small {
+      margin-top: 0.5em;
+    }
+
     &-px1 {
       margin-top: 1px;
     }
@@ -136,6 +147,10 @@ body {
 
     &-small {
       margin-bottom: 1em;
+    }
+
+    &-very-small {
+      margin-bottom: 0.5em;
     }
 
     &-none {
@@ -153,6 +168,14 @@ body {
     &-small {
       margin-left: 1em;
     }
+
+    &-very-small {
+      margin-left: 0.5em;
+    }
+
+    &-mini {
+      margin-left: 0.25em;
+    }
   }
 
   &-right {
@@ -160,6 +183,10 @@ body {
 
     &-small {
       margin-right: 1em;
+    }
+
+    &-very-small {
+      margin-right: 0.5em;
     }
   }
 
@@ -211,6 +238,17 @@ body {
     &-very-small {
       padding-bottom: 0.5em;
     }
+
+    &-none {
+      padding-bottom: 0px;
+    }
+  }
+
+  &-horizontal {
+    &-very-small {
+      padding-left: 0.5em;
+      padding-right: 0.5em;
+    }
   }
 
   &-none {
@@ -223,6 +261,9 @@ body {
 .text {
   &-right {
     text-align: right;
+  }
+  &-bold {
+    font-weight: bold;
   }
 }
 
@@ -273,6 +314,15 @@ select {
   &-green {
     color: $c-green;
   }
+  &-orange {
+    color: $c-orange;
+  }
+  &-red {
+    color: $c-red;
+  }
+  &-white {
+    color: $c-white;
+  }
 }
 
 /* ANT */
@@ -284,6 +334,20 @@ select {
     &-number {
       &-disabled {
         color: rgba(0, 0, 0, 0.65);
+      }
+    }
+  }
+  &-input,
+  &-input-number {
+    &.read-only {
+      background-color: #f5f5f5;
+
+      &:hover,
+      &:focus {
+        border-color: #d9d9d9;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
       }
     }
   }
@@ -305,9 +369,38 @@ select {
   }
 }
 
+.ant-menu-inline {
+  .ant-menu-item {
+    width: 100% !important;
+  }
+}
+
+/* VISIBILITY */
+
+.hidden {
+  display: none;
+}
+
 /* OTHER */
 
 .pre {
   white-space: pre;
   font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+}
+
+.table-checkbox {
+  margin: 0;
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.bold {
+  font-weight: 700;
 }

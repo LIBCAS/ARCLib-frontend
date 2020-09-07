@@ -35,7 +35,7 @@ export default compose(
       const { setFilter } = this.props;
 
       setFilter({
-        order: orderTypes.ASC
+        order: orderTypes.DESC
       });
     }
   })

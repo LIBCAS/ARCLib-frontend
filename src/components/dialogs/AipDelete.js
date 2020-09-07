@@ -52,7 +52,7 @@ export default compose(
 
       if (response === 200 || response === 409) {
         setFail(null);
-        getAip(externalId);
+        await getAip(externalId);
         closeDialog();
 
         setDialog("Info", {

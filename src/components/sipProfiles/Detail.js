@@ -1,18 +1,26 @@
 import React from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers, withState, lifecycle } from "recompose";
+import { compose, withHandlers } from "recompose";
 import { get, map } from "lodash";
-import { message } from "antd";
 
 import Button from "../Button";
-import SyntaxHighlighter from "../SyntaxHighlighter";
-import ErrorBlock from "../ErrorBlock";
-import { TextField, SelectField, Validation } from "../form";
+import {
+  TextField,
+  SelectField,
+  SyntaxHighlighterField,
+  Validation,
+  Checkbox,
+} from "../form";
 import { saveSipProfile } from "../../actions/sipProfileActions";
-import { setDialog } from "../../actions/appActions";
-import { isAdmin, hasValue, downloadFile } from "../../utils";
+import {
+  isAdmin,
+  openUrlInNewTab,
+  removeStartEndWhiteSpaceInSelectedFields,
+} from "../../utils";
 import { packageTypeOptions } from "../../enums";
+import InfoIcon from "../InfoIcon";
+import { GLOB_URL } from "../../constants";
 
 const Detail = ({
   history,
@@ -21,13 +29,6 @@ const Detail = ({
   texts,
   language,
   user,
-  xmlContent,
-  setXmlContent,
-  xmlContentFail,
-  setXmlContentFail,
-  xmlContentState,
-  setXmlContentState,
-  setDialog
 }) => (
   <div>
     <form {...{ onSubmit: handleSubmit }}>
@@ -37,137 +38,98 @@ const Detail = ({
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
+            component: SyntaxHighlighterField,
             label: texts.XSL_TRANSFORMATION,
-            value: xmlContent,
-            onChange: xml => {
-              setXmlContent(xml);
-              setXmlContentFail(!hasValue(xml) ? texts.REQUIRED : null);
-            },
-            syntaxHighlighter: true
+            name: "xsl",
+            validate: [Validation.required[language]],
+            fileName: get(sipProfile, "name"),
           },
           {
             component: TextField,
-            label: texts.PATH_TO_XML,
-            name: "pathToXml",
-            validate: [Validation.required[language]]
+            label: (
+              <span>
+                {texts.PATH_TO_XML}
+                <InfoIcon
+                  {...{
+                    glyph: "new-window",
+                    tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
+                    onClick: () => openUrlInNewTab(GLOB_URL),
+                  }}
+                />
+              </span>
+            ),
+            name: "pathToSipId.pathToXmlGlobPattern",
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.XPATH_TO_ID,
-            name: "xpathToId",
-            validate: [Validation.required[language]]
+            name: "pathToSipId.xpathToId",
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
-            label: texts.SIP_METADATA_PATH,
-            name: "sipMetadataPath",
-            validate: [Validation.required[language]]
+            label: (
+              <span>
+                {texts.SIP_METADATA_PATH}
+                <InfoIcon
+                  {...{
+                    glyph: "new-window",
+                    tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
+                    onClick: () => openUrlInNewTab(GLOB_URL),
+                  }}
+                />
+              </span>
+            ),
+            name: "sipMetadataPathGlobPattern",
+            validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.SIP_PACKAGE_TYPE,
             name: "packageType",
             validate: [Validation.required[language]],
-            options: packageTypeOptions
-          }
+            options: packageTypeOptions,
+          },
+          {
+            component: Checkbox,
+            label: texts.EDITABLE,
+            name: "editable",
+            disabled: true,
+          },
         ],
-        ({ syntaxHighlighter, value, onChange, ...field }, key) =>
-          syntaxHighlighter ? (
-            <div {...{ key, className: "margin-bottom-small" }}>
-              <SyntaxHighlighter
-                {...{
-                  key: xmlContentState,
-                  lineNumbers: true,
-                  mode: "xml",
-                  value,
-                  onChange,
-                  disabled: !isAdmin(user),
-                  label: field.label
-                }}
-              />
-              <ErrorBlock {...{ label: xmlContentFail }} />
-              {isAdmin(user) && (
-                <div {...{ className: "flex-row flex-right" }}>
-                  <Button
-                    {...{
-                      onClick: () =>
-                        setDialog("DropFilesDialog", {
-                          title: texts.UPLOAD_XML,
-                          label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-                          multiple: false,
-                          onDrop: files => {
-                            const file = files[0];
-
-                            if (file) {
-                              const reader = new FileReader();
-
-                              reader.readAsText(file);
-
-                              reader.onloadend = () => {
-                                const xml = reader.result;
-
-                                setXmlContent(hasValue(xml) ? xml : "");
-                                setXmlContentFail(
-                                  !hasValue(xml) ? texts.REQUIRED : null
-                                );
-                                setXmlContentState(!xmlContentState);
-                                message.success(
-                                  texts.FILE_SUCCESSFULLY_UPLOADED,
-                                  5
-                                );
-                              };
-                            }
-                          }
-                        }),
-                      className: "margin-top-small"
-                    }}
-                  >
-                    {texts.UPLOAD_XML}
-                  </Button>
-                  <Button
-                    {...{
-                      onClick: () =>
-                        downloadFile(
-                          xmlContent,
-                          `${get(sipProfile, "name", "sipProfile")}.xml`,
-                          "text/xml"
-                        ),
-                      className: "margin-top-small margin-left-small"
-                    }}
-                  >
-                    {texts.DOWNLOAD_XML}
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Field
-              {...{
-                key,
-                id: `sip-profile-detail-${key}`,
-                disabled: !isAdmin(user),
-                ...field
-              }}
-            />
-          )
+        (field) => (
+          <Field
+            {...{
+              key: field.name,
+              id: `sip-profile-detail-${field.name}`,
+              disabled: !isAdmin(user) || !get(sipProfile, "editable"),
+              ...field,
+            }}
+          />
+        )
       )}
       <div {...{ className: "flex-row flex-right" }}>
         <Button {...{ onClick: () => history.push("/sip-profiles") }}>
-          {isAdmin(user) ? texts.STORNO : texts.CLOSE}
+          {isAdmin(user) && get(sipProfile, "editable")
+            ? texts.STORNO
+            : texts.CLOSE}
         </Button>
-        {isAdmin(user) && (
+        {isAdmin(user) && get(sipProfile, "editable") ? (
           <Button
             {...{
               primary: true,
               type: "submit",
-              className: "margin-left-small"
+              className: "margin-left-small",
             }}
           >
             {texts.SAVE_AND_CLOSE}
           </Button>
+        ) : (
+          <div />
         )}
       </div>
     </form>
@@ -177,60 +139,36 @@ const Detail = ({
 export default compose(
   connect(null, {
     saveSipProfile,
-    setDialog
-  }),
-  withState("xmlContent", "setXmlContent", ""),
-  withState("xmlContentState", "setXmlContentState", true),
-  withState("xmlContentFail", "setXmlContentFail", ""),
-  lifecycle({
-    componentWillMount() {
-      const {
-        sipProfile,
-        setXmlContent,
-        xmlContentState,
-        setXmlContentState
-      } = this.props;
-
-      setXmlContent(get(sipProfile, "xsl", ""));
-      setXmlContentState(!xmlContentState);
-    }
   }),
   withHandlers({
-    onSubmit: ({
-      saveSipProfile,
-      sipProfile,
-      texts,
-      xmlContent,
-      setXmlContentFail,
-      history
-    }) => async ({ pathToXml, xpathToId, ...formData }) => {
-      if (hasValue(xmlContent)) {
-        setXmlContentFail(null);
-        const response = await saveSipProfile({
-          ...sipProfile,
-          ...formData,
-          xsl: xmlContent,
-          pathToSipId: { ...sipProfile.pathToSipId, pathToXml, xpathToId }
-        });
+    onSubmit: ({ saveSipProfile, sipProfile, texts, history }) => async (
+      formData
+    ) => {
+      const response = await saveSipProfile({
+        ...sipProfile,
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+          "name",
+          "pathToSipId.pathToXmlGlobPattern",
+          "pathToSipId.xpathToId",
+          "sipMetadataPathGlobPattern",
+        ]),
+      });
 
-        if (response === 200) {
-          history.push("/sip-profiles");
-        } else {
-          throw new SubmissionError(
-            response === 409
-              ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
-              : {
-                  packageType: texts.SAVE_FAILED
-                }
-          );
-        }
+      if (response === 200) {
+        history.push("/sip-profiles");
       } else {
-        setXmlContentFail(texts.REQUIRED);
+        throw new SubmissionError(
+          response === 409
+            ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
+            : {
+                packageType: texts.SAVE_FAILED,
+              }
+        );
       }
-    }
+    },
   }),
   reduxForm({
     form: "sip-profile-detail",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(Detail);

@@ -1,59 +1,90 @@
 import * as c from "./constants";
 import fetch from "../utils/fetch";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 
-export const getDeletionRequests = () => async dispatch => {
+export const getDeletionRequests = () => async (dispatch) => {
+  dispatch({
+    type: c.DELETION_REQUESTS,
+    payload: {
+      deletionRequests: null,
+    },
+  });
+
   try {
-    const response = await fetch("/api/aip/list_deletion_requests");
+    const response = await fetch("/api/deletion_request");
 
-    if (response.status === 200) {
+    if (response.ok) {
       const deletionRequests = await response.json();
 
       dispatch({
         type: c.DELETION_REQUESTS,
         payload: {
-          deletionRequests
-        }
+          deletionRequests,
+        },
       });
 
       return deletionRequests;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
-    return false;
-  }
-};
-
-export const acknowledgeDeletionRequest = id => async dispatch => {
-  dispatch(showLoader());
-  try {
-    const response = await fetch(`/api/aip/${id}/acknowledge_deletion`, {
-      method: "PUT"
-    });
-
-    dispatch(showLoader(false));
-    return response.status === 200;
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const disacknowledgeDeletionRequest = id => async dispatch => {
+export const acknowledgeDeletionRequest = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(`/api/aip/${id}/disacknowledge_deletion`, {
-      method: "PUT"
+    const response = await fetch(`/api/deletion_request/${id}/acknowledge`, {
+      method: "POST",
     });
 
     dispatch(showLoader(false));
-    return response.status === 200;
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const disacknowledgeDeletionRequest = (id) => async (dispatch) => {
+  dispatch(showLoader());
+  try {
+    const response = await fetch(`/api/deletion_request/${id}/disacknowledge`, {
+      method: "POST",
+    });
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const revertDeletionRequest = (id) => async (dispatch) => {
+  dispatch(showLoader());
+  try {
+    const response = await fetch(`/api/deletion_request/${id}/revert`, {
+      method: "POST",
+    });
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok;
+  } catch (error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

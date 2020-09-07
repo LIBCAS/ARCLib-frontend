@@ -32,7 +32,7 @@ const Authentication = ({ handleSubmit, texts, language }) => (
           <Field
             {...{
               key,
-              id: `authentication-${key}`,
+              id: `authentication-${field.name}`,
               ...field
             }}
           />

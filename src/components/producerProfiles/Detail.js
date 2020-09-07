@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { reduxForm, Field, SubmissionError } from "redux-form";
 import { compose, withHandlers, lifecycle } from "recompose";
 import { find, map, isEmpty } from "lodash";
+import { Row, Col } from "antd";
 
 import Button from "../Button";
 import { TextField, SelectField, Checkbox, Validation } from "../form";
@@ -12,7 +13,7 @@ import { saveProducerProfile } from "../../actions/producerProfileActions";
 import { getSipProfiles } from "../../actions/sipProfileActions";
 import { getValidationProfiles } from "../../actions/validationProfileActions";
 import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
-import { isSuperAdmin, isAdmin } from "../../utils";
+import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
 
 const Detail = ({
   handleSubmit,
@@ -22,132 +23,151 @@ const Detail = ({
   workflowDefinitions,
   texts,
   language,
-  user,
   change,
   setDialog,
-  history
+  history,
+  canEditAll,
+  canEdit
 }) => (
   <form {...{ onSubmit: handleSubmit }}>
-    {map(
-      [
-        {
-          component: TextField,
-          label: texts.NAME,
-          name: "name",
-          validate: [Validation.required[language]]
-        },
-        {
-          component: SelectField,
-          label: texts.PRODUCER,
-          name: "producer",
-          validate: [Validation.required[language]],
-          options: map(producers, producer => ({
-            label: producer.name,
-            value: producer.id
-          }))
-        },
-        {
-          component: TextField,
-          label: texts.EXTERNAL_ID,
-          name: "externalId",
-          validate: [Validation.required[language]],
-          disabled: true
-        },
-        {
-          component: SelectField,
-          label: texts.SIP_PROFILE,
-          name: "sipProfile",
-          validate: [Validation.required[language]],
-          options: map(sipProfiles, sipProfile => ({
-            label: sipProfile.name,
-            value: sipProfile.id
-          }))
-        },
-        {
-          component: SelectField,
-          label: texts.VALIDATION_PROFILE,
-          name: "validationProfile",
-          validate: [Validation.required[language]],
-          options: map(validationProfiles, validationProfile => ({
-            label: validationProfile.name,
-            value: validationProfile.id
-          }))
-        },
-        {
-          component: SelectField,
-          label: texts.WORKFLOW_DEFINITION,
-          name: "workflowDefinition",
-          validate: [Validation.required[language]],
-          options: map(workflowDefinitions, workflowDefinition => ({
-            label: workflowDefinition.name,
-            value: workflowDefinition.id
-          }))
-        },
-        {
-          component: TextField,
-          label: texts.WORKFLOW_CONFIGURATION,
-          name: "workflowConfig",
-          validate: [Validation.required[language], Validation.json[language]],
-          type: "textarea",
-          buttons: [
-            {
-              label: texts.UPLOAD_WORKFLOW_CONFIGURATION,
-              onClick: () =>
-                setDialog("DropFilesDialog", {
-                  title: texts.UPLOAD_WORKFLOW_CONFIGURATION,
-                  label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-                  multiple: false,
-                  onDrop: files => {
-                    const file = files[0];
+    <Row {...{ gutter: 16 }}>
+      {map(
+        [
+          {
+            component: TextField,
+            label: texts.NAME,
+            name: "name",
+            validate: [Validation.required[language]],
+            lg: 12
+          },
+          canEditAll
+            ? {
+                component: SelectField,
+                label: texts.PRODUCER,
+                name: "producer",
+                validate: [Validation.required[language]],
+                options: map(producers, producer => ({
+                  label: producer.name,
+                  value: producer.id
+                })),
+                lg: 12
+              }
+            : {
+                component: TextField,
+                label: texts.PRODUCER,
+                name: "producer.name",
+                lg: 12,
+                disabled: true
+              },
+          {
+            component: TextField,
+            label: texts.EXTERNAL_ID,
+            name: "externalId",
+            validate: [Validation.required[language]],
+            disabled: true,
+            lg: 12
+          },
+          {
+            component: SelectField,
+            label: texts.SIP_PROFILE,
+            name: "sipProfile",
+            validate: [Validation.required[language]],
+            options: map(sipProfiles, sipProfile => ({
+              label: sipProfile.name,
+              value: sipProfile.id
+            })),
+            lg: 12
+          },
+          {
+            component: SelectField,
+            label: texts.VALIDATION_PROFILE,
+            name: "validationProfile",
+            validate: [Validation.required[language]],
+            options: map(validationProfiles, validationProfile => ({
+              label: validationProfile.name,
+              value: validationProfile.id
+            })),
+            lg: 12
+          },
+          {
+            component: SelectField,
+            label: texts.WORKFLOW_DEFINITION,
+            name: "workflowDefinition",
+            validate: [Validation.required[language]],
+            options: map(workflowDefinitions, workflowDefinition => ({
+              label: workflowDefinition.name,
+              value: workflowDefinition.id
+            })),
+            lg: 12
+          },
+          {
+            component: TextField,
+            label: texts.WORKFLOW_CONFIGURATION,
+            name: "workflowConfig",
+            validate: [
+              Validation.required[language],
+              Validation.json[language]
+            ],
+            type: "textarea",
+            buttons: [
+              {
+                label: texts.UPLOAD_WORKFLOW_CONFIGURATION,
+                onClick: () =>
+                  setDialog("DropFilesDialog", {
+                    title: texts.UPLOAD_WORKFLOW_CONFIGURATION,
+                    label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
+                    multiple: false,
+                    onDrop: files => {
+                      const file = files[0];
 
-                    if (file) {
-                      const reader = new FileReader();
+                      if (file) {
+                        const reader = new FileReader();
 
-                      reader.readAsText(file);
+                        reader.readAsText(file);
 
-                      reader.onloadend = () => {
-                        const config = reader.result;
+                        reader.onloadend = () => {
+                          const config = reader.result;
 
-                        change("workflowConfig", config);
-                      };
+                          change("workflowConfig", config);
+                        };
+                      }
                     }
-                  }
-                })
-            }
-          ]
-        },
-        {
-          component: Checkbox,
-          label: texts.DEBUGGING_MODE_ACTIVE,
-          name: "debuggingModeActive"
-        }
-      ],
-      ({ buttons, name, disabled, ...field }, key) => (
-        <div {...{ key }}>
-          <Field
-            {...{
-              id: `producer-profile-detail-${name}`,
-              name,
-              ...field,
-              disabled: disabled || !(isSuperAdmin(user) || isAdmin(user))
-            }}
-          />
-          {(isSuperAdmin(user) || isAdmin(user)) &&
-            !isEmpty(buttons) && (
+                  })
+              }
+            ]
+          },
+          {
+            component: Checkbox,
+            label: texts.DEBUGGING_MODE_ACTIVE,
+            name: "debuggingModeActive"
+          }
+        ],
+        ({ buttons, name, disabled, lg, ...field }, key) => (
+          <Col {...{ key, lg: lg || 24 }}>
+            <Field
+              {...{
+                id: `producer-profile-detail-${name}`,
+                name,
+                ...field,
+                disabled: disabled || (!canEdit && !canEditAll)
+              }}
+            />
+            {(canEdit || canEditAll) && !isEmpty(buttons) && (
               <div {...{ className: "flex-row flex-right" }}>
                 {map(buttons, ({ label, ...props }, key) => (
                   <Button {...{ key, ...props }}>{label}</Button>
                 ))}
               </div>
             )}
-        </div>
-      )
-    )}
+          </Col>
+        )
+      )}
+    </Row>
     <div {...{ className: "flex-row flex-right" }}>
       <Button {...{ onClick: () => history.push("/producer-profiles") }}>
-        {isSuperAdmin(user) || isAdmin(user) ? texts.STORNO : texts.CLOSE}
+        {canEdit || canEditAll ? texts.STORNO : texts.CLOSE}
       </Button>
-      {(isSuperAdmin(user) || isAdmin(user)) && (
+      {(canEdit || canEditAll) && (
         <Button
           {...{
             primary: true,
@@ -187,16 +207,21 @@ export default compose(
   lifecycle({
     componentWillMount() {
       const {
+        canEdit,
+        canEditAll,
         getProducers,
         getSipProfiles,
         getValidationProfiles,
         getWorkflowDefinitions
       } = this.props;
-
-      getProducers(false);
-      getSipProfiles();
-      getValidationProfiles();
-      getWorkflowDefinitions();
+      if (canEdit || canEditAll) {
+        if (canEditAll) {
+          getProducers(false);
+        }
+        getSipProfiles();
+        getValidationProfiles();
+        getWorkflowDefinitions();
+      }
     }
   }),
   withHandlers({
@@ -208,7 +233,8 @@ export default compose(
       validationProfiles,
       workflowDefinitions,
       texts,
-      history
+      history,
+      canEditAll
     }) => async ({
       producer,
       sipProfile,
@@ -220,8 +246,10 @@ export default compose(
       if (
         await saveProducerProfile({
           ...producerProfile,
-          ...formData,
-          producer: find(producers, item => item.id === producer),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+          producer: canEditAll
+            ? find(producers, item => item.id === producer)
+            : producer,
           sipProfile: find(sipProfiles, item => item.id === sipProfile),
           validationProfile: find(
             validationProfiles,
@@ -231,7 +259,7 @@ export default compose(
             workflowDefinitions,
             item => item.id === workflowDefinition
           ),
-          debuggingModeActive: debuggingModeActive !== "" ? true : false
+          debuggingModeActive: debuggingModeActive === true
         })
       ) {
         history.push("/producer-profiles");

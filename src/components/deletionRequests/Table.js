@@ -1,54 +1,99 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { map, get } from "lodash";
+import { map, get, compact } from "lodash";
 
 import Button from "../Button";
 import Table from "../table/Table";
 import { setDialog } from "../../actions/appActions";
+import { isDeletionAcknowledge } from "../../utils";
 
-const DeletionRequestsTable = ({ deletionRequests, texts, setDialog }) => (
+const deletionRequestState = {
+  _1_CONFIRMATION_REQUIRED: "_1_CONFIRMATION_REQUIRED",
+  _2_CONFIRMATIONS_REQUIRED: "_2_CONFIRMATIONS_REQUIRED",
+  DELETED: "DELETED",
+  REJECTED: "REJECTED",
+  REVERTED: "REVERTED",
+};
+
+const DeletionRequestsTable = ({
+  deletionRequests,
+  texts,
+  setDialog,
+  user,
+}) => (
   <Table
     {...{
-      thCells: [
+      thCells: compact([
         { label: texts.AIP_ID },
         { label: texts.REQUESTER },
-        { label: "" }
-      ],
-      items: map(deletionRequests, item => ({
-        items: [
-          { label: get(item, "aipId", "") },
-          { label: get(item, "requester.username", "") },
-          {
-            label: (
-              <div {...{ className: "flex-row-normal-nowrap flex-right" }}>
-                <Button
-                  {...{
-                    onClick: () =>
-                      setDialog("AcknowledgeDeletionRequest", {
-                        id: get(item, "id")
-                      })
-                  }}
-                >
-                  {texts.ACKNOWLEDGE_DELETION_REQUEST}
-                </Button>
-                <Button
-                  {...{
-                    onClick: () =>
-                      setDialog("DisacknowledgeDeletionRequest", {
-                        id: get(item, "id")
-                      }),
-                    className: "margin-left-small"
-                  }}
-                >
-                  {texts.DISACKNOWLEDGE_DELETION_REQUEST}
-                </Button>
-              </div>
-            ),
-            className: "text-right"
-          }
-        ]
-      }))
+        { label: texts.STATE },
+        isDeletionAcknowledge(user) && { label: "" },
+      ]),
+      items: map(deletionRequests, (item) => {
+        const state =
+          !get(item, "rejectedBy") &&
+          !get(item, "confirmer1") &&
+          !get(item, "confirmer2")
+            ? deletionRequestState._2_CONFIRMATIONS_REQUIRED
+            : !get(item, "rejectedBy") &&
+              (!get(item, "confirmer1") || !get(item, "confirmer2"))
+            ? deletionRequestState._1_CONFIRMATION_REQUIRED
+            : get(item, "confirmer1") && get(item, "confirmer2")
+            ? deletionRequestState.DELETED
+            : get(item, "rejectedBy")
+            ? get(user, "id") === get(item, "rejectedBy.id")
+              ? deletionRequestState.REVERTED
+              : deletionRequestState.REJECTED
+            : null;
+        return {
+          items: compact([
+            { label: get(item, "aipId", "") },
+            { label: get(item, "requester.username", "") },
+            { label: get(texts, state) || "" },
+            isDeletionAcknowledge(user) && {
+              label:
+                get(user, "id") !== get(item, "requester.id") &&
+                get(user, "id") !== get(item, "confirmer1.id") &&
+                get(user, "id") !== get(item, "confirmer2.id") &&
+                state !== deletionRequestState.DELETED &&
+                state !== deletionRequestState.REJECTED ? (
+                  <div {...{ className: "flex-row-normal-nowrap flex-right" }}>
+                    <Button
+                      {...{
+                        onClick: () =>
+                          setDialog("AcknowledgeDeletionRequest", item),
+                      }}
+                    >
+                      {texts.ACKNOWLEDGE_DELETION_REQUEST}
+                    </Button>
+                    <Button
+                      {...{
+                        onClick: () =>
+                          setDialog("DisacknowledgeDeletionRequest", item),
+                        className: "margin-left-small",
+                      }}
+                    >
+                      {texts.DISACKNOWLEDGE_DELETION_REQUEST}
+                    </Button>
+                  </div>
+                ) : get(user, "id") === get(item, "requester.id") &&
+                  !get(item, "rejectedBy") ? (
+                  <Button
+                    {...{
+                      onClick: () => setDialog("RevertDeletionRequest", item),
+                    }}
+                  >
+                    {texts.REVERT}
+                  </Button>
+                ) : (
+                  <div />
+                ),
+              className: "text-right",
+            },
+          ]),
+        };
+      }),
     }}
   />
 );

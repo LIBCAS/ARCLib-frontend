@@ -50,7 +50,7 @@ export default compose(
     }) => async () => {
       if (await renewAip(id)) {
         setFail(null);
-        getAip(externalId);
+        await getAip(externalId);
         closeDialog();
 
         setDialog("Info", {

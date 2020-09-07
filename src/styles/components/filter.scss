@@ -25,6 +25,18 @@
 
     &.full {
       width: 100% !important;
+
+      &.width-65 {
+        width: 65px !important;
+      }
+
+      &.min-width-65 {
+        min-width: 65px !important;
+      }
+
+      &.max-width-65 {
+        max-width: 65px !important;
+      }
     }
   }
 
@@ -49,6 +61,10 @@
   .datetimepicker-field {
     width: 50% !important;
     min-width: 150px !important;
+
+    &.full {
+      width: 100% !important;
+    }
   }
 
   @media screen and (max-width: $breakpoint-tablet) {

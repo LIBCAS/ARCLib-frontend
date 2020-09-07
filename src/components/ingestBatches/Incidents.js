@@ -10,7 +10,7 @@ import { TextField, SelectField, Validation } from "../form";
 import Table from "../table/Table";
 import { setDialog } from "../../actions/appActions";
 import { solveIncidents, cancelIncidents } from "../../actions/incidentActions";
-import { formatTime } from "../../utils";
+import { formatDateTime } from "../../utils";
 
 const operations = { SOLVE: "SOLVE", CANCEL: "CANCEL" };
 
@@ -30,9 +30,10 @@ const Incidents = ({
       {...{
         thCells: [
           { label: "" },
-          { label: texts.TIMESTAMP },
+          { label: texts.CREATED },
           { label: texts.INGEST_WORKFLOW_ID },
-          { label: texts.ASSIGNEE }
+          { label: texts.BPM_TASK_ID },
+          { label: texts.RESPONSIBLE_PERSON }
         ],
         items: map(incidents, item => ({
           onClick: () => setDialog("IncidentDetail", { incident: item }),
@@ -47,7 +48,9 @@ const Incidents = ({
                       setSelected(
                         !!find(selected, s => s === item.id)
                           ? filter(selected, s => s !== item.id)
-                          : [...selected, item.id]
+                          : !isEmpty(selected)
+                            ? [...selected, item.id]
+                            : [item.id]
                       );
                     }
                   }}
@@ -55,9 +58,10 @@ const Incidents = ({
               ),
               className: "td-checkbox"
             },
-            { label: formatTime(item.created) },
+            { label: formatDateTime(item.created) },
             { label: get(item, "externalId", "") },
-            { label: get(item, "assignee", "") }
+            { label: get(item, "activityId", "") },
+            { label: get(item, "responsiblePerson.username", "") }
           ]
         }))
       }}
@@ -96,7 +100,7 @@ const Incidents = ({
             <Field {...{ key, id: `incidents-table-${key}`, ...field }} />
           )
         )}
-        <div {...{ className: "flex-row flex-right" }}>
+        <div {...{ className: "flex-row flex-right margin-bottom-small" }}>
           <Button {...{ onClick: () => setSelected([]) }}>
             {texts.STORNO}
           </Button>

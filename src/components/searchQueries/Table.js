@@ -1,13 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
+import { compose, withHandlers } from "recompose";
 import { map, get } from "lodash";
 
 import Button from "../Button";
 import Table from "../table/Table";
-import { setDialog } from "../../actions/appActions";
-import { setQuery } from "../../actions/queryActions";
-import { formatTime, isAdmin } from "../../utils";
+import { setDialog, showLoader } from "../../actions/appActions";
+import { getSavedQuery, setQuery } from "../../actions/queryActions";
+import { formatDateTime, isAdmin } from "../../utils";
 
 const SearchQueriesTable = ({
   history,
@@ -15,12 +15,13 @@ const SearchQueriesTable = ({
   setDialog,
   setQuery,
   texts,
-  user
+  user,
+  loadQuery
 }) => (
   <Table
     {...{
       thCells: [
-        { label: texts.CREATED, style: { minWidth: 150 } },
+        { label: texts.NAME, style: { minWidth: 150 } },
         { label: texts.UPDATED, style: { minWidth: 150 } },
         { label: texts.EXPORT_TIME, style: { minWidth: 150 } },
         { label: texts.EXPORT_LOCATION_PATH, style: { minWidth: 200 } },
@@ -28,10 +29,10 @@ const SearchQueriesTable = ({
       ],
       items: map(queries, item => ({
         items: [
-          { label: formatTime(item.created) },
-          { label: formatTime(item.updated) },
-          { label: formatTime(get(item, "exportRoutine.exportTime")) },
-          { label: get(item, "exportRoutine.exportLocationPath") },
+          { label: get(item, "name") },
+          { label: formatDateTime(item.updated) },
+          { label: formatDateTime(get(item, "exportTime")) },
+          { label: get(item, "exportLocationPath") },
           {
             label: (
               <div
@@ -47,28 +48,29 @@ const SearchQueriesTable = ({
                       onClick: e => {
                         e.stopPropagation();
                         setDialog("SearchQueryExportResults", {
-                          aipQuery: { id: get(item, "id") }
+                          aipQuery: { id: item.id }
                         });
                       },
-                      show: !get(item, "exportRoutine")
+                      show: !item.exportTime
                     },
                     {
                       label: texts.EXPORT_ROUTINE_DELETE,
                       onClick: e => {
                         e.stopPropagation();
                         setDialog("ExportRoutineDelete", {
-                          id: get(item, "exportRoutine.id")
+                          id: item.exportRoutineId
                         });
                       },
                       className: "margin-left-small",
-                      show: get(item, "exportRoutine")
+                      show: item.exportTime
                     },
                     {
                       label: texts.SHOW_SEARCH_RESULTS,
-                      onClick: e => {
+                      onClick: async e => {
                         e.stopPropagation();
+                        const query = await loadQuery(item.id);
                         setDialog("SearchQueryDetail", {
-                          items: get(item, "result.items")
+                          items: get(query, "result.items")
                         });
                       },
                       className: "margin-left-small",
@@ -76,9 +78,10 @@ const SearchQueriesTable = ({
                     },
                     {
                       label: texts.NEW_SEARCH_BASED_ON_QUERY,
-                      onClick: e => {
+                      onClick: async e => {
                         e.stopPropagation();
-                        setQuery(item);
+                        const query = await loadQuery(item.id);
+                        setQuery(query);
                         history.push("/aip-search");
                       },
                       className: "margin-left-small",
@@ -118,6 +121,14 @@ const SearchQueriesTable = ({
   />
 );
 
-export default compose(connect(null, { setDialog, setQuery }))(
-  SearchQueriesTable
-);
+export default compose(
+  connect(null, { setDialog, setQuery, getSavedQuery, showLoader }),
+  withHandlers({
+    loadQuery: ({ getSavedQuery, showLoader }) => async id => {
+      showLoader();
+      const query = await getSavedQuery(id);
+      showLoader(false);
+      return query;
+    }
+  })
+)(SearchQueriesTable);

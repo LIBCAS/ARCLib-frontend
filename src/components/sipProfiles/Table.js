@@ -5,7 +5,7 @@ import { map, get, compact } from "lodash";
 import Button from "../Button";
 import Table from "../table/Table";
 import { setDialog } from "../../actions/appActions";
-import { isAdmin, formatTime } from "../../utils";
+import { isAdmin, formatDateTime } from "../../utils";
 
 const SipProfileTable = ({ history, sipProfiles, setDialog, texts, user }) => (
   <Table
@@ -20,11 +20,11 @@ const SipProfileTable = ({ history, sipProfiles, setDialog, texts, user }) => (
         onClick: () => history.push(`/sip-profiles/${item.id}`),
         items: compact([
           { label: get(item, "name", "") },
-          { label: formatTime(get(item, "created")) },
-          { label: formatTime(get(item, "updated")) },
+          { label: formatDateTime(get(item, "created")) },
+          { label: formatDateTime(get(item, "updated")) },
           isAdmin(user)
             ? {
-                label: (
+                label: get(item, "editable") ? (
                   <Button
                     {...{
                       onClick: e => {
@@ -38,6 +38,8 @@ const SipProfileTable = ({ history, sipProfiles, setDialog, texts, user }) => (
                   >
                     {texts.DELETE}
                   </Button>
+                ) : (
+                  <div />
                 ),
                 className: "text-right"
               }

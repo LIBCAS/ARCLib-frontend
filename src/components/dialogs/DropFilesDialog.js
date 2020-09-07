@@ -46,7 +46,7 @@ export default compose(
       closeDialog();
 
       if (get(data, "afterClose")) {
-        data.afterClose();
+        data.afterClose(data);
       }
     }
   }),

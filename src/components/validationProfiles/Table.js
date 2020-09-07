@@ -5,7 +5,7 @@ import { map, get, compact } from "lodash";
 import Button from "../Button";
 import Table from "../table/Table";
 import { setDialog } from "../../actions/appActions";
-import { isAdmin, formatTime } from "../../utils";
+import { isAdmin, formatDateTime } from "../../utils";
 
 const ValidationProfileTable = ({
   history,
@@ -26,8 +26,8 @@ const ValidationProfileTable = ({
         onClick: () => history.push(`/validation-profiles/${item.id}`),
         items: compact([
           { label: get(item, "name", "") },
-          { label: formatTime(get(item, "created")) },
-          { label: formatTime(get(item, "updated")) },
+          { label: formatDateTime(get(item, "created")) },
+          { label: formatDateTime(get(item, "updated")) },
           isAdmin(user)
             ? {
                 label: (

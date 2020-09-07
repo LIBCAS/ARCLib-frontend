@@ -53,9 +53,9 @@ const ProducerProfiles = ({
       {...{
         className: "margin-bottom",
         sortOptions: [
-          { label: texts.NAME, value: "name" },
-          { label: texts.CREATED, value: "created" },
           { label: texts.UPDATED, value: "updated" },
+          { label: texts.CREATED, value: "created" },
+          { label: texts.NAME, value: "name" },
           { label: texts.PRODUCER, value: "producerName" },
           { label: texts.SIP_PROFILE, value: "sipProfileName" },
           { label: texts.VALIDATION_PROFILE, value: "validationProfileName" },

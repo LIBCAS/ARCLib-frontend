@@ -2,13 +2,23 @@
 
 .layout {
   min-height: 100vh;
+
+  &.test {
+    min-height: calc(100vh - #{$height-test-stripe});
+  }
 }
 
 /* CONTAINER */
 
 .container {
   width: 100%;
-  padding: 1em;
+  padding: 0.5em;
+  max-height: calc(100vh - 64px);
+  overflow: auto;
+
+  &.test {
+    max-height: calc(100vh - 64px - #{$height-test-stripe});
+  }
 
   &.form {
     max-width: 500px;
@@ -17,4 +27,25 @@
     flex-direction: column;
     justify-content: center;
   }
+}
+
+@media (max-width: $breakpoint-desktop) {
+  .container {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* TEST ENVIRONMENT */
+
+.test-stripe {
+  height: $height-test-stripe;
+  min-height: $height-test-stripe;
+  max-height: $height-test-stripe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  background-color: $c-green-dark;
+  color: $c-white;
 }

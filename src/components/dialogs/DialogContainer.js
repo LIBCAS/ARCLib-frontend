@@ -29,6 +29,8 @@ const DialogContainer = ({
         }
       },
       bsSize: large && "large",
+      backdrop: "static",
+      animation: false,
       ...rest
     }}
   >

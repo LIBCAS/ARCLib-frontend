@@ -1,7 +1,15 @@
 import * as c from "./constants";
 import fetch from "../utils/fetch";
+import { openErrorDialogIfRequestFailed } from "../actions/appActions";
 
 export const getJobs = () => async dispatch => {
+  dispatch({
+    type: c.JOB,
+    payload: {
+      jobs: null
+    }
+  });
+
   try {
     const response = await fetch("/api/jobs");
 
@@ -18,26 +26,11 @@ export const getJobs = () => async dispatch => {
       return jobs;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
-    return false;
-  }
-};
-
-export const saveJob = body => async () => {
-  try {
-    const response = await fetch(`/api/jobs/${body.id}`, {
-      method: "PUT",
-      headers: new Headers({
-        "Content-Type": "application/json"
-      }),
-      body: JSON.stringify(body)
-    });
-
-    return response.status === 200;
-  } catch (error) {
-    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

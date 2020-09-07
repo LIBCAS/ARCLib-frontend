@@ -6,7 +6,7 @@ import Button from "../Button";
 import Table from "../table/TableWithFilter";
 import { setDialog } from "../../actions/appActions";
 import { filterTypes } from "../../enums";
-import { formatTime, isSuperAdmin } from "../../utils";
+import { formatDateTime, isSuperAdmin } from "../../utils";
 
 const ProducerProfilesTable = ({
   history,
@@ -34,12 +34,12 @@ const ProducerProfilesTable = ({
         items: [
           { label: get(item, "externalId", "") },
           { label: get(item, "name", "") },
-          { label: formatTime(item.created) },
-          { label: formatTime(item.updated) },
+          { label: formatDateTime(item.created) },
+          { label: formatDateTime(item.updated) },
           { label: get(item, "producer.name", "") },
-          { label: get(item, "sipProfile.name", "") },
-          { label: get(item, "validationProfile.name", "") },
-          { label: get(item, "workflowDefinition.name", "") },
+          { label: get(item, "sipProfileName", "") },
+          { label: get(item, "validationProfileName", "") },
+          { label: get(item, "workflowDefinitionName", "") },
           {
             label: isSuperAdmin(user) ? (
               <Button

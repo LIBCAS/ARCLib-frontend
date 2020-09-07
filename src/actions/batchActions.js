@@ -1,14 +1,31 @@
 import { get } from "lodash";
+
 import * as c from "./constants";
 import fetch from "../utils/fetch";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 import { createFilterPagerParams } from "../utils";
 
-export const getBatches = () => async (dispatch, getState) => {
+export const getBatches = (clearBeforeGet = true, enableUrl) => async (
+  dispatch,
+  getState
+) => {
+  if (clearBeforeGet) {
+    dispatch({
+      type: c.BATCH,
+      payload: {
+        batches: null
+      }
+    });
+  }
+
   try {
-    const response = await fetch("/api/batch/list", {
+    const response = await fetch("/api/batch/list_dtos", {
       params: createFilterPagerParams(getState)
     });
+
+    if (enableUrl && enableUrl !== window.location.pathname) {
+      return false;
+    }
 
     if (response.status === 200) {
       const batches = await response.json();
@@ -23,16 +40,40 @@ export const getBatches = () => async (dispatch, getState) => {
       return batches;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const getBatch = id => async dispatch => {
+export const getBatch = (
+  id,
+  clearBeforeGet = true,
+  withLoader = true,
+  enableUrl
+) => async dispatch => {
+  if (clearBeforeGet) {
+    dispatch({
+      type: c.BATCH,
+      payload: {
+        batch: null
+      }
+    });
+  }
+
+  if (withLoader) {
+    dispatch(showLoader());
+  }
+
   try {
     const response = await fetch(`/api/batch/${id}`);
+
+    if (enableUrl && enableUrl !== window.location.pathname) {
+      return false;
+    }
 
     if (response.status === 200) {
       const batch = await response.json();
@@ -44,18 +85,34 @@ export const getBatch = id => async dispatch => {
         }
       });
 
+      if (withLoader) {
+        dispatch(showLoader(false));
+      }
       return batch;
     }
 
+    if (withLoader) {
+      dispatch(showLoader(false));
+    }
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    if (withLoader) {
+      dispatch(showLoader(false));
+    }
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const processOne = ({ sipContent, ...params }) => async dispatch => {
-  dispatch(showLoader());
+export const processOne = ({ sipContent, ...params }) => async (
+  dispatch,
+  getState
+) => {
+  dispatch(
+    showLoader(true, get(getState(), "app.texts.BATCH_PROCESS_ONE_LOADER_TEXT"))
+  );
   try {
     const formData = new FormData();
 
@@ -67,25 +124,14 @@ export const processOne = ({ sipContent, ...params }) => async dispatch => {
       body: formData
     });
 
-    const contentType = response.headers.get("content-type");
-
     dispatch(showLoader(false));
-    return {
-      ok: response.status === 200,
-      message:
-        response.status !== 200 &&
-        contentType &&
-        contentType.indexOf("application/json") !== -1
-          ? get(await response.json(), "message", "")
-          : ""
-    };
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
-    return {
-      ok: false,
-      message: ""
-    };
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
   }
 };
 
@@ -97,10 +143,12 @@ export const cancelBatch = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -113,7 +161,7 @@ export const resumeBatch = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
-    return response.status === 200 && (await response.text());
+    return (await response.text()) === "true";
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
@@ -129,10 +177,12 @@ export const suspendBatch = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

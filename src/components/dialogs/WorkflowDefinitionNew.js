@@ -15,7 +15,7 @@ import DialogContainer from "./DialogContainer";
 import { TextField as FormTextField, Validation } from "../form";
 import {
   saveWorkflowDefinition,
-  getWorkflowDefinitions
+  getWorkflowDefinitions,
 } from "../../actions/workflowDefinitionActions";
 import { setDialog } from "../../actions/appActions";
 import { hasValue } from "../../utils";
@@ -32,7 +32,7 @@ const WorkflowDefinitionNew = ({
   setXmlContentFail,
   fileName,
   setFileName,
-  setDialog
+  setDialog,
 }) => (
   <DialogContainer
     {...{
@@ -40,7 +40,7 @@ const WorkflowDefinitionNew = ({
       name: "WorkflowDefinitionNew",
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      large: true
+      large: true,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -50,18 +50,18 @@ const WorkflowDefinitionNew = ({
             component: FormTextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             label: texts.BPMN_DEFINITION,
             value: xmlContent,
             fileName,
-            onChange: xml => {
+            onChange: (xml) => {
               setXmlContent(xml);
               setXmlContentFail(!hasValue(xml) ? texts.REQUIRED : null);
             },
-            syntaxHighlighter: true
-          }
+            syntaxHighlighter: true,
+          },
         ],
         ({ syntaxHighlighter, value, onChange, fileName, ...field }, key) =>
           syntaxHighlighter ? (
@@ -69,20 +69,21 @@ const WorkflowDefinitionNew = ({
               <div
                 {...{
                   className:
-                    "flex-row-nowrap responsive-mobile flex-right flex-bottom"
+                    "flex-row-nowrap responsive-mobile flex-right flex-bottom",
                 }}
               >
                 <FormGroup
                   {...{
                     controlId: "workflow-definition-new-bpmn-name",
-                    className: "margin-none width-full"
+                    className: "margin-none width-full",
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextField
                     {...{
+                      id: "workflow-definition-new-bpmn-name-textfield",
                       disabled: true,
-                      value: fileName
+                      value: fileName,
                     }}
                   />
                 </FormGroup>
@@ -93,7 +94,7 @@ const WorkflowDefinitionNew = ({
                         title: texts.UPLOAD_XML,
                         label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                         multiple: false,
-                        onDrop: files => {
+                        onDrop: (files) => {
                           const file = files[0];
 
                           if (file) {
@@ -119,9 +120,10 @@ const WorkflowDefinitionNew = ({
                             };
                           }
                         },
-                        afterClose: () => setDialog("WorkflowDefinitionNew")
+                        afterClose: () => setDialog("WorkflowDefinitionNew"),
                       }),
-                    className: "margin-top-small margin-left-small"
+                    className: "margin-top-small margin-left-small",
+                    style: { minWidth: 110 },
                   }}
                 >
                   {texts.UPLOAD_XML}
@@ -130,7 +132,9 @@ const WorkflowDefinitionNew = ({
               <ErrorBlock {...{ label: xmlContentFail }} />
             </div>
           ) : (
-            <Field {...{ key, id: `validation-profile-${key}`, ...field }} />
+            <Field
+              {...{ key, id: `validation-profile-${field.name}`, ...field }}
+            />
           )
       )}
     </form>
@@ -141,7 +145,7 @@ export default compose(
   connect(null, {
     saveWorkflowDefinition,
     getWorkflowDefinitions,
-    setDialog
+    setDialog,
   }),
   withRouter,
   withState("xmlContent", "setXmlContent", ""),
@@ -155,31 +159,31 @@ export default compose(
       getWorkflowDefinitions,
       texts,
       xmlContent,
-      setXmlContentFail
-    }) => async formData => {
+      setXmlContentFail,
+    }) => async (formData) => {
       if (hasValue(xmlContent)) {
         setXmlContentFail(null);
         if (
           await saveWorkflowDefinition({
             id: uuidv1(),
             ...formData,
-            bpmnDefinition: xmlContent
+            bpmnDefinition: xmlContent,
           })
         ) {
           getWorkflowDefinitions();
           closeDialog();
         } else {
           throw new SubmissionError({
-            bpmnDefinition: texts.WORKFLOW_DEFINITION_NEW_FAILED
+            bpmnDefinition: texts.WORKFLOW_DEFINITION_NEW_FAILED,
           });
         }
       } else {
         setXmlContentFail(texts.REQUIRED);
       }
-    }
+    },
   }),
   reduxForm({
     form: "WorkflowDefinitionNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(WorkflowDefinitionNew);

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
+import { compose, lifecycle, withProps } from "recompose";
 import { withRouter } from "react-router-dom";
 import { get } from "lodash";
 
@@ -8,6 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/producerProfiles/Detail";
 import { getProducerProfile } from "../../actions/producerProfileActions";
 import { prettyJSON } from "../../utils";
+import { isSuperAdmin, isAdmin } from "../../utils";
 
 const ProducerProfile = ({
   history,
@@ -24,7 +25,7 @@ const ProducerProfile = ({
       ]
     }}
   >
-    {producerProfile && (
+    {get(props.user, "producer") && producerProfile && (
       <Detail
         {...{
           history,
@@ -33,7 +34,9 @@ const ProducerProfile = ({
           getProducerProfile,
           initialValues: {
             name: get(producerProfile, "name", ""),
-            producer: get(producerProfile, "producer.id"),
+            producer: props.canEditAll
+              ? get(producerProfile, "producer.id")
+              : get(producerProfile, "producer"),
             externalId: get(producerProfile, "externalId", ""),
             sipProfile: get(producerProfile, "sipProfile.id", ""),
             validationProfile: get(producerProfile, "validationProfile.id", ""),
@@ -62,6 +65,12 @@ export default compose(
     }),
     { getProducerProfile }
   ),
+  withProps(({ user, producerProfile }) => ({
+    canEditAll: isSuperAdmin(user),
+    canEdit:
+      isAdmin(user) &&
+      get(producerProfile, "producer.id") === get(user, "producer.id")
+  })),
   lifecycle({
     componentWillMount() {
       const { match, getProducerProfile } = this.props;

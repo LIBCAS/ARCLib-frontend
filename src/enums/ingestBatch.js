@@ -4,21 +4,24 @@ export const ingestBatchState = {
   PROCESSING: "PROCESSING",
   SUSPENDED: "SUSPENDED",
   CANCELED: "CANCELED",
-  PROCESSED: "PROCESSED"
+  PROCESSED: "PROCESSED",
+  PROCESSED_WITH_FAILURES: "PROCESSED_WITH_FAILURES"
 };
 
 export const ingestBatchStateTextsCZ = {
   [ingestBatchState.PROCESSING]: CZ.PROCESSING,
   [ingestBatchState.SUSPENDED]: CZ.SUSPENDED,
   [ingestBatchState.CANCELED]: CZ.CANCELED,
-  [ingestBatchState.PROCESSED]: CZ.PROCESSED
+  [ingestBatchState.PROCESSED]: CZ.PROCESSED,
+  [ingestBatchState.PROCESSED_WITH_FAILURES]: CZ.PROCESSED_WITH_FAILURES
 };
 
 export const ingestBatchStateTextsEN = {
   [ingestBatchState.PROCESSING]: EN.PROCESSING,
   [ingestBatchState.SUSPENDED]: EN.SUSPENDED,
   [ingestBatchState.CANCELED]: EN.CANCELED,
-  [ingestBatchState.PROCESSED]: EN.PROCESSED
+  [ingestBatchState.PROCESSED]: EN.PROCESSED,
+  [ingestBatchState.PROCESSED_WITH_FAILURES]: EN.PROCESSED_WITH_FAILURES
 };
 
 export const ingestBatchStateTexts = {
@@ -42,6 +45,10 @@ export const ingestBatchStateOptionsCZ = [
   {
     label: ingestBatchStateTextsCZ[ingestBatchState.PROCESSED],
     value: ingestBatchState.PROCESSED
+  },
+  {
+    label: ingestBatchStateTextsCZ[ingestBatchState.PROCESSED_WITH_FAILURES],
+    value: ingestBatchState.PROCESSED_WITH_FAILURES
   }
 ];
 
@@ -61,6 +68,10 @@ export const ingestBatchStateOptionsEN = [
   {
     label: ingestBatchStateTextsEN[ingestBatchState.PROCESSED],
     value: ingestBatchState.PROCESSED
+  },
+  {
+    label: ingestBatchStateTextsEN[ingestBatchState.PROCESSED_WITH_FAILURES],
+    value: ingestBatchState.PROCESSED_WITH_FAILURES
   }
 ];
 

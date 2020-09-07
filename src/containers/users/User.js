@@ -7,7 +7,7 @@ import { get } from "lodash";
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/users/Detail";
 import { getUser } from "../../actions/usersActions";
-import { formatTime } from "../../utils";
+import { formatDateTime } from "../../utils";
 
 const User = ({ history, user, texts, ...props }) => (
   <PageWrapper
@@ -27,8 +27,8 @@ const User = ({ history, user, texts, ...props }) => (
           initialValues: {
             username: get(user, "username", ""),
             fullName: get(user, "fullName", ""),
-            created: formatTime(get(user, "created")),
-            updated: formatTime(get(user, "updated")),
+            created: formatDateTime(get(user, "created")),
+            updated: formatDateTime(get(user, "updated")),
             producer: get(user, "producer.id", "")
           },
           ...props

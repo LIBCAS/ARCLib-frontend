@@ -1,25 +1,14 @@
 import React from "react";
 
 import PrettyJSON from "../PrettyJSON";
-import Tooltip from "../Tooltip";
 
 const PrettyJSONTableCell = ({ json, id }) => (
-  <div
+  <PrettyJSON
     {...{
-      "data-tip": "",
-      "data-for": id
+      json,
+      maxLines: 5
     }}
-  >
-    <PrettyJSON
-      {...{
-        json,
-        maxLines: 5
-      }}
-    />
-    <Tooltip {...{ id, withoutBeak: true }}>
-      <PrettyJSON {...{ json }} />
-    </Tooltip>
-  </div>
+  />
 );
 
 export default PrettyJSONTableCell;

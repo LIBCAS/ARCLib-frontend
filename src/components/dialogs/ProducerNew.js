@@ -9,6 +9,7 @@ import uuidv1 from "uuid/v1";
 import DialogContainer from "./DialogContainer";
 import { TextField, Validation } from "../form";
 import { saveProducer, getProducers } from "../../actions/producerActions";
+import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
 
 const ProducerNew = ({ handleSubmit, texts, language }) => (
   <DialogContainer
@@ -36,7 +37,7 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
           }
         ],
         (field, key) => (
-          <Field {...{ key, id: `producer-new-${key}`, ...field }} />
+          <Field {...{ key, id: `producer-new-${field.name}`, ...field }} />
         )
       )}
     </form>
@@ -58,7 +59,10 @@ export default compose(
     }) => async formData => {
       const response = await saveProducer({
         id: uuidv1(),
-        ...formData
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+          "name",
+          "transferAreaPath"
+        ])
       });
 
       if (response === 200) {

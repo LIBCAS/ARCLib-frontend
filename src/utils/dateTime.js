@@ -1,25 +1,37 @@
+import { format } from "date-fns";
+
 import { hasValue } from "./";
 
-export const formatTime = dateTime => {
-  if (
-    !hasValue(dateTime) ||
-    typeof dateTime !== "string" ||
-    !dateTime.match(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d.*Z$/)
-  ) {
+export const isValidDateTimeString = dateTime =>
+  hasValue(dateTime) &&
+  typeof dateTime === "string" &&
+  dateTime.match(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d.*Z$/);
+
+export const isValidDateString = date =>
+  hasValue(date) && typeof date === "string";
+
+export const formatDateTime = dateTime => {
+  if (!isValidDateTimeString(dateTime)) {
     return "";
   }
 
-  return (
-    dateTime.substring(8, 10) +
-    "." +
-    dateTime.substring(5, 7) +
-    "." +
-    dateTime.substring(0, 4) +
-    " " +
-    String(Number(dateTime.substring(11, 13)) + 2) +
-    ":" +
-    dateTime.substring(14, 16)
-  );
+  return format(dateTime, "DD.MM.YYYY HH:mm");
+};
+
+export const formatDateTimeWithSeconds = dateTime => {
+  if (!isValidDateTimeString(dateTime)) {
+    return "";
+  }
+
+  return format(dateTime, "DD.MM.YYYY HH:mm:ss");
+};
+
+export const formatDate = date => {
+  if (!isValidDateString(date)) {
+    return "";
+  }
+
+  return format(date, "DD.MM.YYYY");
 };
 
 export const timeStampToDateTime = timestamp => {

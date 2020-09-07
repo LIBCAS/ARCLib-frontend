@@ -9,7 +9,7 @@ import DialogContainer from "./DialogContainer";
 import ErrorBlock from "../ErrorBlock";
 import {
   acknowledgeDeletionRequest,
-  getDeletionRequests
+  getDeletionRequests,
 } from "../../actions/deletionRequestActions";
 
 const AcknowledgeDeletionRequest = ({
@@ -17,7 +17,7 @@ const AcknowledgeDeletionRequest = ({
   data,
   fail,
   setFail,
-  texts
+  texts,
 }) => (
   <DialogContainer
     {...{
@@ -25,12 +25,12 @@ const AcknowledgeDeletionRequest = ({
       name: "AcknowledgeDeletionRequest",
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setFail(null)
+      onClose: () => setFail(null),
     }}
   >
     <p>
       {texts.ACKNOWLEDGE_DELETION_REQUEST_TEXT}
-      {get(data, "id") ? <strong> {get(data, "id")}</strong> : ""}?
+      {get(data, "aipId") ? <strong> {get(data, "aipId")}</strong> : ""}?
     </p>
     <ErrorBlock {...{ label: fail }} />
   </DialogContainer>
@@ -40,7 +40,7 @@ export default compose(
   withState("fail", "setFail", null),
   connect(null, {
     acknowledgeDeletionRequest,
-    getDeletionRequests
+    getDeletionRequests,
   }),
   withRouter,
   withHandlers({
@@ -50,7 +50,7 @@ export default compose(
       getDeletionRequests,
       data: { id },
       setFail,
-      texts
+      texts,
     }) => async () => {
       if (await acknowledgeDeletionRequest(id)) {
         getDeletionRequests();
@@ -59,9 +59,9 @@ export default compose(
       } else {
         setFail(texts.ACKNOWLEDGE_DELETION_REQUEST_FAILED);
       }
-    }
+    },
   }),
   reduxForm({
-    form: "AcknowledgeDeletionRequestDialogForm"
+    form: "AcknowledgeDeletionRequestDialogForm",
   })
 )(AcknowledgeDeletionRequest);

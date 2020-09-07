@@ -1,28 +1,18 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withHandlers, withProps, withState } from "recompose";
+import { compose, withHandlers, withProps } from "recompose";
 import { reduxForm, Field, SubmissionError } from "redux-form";
 import { withRouter } from "react-router-dom";
-import { map, get, forEach } from "lodash";
+import { map, get } from "lodash";
 import uuidv1 from "uuid/v1";
-import { FormGroup, ControlLabel } from "react-bootstrap";
 
 import DialogContainer from "./DialogContainer";
-import DateTimePicker from "../DateTimePicker";
-import { SelectField, Validation } from "../form";
+import { SelectField, Validation, DateTimeField } from "../form";
 import { getSavedQueries } from "../../actions/queryActions";
-import { getExportRoutineByAipQueryId } from "../../actions/exportRoutineActions";
 import { saveExportRoutine } from "../../actions/exportRoutineActions";
-import { exportTypeOptions, languages } from "../../enums";
-import { hasValue } from "../../utils";
+import { exportTypeOptions } from "../../enums";
 
-const SearchQueryExportResults = ({
-  handleSubmit,
-  texts,
-  language,
-  change,
-  exportTimeError
-}) => (
+const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.EXPORT_SEARCH_RESULTS,
@@ -32,22 +22,19 @@ const SearchQueryExportResults = ({
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
-      <FormGroup {...{ controlId: "search-query-export-results-exportTime" }}>
-        <ControlLabel>{texts.EXPORT_TIME}</ControlLabel>
-        <DateTimePicker
-          {...{
-            placeholder:
-              language === languages.CZ
-                ? "DD.MM.RRRR HH:mm"
-                : "DD.MM.YYYY HH:mm",
-            className: "width-full",
-            onChange: value => {
-              change("exportTime", value);
-            },
-            exportTimeError
-          }}
-        />
-      </FormGroup>
+      <Field
+        {...{
+          component: DateTimeField,
+          id: "search-query-export-results-exportTime",
+          name: "exportTime",
+          label: texts.EXPORT_TIME,
+          validate: [
+            Validation.required[language],
+            Validation.enterValidDate[language],
+            Validation.enterCurrentOrFutureDate[language]
+          ]
+        }}
+      />
       {map(
         [
           {
@@ -72,10 +59,8 @@ export default compose(
   withRouter,
   connect(null, {
     saveExportRoutine,
-    getSavedQueries,
-    getExportRoutineByAipQueryId
+    getSavedQueries
   }),
-  withState("exportTimeError", "setExportTimeError", null),
   withProps(({ language }) => ({
     initialValues: {
       type: get(exportTypeOptions, `[${language}][0].value`)
@@ -87,33 +72,22 @@ export default compose(
       saveExportRoutine,
       texts,
       data,
-      setExportTimeError,
-      getSavedQueries,
-      getExportRoutineByAipQueryId
-    }) => async ({ exportTime, ...formData }) => {
-      if (!hasValue(exportTime)) {
-        setExportTimeError(texts.REQUIRED);
+      getSavedQueries
+    }) => async formData => {
+      if (
+        await saveExportRoutine({
+          id: uuidv1(),
+          ...data,
+          ...formData
+        })
+      ) {
+        closeDialog();
+
+        await getSavedQueries();
       } else {
-        setExportTimeError(null);
-
-        if (
-          await saveExportRoutine({
-            id: uuidv1(),
-            ...data,
-            exportTime,
-            ...formData
-          })
-        ) {
-          closeDialog();
-
-          const queries = await getSavedQueries();
-
-          forEach(queries, ({ id }) => getExportRoutineByAipQueryId(id));
-        } else {
-          throw new SubmissionError({
-            exportType: texts.EXPORT_FAILED
-          });
-        }
+        throw new SubmissionError({
+          exportType: texts.EXPORT_FAILED
+        });
       }
     }
   }),

@@ -26,8 +26,20 @@
     }
   }
 
+  &.test {
+    .menu {
+      max-height: calc(100vh - 64px - #{$height-test-stripe});
+    }
+  }
+
   .menu {
-    padding: 1em 0;
+    padding: 0.5em 0;
+    max-height: calc(100vh - 64px);
+    overflow: hidden;
+
+    &:hover {
+      overflow-y: auto;
+    }
 
     .menu-item,
     .ant-menu-inline {
@@ -40,6 +52,22 @@
     .menu-item:hover,
     .ant-menu-inline:hover {
       color: $c-secondary;
+    }
+
+    .ant-menu-item-group {
+      .ant-menu-item-group-title {
+        margin: 0;
+        height: 50px;
+        line-height: 50px;
+        padding: 0 16px 0 24px;
+        vertical-align: middle;
+      }
+
+      .ant-menu-item-group-list {
+        .menu-item.ant-menu-item {
+          padding: 0 16px 0 48px !important;
+        }
+      }
     }
   }
 }

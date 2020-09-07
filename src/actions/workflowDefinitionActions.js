@@ -1,10 +1,17 @@
 import * as c from "./constants";
 import fetch from "../utils/fetch";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 
 export const getWorkflowDefinitions = () => async dispatch => {
+  dispatch({
+    type: c.WORKFLOW_DEFINITION,
+    payload: {
+      workflowDefinitions: null
+    }
+  });
+
   try {
-    const response = await fetch("/api/workflow_definition");
+    const response = await fetch("/api/workflow_definition/list_dtos");
 
     if (response.status === 200) {
       const workflowDefinitions = await response.json();
@@ -19,14 +26,25 @@ export const getWorkflowDefinitions = () => async dispatch => {
       return workflowDefinitions;
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
 export const getWorkflowDefinition = id => async dispatch => {
+  dispatch(showLoader());
+
+  dispatch({
+    type: c.WORKFLOW_DEFINITION,
+    payload: {
+      workflowDefinition: null
+    }
+  });
+
   try {
     const response = await fetch(`/api/workflow_definition/${id}`);
 
@@ -40,15 +58,27 @@ export const getWorkflowDefinition = id => async dispatch => {
         }
       });
 
+      dispatch(showLoader(false));
       return workflowDefinition;
     }
 
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
+
+export const clearWorkflowDefinition = () => ({
+  type: c.WORKFLOW_DEFINITION,
+  payload: {
+    workflowDefinition: null
+  }
+});
 
 export const deleteWorkflowDefinition = id => async dispatch => {
   dispatch(showLoader());
@@ -58,10 +88,12 @@ export const deleteWorkflowDefinition = id => async dispatch => {
     });
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -92,10 +124,12 @@ export const saveWorkflowDefinition = body => async dispatch => {
     }
 
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

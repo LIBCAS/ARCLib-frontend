@@ -13,6 +13,8 @@ $c-blue-primary: #337ab7;
 $c-blue-light: #bbddfe;
 $c-blue-sky: #e0efff;
 $c-green: #2ECC40;
+$c-green-dark: #037f51;
+$c-orange: #FF851B;
 $c-red: #FF4136;
 $c-border: #e8e8e8;
 
@@ -26,8 +28,12 @@ $breakpoint-1100: 1100px;
 $breakpoint-1000: 1000px;
 $breakpoint-900: 900px;
 $breakpoint-desktop: 800px;
+$breakpoint-700: 700px;
 $breakpoint-tablet: 600px;
 $breakpoint-500: 500px;
 $breakpoint-mobile: 400px;
 $breakpoint-mini: 300px;
 $breakpoint-200: 200px;
+
+/* SIZES */
+$height-test-stripe: 1.8em;

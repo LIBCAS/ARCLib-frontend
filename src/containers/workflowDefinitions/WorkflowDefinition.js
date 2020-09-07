@@ -6,7 +6,10 @@ import { get } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/workflowDefinitions/Detail";
-import { getWorkflowDefinition } from "../../actions/workflowDefinitionActions";
+import {
+  clearWorkflowDefinition,
+  getWorkflowDefinition
+} from "../../actions/workflowDefinitionActions";
 
 const WorkflowDefinition = ({
   history,
@@ -48,13 +51,19 @@ export default compose(
       workflowDefinition
     }),
     {
+      clearWorkflowDefinition,
       getWorkflowDefinition
     }
   ),
   lifecycle({
     componentWillMount() {
-      const { match, getWorkflowDefinition } = this.props;
+      const {
+        match,
+        clearWorkflowDefinition,
+        getWorkflowDefinition
+      } = this.props;
 
+      clearWorkflowDefinition();
       getWorkflowDefinition(match.params.id);
     }
   })

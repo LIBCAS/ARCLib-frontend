@@ -1,4 +1,5 @@
 import React from "react";
+import { compose, defaultProps } from "recompose";
 import Dropzone from "react-dropzone";
 
 const DropFiles = ({ label, ...props }) => (
@@ -16,4 +17,4 @@ const DropFiles = ({ label, ...props }) => (
   </Dropzone>
 );
 
-export default DropFiles;
+export default compose(defaultProps({ multiple: false }))(DropFiles);

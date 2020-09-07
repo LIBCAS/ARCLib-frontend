@@ -22,10 +22,10 @@ const IngestRoutineTable = ({ history, routines, setDialog, texts, user }) => (
         onClick: () => history.push(`/ingest-routines/${item.id}`),
         items: compact([
           { label: get(item, "name", "") },
-          { label: get(item, "producerProfile.name", "") },
+          { label: get(item, "producerProfileName", "") },
           { label: get(item, "transferAreaPath", "") },
-          { label: get(item, "job.timing", "") },
-          { label: get(item, "job.active") ? texts.YES : texts.NO },
+          { label: get(item, "cronExpression", "") },
+          { label: get(item, "active") ? texts.YES : texts.NO },
           isAdmin(user)
             ? {
                 label: (

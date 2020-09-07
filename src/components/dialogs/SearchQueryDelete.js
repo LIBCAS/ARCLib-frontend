@@ -3,12 +3,10 @@ import { connect } from "react-redux";
 import { compose, withHandlers, withState } from "recompose";
 import { reduxForm } from "redux-form";
 import { withRouter } from "react-router-dom";
-import { forEach } from "lodash";
 
 import DialogContainer from "./DialogContainer";
 import ErrorBlock from "../ErrorBlock";
 import { deleteQuery, getSavedQueries } from "../../actions/queryActions";
-import { getExportRoutineByAipQueryId } from "../../actions/exportRoutineActions";
 
 const SearchQueryDelete = ({ handleSubmit, fail, setFail, texts }) => (
   <DialogContainer
@@ -29,8 +27,7 @@ export default compose(
   withState("fail", "setFail", null),
   connect(null, {
     deleteQuery,
-    getSavedQueries,
-    getExportRoutineByAipQueryId
+    getSavedQueries
   }),
   withRouter,
   withHandlers({
@@ -40,16 +37,13 @@ export default compose(
       getSavedQueries,
       data: { id },
       setFail,
-      texts,
-      getExportRoutineByAipQueryId
+      texts
     }) => async () => {
       if (await deleteQuery(id)) {
         setFail(null);
         closeDialog();
 
-        const queries = await getSavedQueries();
-
-        forEach(queries, ({ id }) => getExportRoutineByAipQueryId(id));
+        await getSavedQueries();
       } else {
         setFail(texts.DELETE_FAILED);
       }

@@ -8,6 +8,7 @@ const ProducersTable = ({ history, producers, setDialog, texts }) => (
   <Table
     {...{
       thCells: [
+        { label: texts.ID },
         { label: texts.NAME },
         { label: texts.TRANSFER_AREA_PATH },
         { label: "" }
@@ -15,6 +16,7 @@ const ProducersTable = ({ history, producers, setDialog, texts }) => (
       items: map(producers, item => ({
         onClick: () => history.push(`/producers/${item.id}`),
         items: [
+          { label: get(item, "id", "") },
           { label: get(item, "name", "") },
           { label: get(item, "transferAreaPath", "") },
           {

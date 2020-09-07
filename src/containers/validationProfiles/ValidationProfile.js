@@ -6,7 +6,10 @@ import { get } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/validationProfiles/Detail";
-import { getValidationProfile } from "../../actions/validationProfileActions";
+import {
+  clearValidationProfile,
+  getValidationProfile
+} from "../../actions/validationProfileActions";
 
 const ValidationProfile = ({ history, validationProfile, texts, ...props }) => (
   <PageWrapper
@@ -39,13 +42,19 @@ export default compose(
   connect(
     ({ validationProfile: { validationProfile } }) => ({ validationProfile }),
     {
+      clearValidationProfile,
       getValidationProfile
     }
   ),
   lifecycle({
     componentWillMount() {
-      const { match, getValidationProfile } = this.props;
+      const {
+        match,
+        clearValidationProfile,
+        getValidationProfile
+      } = this.props;
 
+      clearValidationProfile();
       getValidationProfile(match.params.id);
     }
   })

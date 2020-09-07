@@ -42,3 +42,9 @@
     }
   }
 }
+
+.table-with-no-margin {
+  .table-responsive {
+    margin: 0;
+  }
+}

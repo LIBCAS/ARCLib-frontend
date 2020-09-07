@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
+import { compose, withProps } from "recompose";
 import { map, find, get } from "lodash";
 import { Select } from "antd";
 
@@ -23,7 +23,7 @@ const TextFilter = ({
   className,
   selectClassName,
   textClassName,
-  language
+  options
 }) => (
   <div {...{ className }}>
     <Select
@@ -43,14 +43,13 @@ const TextFilter = ({
           : undefined
       }}
     >
-      {map(filterTypeOperations[filterTypes.TEXT], (o, key) => (
-        <Option {...{ key, value: o }}>
-          {filterOperationsText[language][o]}
-        </Option>
+      {map(options, ({ value, label }, key) => (
+        <Option {...{ key, value }}>{label}</Option>
       ))}
     </Select>
     <TextField
       {...{
+        id: `text-filter-${index}`,
         onChange: ({ target: { value } }) => {
           setFilter({
             filter: map(
@@ -73,5 +72,13 @@ const TextFilter = ({
 export default compose(
   connect(({ app: { filter, language } }) => ({ filter, language }), {
     setFilter
-  })
+  }),
+  withProps(({ options, language }) => ({
+    options:
+      options ||
+      map(filterTypeOperations[filterTypes.TEXT], value => ({
+        value,
+        label: filterOperationsText[language][value]
+      }))
+  }))
 )(TextFilter);

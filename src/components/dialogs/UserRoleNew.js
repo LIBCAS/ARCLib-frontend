@@ -1,47 +1,29 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { compose, withHandlers, withProps } from "recompose";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
-import { find, filter, map, get, isEmpty } from "lodash";
+import { find, map, get, isEmpty, filter } from "lodash";
 
 import DialogContainer from "./DialogContainer";
 import { SelectField, Validation } from "../form";
 import { saveUserRoles, getUser } from "../../actions/usersActions";
 import { getUser as getCurrentUser } from "../../actions/userActions";
-import { roles, rolesOptions, rolesDescriptions } from "../../enums";
+import { rolesDescriptions } from "../../enums";
 import { getRoles } from "../../utils";
 
-let rolesOptionsModified = [];
-
-const UserRoleNew = ({ handleSubmit, user, users, texts, language }) => {
-  rolesOptionsModified =
-    get(users, "user") && user
-      ? map(
-          filter(
-            rolesOptions,
-            role =>
-              !find(getRoles(get(users, "user")), r => r === role.name) &&
-              (role.name !== roles.ROLE_SUPER_ADMIN ||
-                find(getRoles(user), r => r === roles.ROLE_SUPER_ADMIN))
-          ),
-          role => ({
-            label: rolesDescriptions[language][role.name],
-            value: role.id
-          })
-        )
-      : undefined;
-
+const UserRoleNew = ({ handleSubmit, texts, language, rolesOptions }) => {
   return (
     <DialogContainer
       {...{
         title: texts.USER_ROLE_NEW,
         name: "UserRoleNew",
         handleSubmit,
-        submitLabel: !isEmpty(rolesOptionsModified) ? texts.SUBMIT : texts.OK
+        submitLabel: !isEmpty(rolesOptions) ? texts.SUBMIT : texts.CLOSE,
+        noCloseButton: true
       }}
     >
-      {!isEmpty(rolesOptionsModified) ? (
+      {!isEmpty(rolesOptions) ? (
         <form {...{ onSubmit: handleSubmit }}>
           {map(
             [
@@ -50,7 +32,7 @@ const UserRoleNew = ({ handleSubmit, user, users, texts, language }) => {
                 label: texts.ROLE,
                 name: "role",
                 validate: [Validation.required[language]],
-                options: rolesOptionsModified
+                options: rolesOptions
               }
             ],
             (field, key) => (
@@ -70,17 +52,35 @@ export default compose(
   connect(
     ({ app: { user }, users }) => ({
       user,
-      users,
-      initialValues: {
-        role: get(rolesOptionsModified, "[0].value")
-      }
+      users
     }),
     {
       saveUserRoles,
       getUser,
-      getCurrentUser
+      getCurrentUser,
+      reset
     }
   ),
+  withProps(({ data }) => ({
+    roles: get(data, "roles", [])
+  })),
+  withProps(({ roles, users, language }) => ({
+    rolesOptions: map(
+      filter(
+        roles,
+        role => !find(getRoles(get(users, "user")), r => r === role.name)
+      ),
+      ({ id, name }) => ({
+        value: id,
+        label: rolesDescriptions[language][name]
+      })
+    )
+  })),
+  withProps(({ rolesOptions }) => ({
+    initialValues: {
+      role: get(rolesOptions, "[0].value")
+    }
+  })),
   withHandlers({
     onSubmit: ({
       closeDialog,
@@ -89,29 +89,33 @@ export default compose(
       users,
       user,
       texts,
-      getCurrentUser
+      getCurrentUser,
+      reset,
+      roles,
+      rolesOptions
     }) => async ({ role }) => {
-      if (isEmpty(rolesOptionsModified)) {
-        closeDialog();
-      }
+      if (!isEmpty(rolesOptions)) {
+        const response = await saveUserRoles(get(users, "user.id"), [
+          ...get(users, "user.roles"),
+          find(roles, r => r.id === role)
+        ]);
 
-      const response = await saveUserRoles(get(users, "user.id"), [
-        ...get(users, "user.roles"),
-        find(rolesOptions, r => r.id === role)
-      ]);
-
-      if (response === 200) {
-        getUser(get(users, "user.id"));
-        getCurrentUser(user.id);
-        closeDialog();
-      } else if (response === 400) {
-        throw new SubmissionError({
-          role: texts.THE_USER_MUST_HAVE_ASSIGNED_A_PRODUCER
-        });
+        if (response === 200) {
+          getUser(get(users, "user.id"));
+          getCurrentUser(user.id);
+          reset("UserRoleNewDialogForm");
+          closeDialog();
+        } else if (response === 400) {
+          throw new SubmissionError({
+            role: texts.THE_USER_MUST_HAVE_ASSIGNED_A_PRODUCER
+          });
+        } else {
+          throw new SubmissionError({
+            role: texts.USER_ROLE_NEW_FAILED
+          });
+        }
       } else {
-        throw new SubmissionError({
-          role: texts.USER_ROLE_NEW_FAILED
-        });
+        closeDialog();
       }
     }
   }),

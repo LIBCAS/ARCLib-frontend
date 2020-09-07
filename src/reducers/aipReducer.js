@@ -2,7 +2,9 @@ import * as c from "../actions/constants";
 
 const initialState = {
   aip: null,
-  aips: null
+  aips: null,
+  aipInfo: null,
+  filterGroups: null
 };
 
 const reducer = (state = initialState, action) => {

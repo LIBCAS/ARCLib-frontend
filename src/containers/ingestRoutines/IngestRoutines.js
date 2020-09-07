@@ -9,7 +9,6 @@ import Table from "../../components/ingestRoutines/Table";
 import { setDialog } from "../../actions/appActions";
 import { getRoutines } from "../../actions/routineActions";
 import { getProducerProfiles } from "../../actions/producerProfileActions";
-import { getJobs } from "../../actions/jobActions";
 import { isEditor, isSuperAdmin, isArchivist } from "../../utils";
 
 const IngestRoutines = ({
@@ -17,7 +16,6 @@ const IngestRoutines = ({
   routines,
   setDialog,
   getProducerProfiles,
-  getJobs,
   texts,
   user
 }) => (
@@ -29,7 +27,6 @@ const IngestRoutines = ({
           className: "margin-bottom-small",
           onClick: () => {
             getProducerProfiles(false);
-            getJobs();
             setDialog("IngestRoutineNew");
           }
         }}
@@ -46,8 +43,7 @@ export default compose(
   connect(({ routine: { routines } }) => ({ routines }), {
     getRoutines,
     setDialog,
-    getProducerProfiles,
-    getJobs
+    getProducerProfiles
   }),
   lifecycle({
     componentWillMount() {

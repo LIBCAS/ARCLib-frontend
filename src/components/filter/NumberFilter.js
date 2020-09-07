@@ -18,6 +18,7 @@ const NumberFilter = ({
 }) => (
   <TextField
     {...{
+      id: `number-filter-${index}-${number}`,
       className,
       type: "number",
       placeholder,

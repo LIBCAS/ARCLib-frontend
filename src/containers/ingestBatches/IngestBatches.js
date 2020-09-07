@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
+import { compose, lifecycle, withState } from "recompose";
 import { withRouter } from "react-router-dom";
 import { get } from "lodash";
 
@@ -16,12 +16,12 @@ const IngestBatches = ({ history, batches, getBatches, texts, language }) => (
       {...{
         className: "margin-bottom-small",
         sortOptions: [
-          { label: texts.PRODUCER, value: "producerName" },
-          { label: texts.CREATED, value: "created" },
           { label: texts.UPDATED, value: "updated" },
-          { label: texts.STATE, value: "state" }
+          { label: texts.CREATED, value: "created" },
+          { label: texts.PRODUCER, value: "producerName" },
+          { label: texts.STATE, value: "state" },
         ],
-        handleUpdate: () => getBatches()
+        handleUpdate: () => getBatches(),
       }}
     />
     <Table
@@ -30,14 +30,14 @@ const IngestBatches = ({ history, batches, getBatches, texts, language }) => (
         language,
         texts,
         batches: get(batches, "items"),
-        handleUpdate: () => getBatches()
+        handleUpdate: () => getBatches(),
       }}
     />
     <Pagination
       {...{
         handleUpdate: () => getBatches(),
         count: get(batches, "items.length", 0),
-        countAll: get(batches, "count", 0)
+        countAll: get(batches, "count", 0),
       }}
     />
   </PageWrapper>
@@ -45,12 +45,35 @@ const IngestBatches = ({ history, batches, getBatches, texts, language }) => (
 
 export default compose(
   withRouter,
+  withState("timeoutId", "setTimeoutId", null),
   connect(({ batch: { batches } }) => ({ batches }), { getBatches }),
   lifecycle({
-    componentDidMount() {
-      const { getBatches } = this.props;
+    async componentDidMount() {
+      const { getBatches, setTimeoutId } = this.props;
 
-      getBatches();
-    }
+      this.mounted = true;
+
+      const enableUrl = `/ingest-batches`;
+
+      const ok = await getBatches(true, enableUrl);
+
+      const updateItems = async () => {
+        const ok = await getBatches(false, enableUrl);
+        if (ok && this.mounted) {
+          setTimeoutId(setTimeout(updateItems, 10000));
+        }
+      };
+
+      if (ok && this.mounted) {
+        setTimeoutId(setTimeout(updateItems, 10000));
+      }
+    },
+    componentWillUnmount() {
+      const { timeoutId } = this.props;
+
+      this.mounted = false;
+
+      clearTimeout(timeoutId);
+    },
   })
 )(IngestBatches);

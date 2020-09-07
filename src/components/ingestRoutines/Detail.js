@@ -5,23 +5,15 @@ import { compose, withHandlers, lifecycle } from "recompose";
 import { get, map, isEmpty, find } from "lodash";
 
 import Button from "../Button";
+import InfoIcon from "../InfoIcon";
 import { TextField, SelectField, Checkbox, Validation } from "../form";
 import { setDialog } from "../../actions/appActions";
 import { saveRoutine } from "../../actions/routineActions";
-import { saveJob } from "../../actions/jobActions";
 import { getProducerProfiles } from "../../actions/producerProfileActions";
-import { isAdmin } from "../../utils";
+import { isAdmin, openUrlInNewTab, removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import { CRON_URL } from "../../constants";
 
-const Detail = ({
-  handleSubmit,
-  producerProfiles,
-  texts,
-  language,
-  user,
-  change,
-  setDialog,
-  history
-}) => (
+const Detail = ({ handleSubmit, producerProfiles, texts, language, user, change, setDialog, history }) => (
   <form {...{ onSubmit: handleSubmit }}>
     {map(
       [
@@ -49,7 +41,18 @@ const Detail = ({
         },
         {
           component: TextField,
-          label: texts.CRON_EXPRESSION,
+          label: (
+            <span>
+              {texts.CRON_EXPRESSION}
+              <InfoIcon
+                {...{
+                  glyph: "new-window",
+                  tooltip: texts.OPENS_PAGE_WITH_CRON_EXPRESSION_INFORMATION,
+                  onClick: () => openUrlInNewTab(CRON_URL)
+                }}
+              />
+            </span>
+          ),
           name: "job.timing",
           validate: [Validation.required[language], Validation.cron[language]]
         },
@@ -105,9 +108,7 @@ const Detail = ({
           {isAdmin(user) &&
             !isEmpty(buttons) && (
               <div {...{ className: "flex-row flex-right" }}>
-                {map(buttons, ({ label, ...props }, key) => (
-                  <Button {...{ key, ...props }}>{label}</Button>
-                ))}
+                {map(buttons, ({ label, ...props }, key) => <Button {...{ key, ...props }}>{label}</Button>)}
               </div>
             )}
         </div>
@@ -140,7 +141,6 @@ export default compose(
     {
       setDialog,
       saveRoutine,
-      saveJob,
       getProducerProfiles
     }
   ),
@@ -152,47 +152,28 @@ export default compose(
     }
   }),
   withHandlers({
-    onSubmit: ({
-      routine,
-      saveRoutine,
-      saveJob,
-      texts,
-      producerProfiles,
-      history
-    }) => async ({ producerProfile, job, ...formData }) => {
-      if (
-        await saveJob({
-          ...routine.job,
-          ...job
-        })
-      ) {
-        const response = await saveRoutine({
-          ...routine,
-          job,
-          ...formData,
-          producerProfile: find(
-            get(producerProfiles, "items"),
-            item => item.id === producerProfile
-          )
-        });
+    onSubmit: ({ routine, saveRoutine, texts, producerProfiles, history }) => async ({
+      producerProfile,
+      ...formData
+    }) => {
+      const response = await saveRoutine({
+        ...routine,
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name", "transferAreaPath", "job"]),
+        producerProfile: find(get(producerProfiles, "items"), item => item.id === producerProfile)
+      });
 
-        if (response === 200) {
-          history.push("/ingest-routines");
-        } else {
-          throw new SubmissionError(
-            response === 409
-              ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
-              : {
-                  job: {
-                    active: texts.SAVE_UPDATE_FAILED
-                  }
-                }
-          );
-        }
+      if (response === 200) {
+        history.push("/ingest-routines");
       } else {
-        throw new SubmissionError({
-          job: { active: texts.SAVE_UPDATE_FAILED }
-        });
+        throw new SubmissionError(
+          response === 409
+            ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
+            : {
+                job: {
+                  active: texts.SAVE_UPDATE_FAILED
+                }
+              }
+        );
       }
     }
   }),

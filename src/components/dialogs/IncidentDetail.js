@@ -6,7 +6,7 @@ import { get, map } from "lodash";
 
 import DialogContainer from "./DialogContainer";
 import { TextField } from "../form";
-import { formatTime, prettyJSON } from "../../utils";
+import { formatDateTime, prettyJSON } from "../../utils";
 
 const IncidentDetail = ({ handleSubmit, texts }) => (
   <DialogContainer
@@ -22,7 +22,7 @@ const IncidentDetail = ({ handleSubmit, texts }) => (
     {map(
       [
         {
-          label: texts.TIMESTAMP,
+          label: texts.CREATED,
           component: TextField,
           name: "incident.created"
         },
@@ -39,9 +39,9 @@ const IncidentDetail = ({ handleSubmit, texts }) => (
           type: "textarea"
         },
         {
-          label: texts.ASSIGNEE,
+          label: texts.RESPONSIBLE_PERSON,
           component: TextField,
-          name: "incident.assignee"
+          name: "incident.responsiblePerson.username"
         },
         {
           label: texts.WORKFLOW_CONFIGURATION,
@@ -50,7 +50,16 @@ const IncidentDetail = ({ handleSubmit, texts }) => (
           type: "textarea"
         }
       ],
-      (field, key) => <Field {...{ key, ...field, disabled: true }} />
+      (field, key) => (
+        <Field
+          {...{
+            key,
+            id: `incident-detail-${field.name}`,
+            ...field,
+            disabled: true
+          }}
+        />
+      )
     )}
   </DialogContainer>
 );
@@ -61,7 +70,7 @@ export default compose(
     initialValues: {
       incident: {
         ...get(data, "incident"),
-        created: formatTime(get(data, "incident.created")),
+        created: formatDateTime(get(data, "incident.created")),
         config: prettyJSON(get(data, "incident.config"))
       }
     }

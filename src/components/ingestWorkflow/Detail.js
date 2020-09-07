@@ -3,15 +3,43 @@ import { get, map } from "lodash";
 import { compose, withProps } from "recompose";
 import { reduxForm, Field } from "redux-form";
 
-import Incidents from "./Incidents";
+import Events from "./Events";
 import ProcessVariables from "./ProcessVariables";
 import Tabs from "../Tabs";
 import Button from "../Button";
 import { TextField } from "../form";
-import { formatTime } from "../../utils";
+import { formatDateTime } from "../../utils";
 
-const Detail = ({ workflow, texts, history }) => (
+const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
   <div>
+    <div {...{ className: "margin-bottom-small" }}>
+      <div {...{ className: "margin-bottom-very-small" }}>
+        <span
+          {...{
+            className: "link",
+            onClick: () =>
+              history.push(`/ingest-batches/${get(workflow, "batch.id")}`),
+          }}
+        >
+          {texts.SWITCH_TO_BATCH}
+        </span>
+      </div>
+      {showSwitchToAipDetail && (
+        <div>
+          <span
+            {...{
+              className: "link",
+              onClick: () =>
+                history.push(
+                  `/aip/${get(workflow, "ingestWorkflow.externalId")}`
+                ),
+            }}
+          >
+            {texts.SWITCH_TO_AIP_DETAIL}
+          </span>
+        </div>
+      )}
+    </div>
     <Tabs
       {...{
         id: "ingest-workflow-tabs",
@@ -19,7 +47,32 @@ const Detail = ({ workflow, texts, history }) => (
           {
             title: texts.INGEST_WORKFLOW,
             content: (
-              <div {...{ className: "margin-top-small" }}>
+              <div>
+                {get(workflow, "batch.producerProfile") && (
+                  <div {...{ className: "margin-bottom-small" }}>
+                    <span {...{ className: "text-bold" }}>
+                      {texts.PRODUCER_PROFILE}:&nbsp;&nbsp;
+                    </span>
+                    <span
+                      {...{
+                        className: "link",
+                        onClick: () =>
+                          history.push(
+                            `/producer-profiles/${get(
+                              workflow,
+                              "batch.producerProfile.id"
+                            )}`
+                          ),
+                      }}
+                    >
+                      {get(
+                        workflow,
+                        "batch.producerProfile.name",
+                        texts.UNKNOWN
+                      )}
+                    </span>
+                  </div>
+                )}
                 <form>
                   {map(
                     [
@@ -27,49 +80,37 @@ const Detail = ({ workflow, texts, history }) => (
                         label: texts.CREATED,
                         component: TextField,
                         name: "ingestWorkflow.created",
-                        show: true
+                        show: true,
                       },
                       {
                         label: texts.UPDATED,
                         component: TextField,
                         name: "ingestWorkflow.updated",
-                        show: true
+                        show: true,
                       },
                       {
                         label: texts.AUTHORIAL_ID,
                         component: TextField,
                         name: "ingestWorkflow.sip.authorialPackage.authorialId",
-                        show: true
+                        show: true,
                       },
                       {
                         label: texts.EXTERNAL_ID,
                         component: TextField,
                         name: "ingestWorkflow.externalId",
-                        show: true
+                        show: true,
                       },
                       {
                         label: texts.PROCESSING_STATE,
                         component: TextField,
                         name: "ingestWorkflow.processingState",
-                        show: true
-                      },
-                      {
-                        label: texts.HASH_VALUE,
-                        component: TextField,
-                        name: "ingestWorkflow.hash.hashValue",
-                        show: true
-                      },
-                      {
-                        label: texts.HASH_TYPE,
-                        component: TextField,
-                        name: "ingestWorkflow.hash.hashType",
-                        show: true
+                        show: true,
                       },
                       {
                         label: texts.MESSAGE,
                         component: TextField,
                         name: "ingestWorkflow.failureInfo.msg",
-                        show: get(workflow, "ingestWorkflow.failureInfo.msg")
+                        show: get(workflow, "ingestWorkflow.failureInfo.msg"),
                       },
                       {
                         label: texts.STACK_TRACE,
@@ -79,7 +120,7 @@ const Detail = ({ workflow, texts, history }) => (
                           workflow,
                           "ingestWorkflow.failureInfo.stackTrace"
                         ),
-                        type: "textarea"
+                        type: "textarea",
                       },
                       {
                         label: texts.INGEST_WORKFLOW_FAILURE_TYPE,
@@ -89,23 +130,37 @@ const Detail = ({ workflow, texts, history }) => (
                         show: get(
                           workflow,
                           "ingestWorkflow.failureInfo.ingestWorkflowFailureType"
-                        )
-                      }
+                        ),
+                      },
                     ],
                     ({ show, ...field }, key) =>
-                      show && <Field {...{ key, ...field, disabled: true }} />
+                      show && (
+                        <Field
+                          {...{
+                            key,
+                            ...field,
+                            id: `ingest-workflow-detail-${field.name}`,
+                            disabled: true,
+                          }}
+                        />
+                      )
                   )}
                 </form>
               </div>
-            )
+            ),
           },
           {
-            title: texts.INCIDENTS,
+            title: texts.EVENTS,
             content: (
-              <Incidents
-                {...{ incidents: get(workflow, "incidents"), texts }}
+              <Events
+                {...{
+                  events: get(workflow, "events"),
+                  texts,
+                  history,
+                  workflowId: get(workflow, "ingestWorkflow.externalId"),
+                }}
               />
-            )
+            ),
           },
           {
             title: texts.PROCESS_VARIABLES,
@@ -113,12 +168,12 @@ const Detail = ({ workflow, texts, history }) => (
               <ProcessVariables
                 {...{
                   processVariables: get(workflow, "processVariables"),
-                  texts
+                  texts,
                 }}
               />
-            )
-          }
-        ]
+            ),
+          },
+        ],
       }}
     />
     <div {...{ className: "flex-row flex-right" }}>
@@ -131,20 +186,25 @@ const Detail = ({ workflow, texts, history }) => (
 
 export default compose(
   withProps(({ workflow, texts }) => ({
+    showSwitchToAipDetail:
+      get(workflow, "ingestWorkflow.processingState") !== "NEW" &&
+      get(workflow, "ingestWorkflow.processingState") !== "PROCESSING" &&
+      get(workflow, "ingestWorkflow.processingState") !== "FAILED",
     initialValues: {
+      ...workflow,
       ingestWorkflow: {
         ...get(workflow, "ingestWorkflow"),
-        created: formatTime(get(workflow, "ingestWorkflow.created")),
-        updated: formatTime(get(workflow, "ingestWorkflow.updated")),
+        created: formatDateTime(get(workflow, "ingestWorkflow.created")),
+        updated: formatDateTime(get(workflow, "ingestWorkflow.updated")),
         processingState: get(
           texts,
           get(workflow, "ingestWorkflow.processingState"),
           get(workflow, "ingestWorkflow.processingState")
-        )
-      }
-    }
+        ),
+      },
+    },
   })),
   reduxForm({
-    form: "ingest-workflow-detail"
+    form: "ingest-workflow-detail",
   })
 )(Detail);

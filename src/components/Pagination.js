@@ -1,5 +1,5 @@
 import React from "react";
-import { map } from "lodash";
+import { map, get } from "lodash";
 import { connect } from "react-redux";
 import { compose, lifecycle } from "recompose";
 import { Icon, Select } from "antd";
@@ -7,6 +7,7 @@ import { Icon, Select } from "antd";
 import Button from "./Button";
 import { setPager } from "../actions/appActions";
 import { pageSizes } from "../enums";
+import * as storage from "../utils/storage";
 
 const { Option } = Select;
 
@@ -17,7 +18,8 @@ const PaginationContainer = ({
   count,
   countAll,
   className,
-  texts
+  texts,
+  userId
 }) => (
   <div
     {...{
@@ -34,6 +36,7 @@ const PaginationContainer = ({
             page: 0,
             pageSize: value
           });
+          storage.set(`pagination-pagesize-${userId}`, value);
           if (handleUpdate) handleUpdate();
         },
         value: pageSize
@@ -84,11 +87,19 @@ const PaginationContainer = ({
 );
 
 export default compose(
-  connect(({ app: { pager, texts } }) => ({ pager, texts }), { setPager }),
+  connect(
+    ({ app: { pager, texts, user } }) => ({ pager, texts, userId: get(user, 'id') }),
+    { setPager }
+  ),
   lifecycle({
     componentWillMount() {
-      const { setPager } = this.props;
-      setPager({ page: 0, pageSize: 10 });
+      const { setPager, userId } = this.props;
+      const pageSize = storage.get(`pagination-pagesize-${userId}`);
+      setPager({
+        page: 0,
+        pageSize:
+          !isNaN(Number(pageSize)) && Number(pageSize) ? Number(pageSize) : 10
+      });
     },
     componentWillUnmount() {
       const { setPager } = this.props;

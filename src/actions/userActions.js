@@ -5,7 +5,7 @@ import { isEmpty } from "lodash";
 
 import fetch from "../utils/fetch";
 import * as c from "./constants";
-import { showLoader } from "./appActions";
+import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 import { getUserRoles } from "./usersActions";
 import * as storage from "../utils/storage";
 import { tokenNotEmpty } from "../utils";
@@ -62,11 +62,20 @@ export const getUser = id => async dispatch => {
           user: !isEmpty(roles) ? { roles, ...user } : user
         }
       });
+    } else {
+      dispatch({
+        type: c.APP,
+        payload: {
+          user: null
+        }
+      });
     }
 
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

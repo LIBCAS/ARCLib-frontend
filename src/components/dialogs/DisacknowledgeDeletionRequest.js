@@ -30,7 +30,7 @@ const DisacknowledgeDeletionRequest = ({
   >
     <p>
       {texts.DISACKNOWLEDGE_DELETION_REQUEST_TEXT}
-      {get(data, "id") ? <strong> {get(data, "id")}</strong> : ""}?
+      {get(data, "aipId") ? <strong> {get(data, "aipId")}</strong> : ""}?
     </p>
     <ErrorBlock {...{ label: fail }} />
   </DialogContainer>

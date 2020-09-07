@@ -1,20 +1,13 @@
 import React from "react";
-import ReactTooltip from "react-tooltip";
-import classNames from "classnames";
+import { compose, defaultProps, withProps, mapProps } from "recompose";
+import { Tooltip } from "antd";
 
-const Tooltip = ({ className, children, withoutBeak, ...props }) => (
-  <ReactTooltip
-    {...{
-      className: classNames(`tooltip${className ? ` ${className}` : ""}`, {
-        "without-beak": withoutBeak
-      }),
-      type: "dark",
-      effect: "solid",
-      ...props
-    }}
-  >
-    {children}
-  </ReactTooltip>
-);
+const TooltipComponent = ({ ...props }) => <Tooltip {...props} />;
 
-export default Tooltip;
+export default compose(
+  defaultProps({ arrowPointAtCenter: true }),
+  withProps(({ content, containerStyle }) => ({
+    children: <div {...{ style: containerStyle }}>{content}</div>
+  })),
+  mapProps(({ content, containerStyle, ...rest }) => rest)
+)(TooltipComponent);

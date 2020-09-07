@@ -7,9 +7,15 @@ import { find, get, map, isEmpty } from "lodash";
 import uuidv1 from "uuid/v1";
 
 import Button from "../Button";
+import InfoIcon from "../InfoIcon";
 import DialogContainer from "./DialogContainer";
 import { TextField, SelectField, Checkbox, Validation } from "../form";
 import { saveRoutine, getRoutines } from "../../actions/routineActions";
+import {
+  openUrlInNewTab,
+  removeStartEndWhiteSpaceInSelectedFields
+} from "../../utils";
+import { CRON_URL } from "../../constants";
 
 const IngestRoutineNew = ({
   handleSubmit,
@@ -48,7 +54,18 @@ const IngestRoutineNew = ({
           },
           {
             component: TextField,
-            label: texts.CRON_EXPRESSION,
+            label: (
+              <span>
+                {texts.CRON_EXPRESSION}
+                <InfoIcon
+                  {...{
+                    glyph: "new-window",
+                    tooltip: texts.OPENS_PAGE_WITH_CRON_EXPRESSION_INFORMATION,
+                    onClick: () => openUrlInNewTab(CRON_URL)
+                  }}
+                />
+              </span>
+            ),
             name: "job.timing",
             validate: [Validation.required[language], Validation.cron[language]]
           },
@@ -114,6 +131,7 @@ const IngestRoutineNew = ({
           </div>
         )
       )}
+      {/* <p>{texts.INGEST_ROUTINE_NEW_TRANSFER_AREA_PATH_NOTE}</p> */}
     </form>
   </DialogContainer>
 );
@@ -143,7 +161,11 @@ export default compose(
     }) => async ({ producerProfile, ...formData }) => {
       const response = await saveRoutine({
         id: uuidv1(),
-        ...formData,
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+          "name",
+          "job.timing",
+          "transferAreaPath"
+        ]),
         producerProfile: find(
           get(producerProfiles, "items"),
           item => item.id === producerProfile

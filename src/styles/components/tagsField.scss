@@ -1,0 +1,20 @@
+.tags-field {
+  &.card-visible {
+    span.ant-input-wrapper.ant-input-group {
+      input {
+        border-top-left-radius: 0;
+      }
+      span.ant-input-group-addon {
+        border-top-right-radius: 0;
+      }
+    }
+  }
+  span.ant-input-group-addon {
+    padding: 0;
+    cursor: pointer;
+
+    span {
+      padding: 6px 11px;
+    }
+  }
+}

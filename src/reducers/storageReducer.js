@@ -1,9 +1,11 @@
 import * as c from "../actions/constants";
 
 const initialState = {
+  archivalStorage: null,
   storages: null,
   storage: null,
-  storageSyncStatus: null
+  storageSyncStatus: null,
+  storageState: null
 };
 
 const reducer = (state = initialState, action) => {

@@ -43,9 +43,9 @@ const Users = ({
       {...{
         className: "margin-bottom",
         sortOptions: [
-          { label: texts.USERNAME, value: "username" },
-          { label: texts.CREATED, value: "created" },
           { label: texts.UPDATED, value: "updated" },
+          { label: texts.CREATED, value: "created" },
+          { label: texts.USERNAME, value: "username" },
           { label: texts.PRODUCER, value: "producerName" }
         ],
         handleUpdate: () => getUsers()

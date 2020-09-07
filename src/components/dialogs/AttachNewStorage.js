@@ -10,6 +10,7 @@ import DialogContainer from "./DialogContainer";
 import { TextField, SelectField, Validation } from "../form";
 import { attachNewStorage, getStorages } from "../../actions/storageActions";
 import { storageTypes, storageTypesOptions } from "../../enums";
+import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
 
 const AttachNewStorage = ({ handleSubmit, texts, language }) => (
   <DialogContainer
@@ -76,7 +77,9 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
           }
         ],
         (field, key) => (
-          <Field {...{ key, id: `attach-new-storage-${key}`, ...field }} />
+          <Field
+            {...{ key, id: `attach-new-storage-${field.name}`, ...field }}
+          />
         )
       )}
     </form>
@@ -100,7 +103,11 @@ export default compose(
       if (
         await attachNewStorage({
           id: uuidv1(),
-          ...formData
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+            "name",
+            "host",
+            "config"
+          ])
         })
       ) {
         getStorages();

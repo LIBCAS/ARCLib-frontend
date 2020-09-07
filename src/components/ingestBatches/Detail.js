@@ -13,7 +13,7 @@ import { TextField } from "../form";
 import {
   cancelBatch,
   resumeBatch,
-  suspendBatch
+  suspendBatch,
 } from "../../actions/batchActions";
 import { setDialog } from "../../actions/appActions";
 import { ingestBatchState, ingestBatchStateTexts } from "../../enums";
@@ -26,17 +26,18 @@ const Detail = ({
   getIncidents,
   incidents,
   texts,
+  language,
   cancelBatch,
   resumeBatch,
   suspendBatch,
-  setDialog
+  setDialog,
 }) => (
   <div>
     {(get(batch, "state") === ingestBatchState.PROCESSING ||
       get(batch, "state") === ingestBatchState.SUSPENDED) && (
       <div
         {...{
-          className: "flex-row flex-centered margin-bottom-small"
+          className: "flex-row flex-centered margin-bottom-small",
         }}
       >
         {map(
@@ -48,7 +49,7 @@ const Detail = ({
                   getBatch(batch.id);
                 }
               },
-              show: get(batch, "state") === ingestBatchState.PROCESSING
+              show: get(batch, "state") === ingestBatchState.PROCESSING,
             },
             {
               label: texts.RESUME,
@@ -63,7 +64,7 @@ const Detail = ({
                   content: (
                     <h3
                       {...{
-                        className: ok ? "color-green" : "invalid"
+                        className: ok ? "color-green" : "invalid",
                       }}
                     >
                       <strong>
@@ -73,11 +74,11 @@ const Detail = ({
                       </strong>
                     </h3>
                   ),
-                  autoClose: true
+                  autoClose: true,
                 });
               },
               className: "margin-left-small",
-              show: get(batch, "state") === ingestBatchState.SUSPENDED
+              show: get(batch, "state") === ingestBatchState.SUSPENDED,
             },
             {
               label: texts.CANCEL,
@@ -89,15 +90,15 @@ const Detail = ({
               className: "margin-left-small",
               show:
                 get(batch, "state") === ingestBatchState.PROCESSING ||
-                get(batch, "state") === ingestBatchState.SUSPENDED
-            }
+                get(batch, "state") === ingestBatchState.SUSPENDED,
+            },
           ],
           ({ show, label, ...button }, key) =>
             show && (
               <Button
                 {...{
                   key,
-                  ...button
+                  ...button,
                 }}
               >
                 {label}
@@ -108,20 +109,33 @@ const Detail = ({
     )}
     <Tabs
       {...{
-        animation: false,
         id: "ingest-batches-detail-tabs",
-        onSelect: tab => {
-          if (tab === 3) {
-            getIncidents(batch.id);
-          } else {
-            getBatch(batch.id);
-          }
-        },
         items: [
           {
             title: texts.INGEST_BATCH,
             content: (
-              <div {...{ className: "margin-top-small" }}>
+              <div>
+                {get(batch, "producerProfile") && (
+                  <div {...{ className: "margin-bottom-small" }}>
+                    <span {...{ className: "text-bold" }}>
+                      {texts.PRODUCER_PROFILE}:&nbsp;&nbsp;
+                    </span>
+                    <span
+                      {...{
+                        className: "link",
+                        onClick: () =>
+                          history.push(
+                            `/producer-profiles/${get(
+                              batch,
+                              "producerProfile.id"
+                            )}`
+                          ),
+                      }}
+                    >
+                      {get(batch, "producerProfile.name", texts.UNKNOWN)}
+                    </span>
+                  </div>
+                )}
                 <form>
                   {map(
                     [
@@ -129,35 +143,42 @@ const Detail = ({
                         id: "batch-detail-producerProfile",
                         label: texts.PRODUCER,
                         name: "producerProfile",
-                        component: TextField
+                        component: TextField,
                       },
                       {
                         id: "batch-detail-workflowConfig",
                         label: texts.WORKFLOW_CONFIGURATION,
                         name: "workflowConfig",
                         component: TextField,
-                        type: "textarea"
+                        type: "textarea",
                       },
                       {
                         id: "batch-detail-state",
                         label: texts.STATE,
                         name: "state",
-                        component: TextField
+                        component: TextField,
                       },
                       {
                         id: "batch-detail-transferAreaPath",
                         label: texts.TRANSFER_AREA_PATH,
                         name: "transferAreaPath",
-                        component: TextField
-                      }
+                        component: TextField,
+                      },
                     ],
                     (field, key) => (
-                      <Field {...{ key, ...field, disabled: true }} />
+                      <Field
+                        {...{
+                          key,
+                          ...field,
+                          id: `ingest-batches-detail-${field.name}`,
+                          disabled: true,
+                        }}
+                      />
                     )
                   )}
                 </form>
               </div>
-            )
+            ),
           },
           {
             title: texts.INGEST_WORKFLOWS,
@@ -166,10 +187,10 @@ const Detail = ({
                 {...{
                   history,
                   ingestWorkflows: get(batch, "ingestWorkflows"),
-                  texts
+                  texts,
                 }}
               />
-            )
+            ),
           },
           {
             title: texts.INCIDENTS,
@@ -180,22 +201,24 @@ const Detail = ({
                     className: "margin-vertical-small",
                     sortOptions: [
                       {
-                        label: texts.TIMESTAMP,
-                        value: "TIMESTAMP"
+                        label: texts.CREATED,
+                        value: "TIMESTAMP",
                       },
                       {
-                        label: texts.ASSIGNEE,
-                        value: "ASSIGNEE"
-                      }
+                        label: texts.RESPONSIBLE_PERSON,
+                        value: "RESPONSIBLE_PERSON",
+                      },
                     ],
-                    handleUpdate: () => getIncidents(batch.id)
+                    handleUpdate: () => getIncidents(batch.id),
                   }}
                 />
-                <Incidents {...{ batch, getIncidents, incidents, texts }} />
+                <Incidents
+                  {...{ batch, getIncidents, incidents, texts, language }}
+                />
               </div>
-            )
-          }
-        ]
+            ),
+          },
+        ],
       }}
     />
     <div {...{ className: "flex-row flex-right" }}>
@@ -213,10 +236,10 @@ export default compose(
       producerProfile: get(batch, "producerProfile.producer.name", ""),
       workflowConfig: prettyJSON(get(batch, "workflowConfig", "")),
       state: get(ingestBatchStateTexts[language], get(batch, "state")),
-      transferAreaPath: get(batch, "transferAreaPath", "")
-    }
+      transferAreaPath: get(batch, "transferAreaPath", ""),
+    },
   })),
   reduxForm({
-    form: "batch-detail"
+    form: "batch-detail",
   })
 )(Detail);

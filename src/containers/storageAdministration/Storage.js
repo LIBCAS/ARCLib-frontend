@@ -6,14 +6,28 @@ import { get } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/storageAdministration/Detail";
-import { getStorage, getStorageSyncStatus } from "../../actions/storageActions";
-import { formatTime, prettyJSON } from "../../utils";
+import {
+  getStorage,
+  getStorageSyncStatus,
+  getStorageState
+} from "../../actions/storageActions";
+import { formatDateTime, prettyJSON } from "../../utils";
 
-const Storage = ({ history, storage, storageSyncStatus, texts, ...props }) => (
+const Storage = ({
+  history,
+  storage,
+  storageSyncStatus,
+  storageStateData,
+  texts,
+  ...props
+}) => (
   <PageWrapper
     {...{
       breadcrumb: [
-        { label: texts.STORAGE_ADMINISTRATION, url: "/storage-administration" },
+        {
+          label: texts.LOGICAL_STORAGE_ADMINISTRATION,
+          url: "/logical-storage-administration"
+        },
         { label: get(storage, "name", "") }
       ]
     }}
@@ -25,13 +39,14 @@ const Storage = ({ history, storage, storageSyncStatus, texts, ...props }) => (
           texts,
           storage,
           storageSyncStatus,
+          storageStateData,
           initialValues: {
             ...storage,
             config: prettyJSON(get(storage, "config")),
             storageSyncStatus: {
               ...storageSyncStatus,
-              created: formatTime(get(storageSyncStatus, "created")),
-              updated: formatTime(get(storageSyncStatus, "updated"))
+              created: formatDateTime(get(storageSyncStatus, "created")),
+              updated: formatDateTime(get(storageSyncStatus, "updated"))
             }
           },
           ...props
@@ -44,18 +59,33 @@ const Storage = ({ history, storage, storageSyncStatus, texts, ...props }) => (
 export default compose(
   withRouter,
   connect(
-    ({ storage: { storage, storageSyncStatus } }) => ({
+    ({ storage: { storage, storageSyncStatus, storageState } }) => ({
       storage,
-      storageSyncStatus
+      storageSyncStatus: {
+        ...storageSyncStatus,
+        remains:
+          !isNaN(Number(get(storageSyncStatus, "totalInThisPhase"))) &&
+          !isNaN(Number(get(storageSyncStatus, "doneInThisPhase")))
+            ? Number(get(storageSyncStatus, "totalInThisPhase")) -
+              Number(get(storageSyncStatus, "doneInThisPhase"))
+            : null
+      },
+      storageStateData: get(storageState, "storageStateData")
     }),
-    { getStorage, getStorageSyncStatus }
+    { getStorage, getStorageSyncStatus, getStorageState }
   ),
   lifecycle({
     componentWillMount() {
-      const { match, getStorage, getStorageSyncStatus } = this.props;
+      const {
+        match,
+        getStorage,
+        getStorageSyncStatus,
+        getStorageState
+      } = this.props;
 
       getStorage(match.params.id);
       getStorageSyncStatus(match.params.id);
+      getStorageState(match.params.id);
     }
   })
 )(Storage);

@@ -4,7 +4,7 @@ import { map, get } from "lodash";
 import Button from "../Button";
 import Table from "../table/TableWithFilter";
 import { filterTypes } from "../../enums";
-import { formatTime } from "../../utils";
+import { formatDateTime } from "../../utils";
 
 const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
   <Table
@@ -20,8 +20,8 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
         onClick: () => history.push(`/users/${item.id}`),
         items: [
           { label: get(item, "username", "") },
-          { label: formatTime(item.created) },
-          { label: formatTime(item.updated) },
+          { label: formatDateTime(item.created) },
+          { label: formatDateTime(item.updated) },
           { label: get(item, "producer.name", "") },
           {
             label: (
