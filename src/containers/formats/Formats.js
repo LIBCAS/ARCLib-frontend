@@ -20,15 +20,16 @@ import {
   importFormatDefinitionsJSON,
   importFormatDefinitionJSON,
   importFormatDefinitionsByteArray,
-  importFormatDefinitionByteArray
+  importFormatDefinitionByteArray,
 } from "../../actions/formatActions";
 import { setDialog, showLoader } from "../../actions/appActions";
 import {
-  isSuperAdmin,
   downloadFile,
   downloadBlob,
-  hasValue
+  hasValue,
+  hasPermission,
 } from "../../utils";
+import { Permission } from "../../enums";
 
 const Formats = ({
   history,
@@ -44,15 +45,15 @@ const Formats = ({
   importFormatDefinitionsJSON,
   importFormatDefinitionJSON,
   importFormatDefinitionsByteArray,
-  importFormatDefinitionByteArray
+  importFormatDefinitionByteArray,
 }) => (
   <PageWrapper
     {...{
-      breadcrumb: [{ label: texts.FORMATS }]
+      breadcrumb: [{ label: texts.FORMATS }],
     }}
   >
     <div {...{ className: "flex-row" }}>
-      {isSuperAdmin(user) && (
+      {hasPermission(Permission.FORMAT_RECORDS_WRITE) && (
         <Tooltip
           {...{
             placement: "right",
@@ -71,7 +72,7 @@ const Formats = ({
                       content: (
                         <h3
                           {...{
-                            className: ok ? "color-green" : "invalid"
+                            className: ok ? "color-green" : "invalid",
                           }}
                         >
                           <strong>
@@ -81,32 +82,32 @@ const Formats = ({
                           </strong>
                         </h3>
                       ),
-                      autoClose: true
+                      autoClose: true,
                     });
-                  }
+                  },
                 }}
               >
                 {texts.UPDATE_FORMATS_USING_PRONOM_NOW}
               </Button>
-            )
+            ),
           }}
         />
       )}
-      {isSuperAdmin(user) && (
+      {hasPermission(Permission.FORMAT_RECORDS_WRITE) && (
         <DropDown
           {...{
             label: texts.IMPORT_FORMAT_DEFINITIONS,
             className: "margin-bottom-small margin-right-small",
-            valueFunction: item => get(item, "label"),
+            valueFunction: (item) => get(item, "label"),
             items: [
               {
-                label: texts.BYTE_ARRAY
+                label: texts.BYTE_ARRAY,
               },
               {
-                label: texts.JSON
-              }
+                label: texts.JSON,
+              },
             ],
-            onClick: async value => {
+            onClick: async (value) => {
               setDialog("DropFilesDialog", {
                 title:
                   value === texts.JSON
@@ -114,7 +115,7 @@ const Formats = ({
                     : texts.IMPORT_FORMAT_DEFINITIONS_FROM_BYTE_ARRAY,
                 label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                 multiple: false,
-                onDrop: files => {
+                onDrop: (files) => {
                   const file = files[0];
 
                   if (file) {
@@ -152,27 +153,27 @@ const Formats = ({
                       };
                     }
                   }
-                }
+                },
               });
-            }
+            },
           }}
         />
       )}
-      {isSuperAdmin(user) && (
+      {hasPermission(Permission.FORMAT_RECORDS_WRITE) && (
         <DropDown
           {...{
             label: texts.IMPORT_FORMAT_DEFINITION,
             className: "margin-bottom-small margin-right-small",
-            valueFunction: item => get(item, "label"),
+            valueFunction: (item) => get(item, "label"),
             items: [
               {
-                label: texts.BYTE_ARRAY
+                label: texts.BYTE_ARRAY,
               },
               {
-                label: texts.JSON
-              }
+                label: texts.JSON,
+              },
             ],
-            onClick: async value => {
+            onClick: async (value) => {
               setDialog("DropFilesDialog", {
                 title:
                   value === texts.JSON
@@ -180,7 +181,7 @@ const Formats = ({
                     : texts.IMPORT_FORMAT_DEFINITION_FROM_BYTE_ARRAY,
                 label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                 multiple: false,
-                onDrop: files => {
+                onDrop: (files) => {
                   const file = files[0];
 
                   if (file) {
@@ -218,9 +219,9 @@ const Formats = ({
                       };
                     }
                   }
-                }
+                },
               });
-            }
+            },
           }}
         />
       )}
@@ -230,14 +231,14 @@ const Formats = ({
           className: "margin-bottom-small",
           items: [
             {
-              label: texts.BYTE_ARRAY
+              label: texts.BYTE_ARRAY,
             },
             {
-              label: texts.JSON
-            }
+              label: texts.JSON,
+            },
           ],
-          valueFunction: item => get(item, "label"),
-          onClick: async value => {
+          valueFunction: (item) => get(item, "label"),
+          onClick: async (value) => {
             if (value === texts.JSON) {
               const json = await exportFormatDefinitionsJSON();
               if (hasValue(json)) {
@@ -254,7 +255,7 @@ const Formats = ({
                 downloadBlob(content, "format_definitions.bytes");
               }
             }
-          }
+          },
         }}
       />
     </div>
@@ -264,9 +265,9 @@ const Formats = ({
         sortOptions: [
           { label: texts.PUID, value: "puid" },
           { label: texts.FORMAT_ID, value: "formatId" },
-          { label: texts.FORMAT_NAME, value: "formatName" }
+          { label: texts.FORMAT_NAME, value: "formatName" },
         ],
-        handleUpdate: () => getFormats()
+        handleUpdate: () => getFormats(),
       }}
     />
     <Table
@@ -275,14 +276,14 @@ const Formats = ({
         texts,
         user,
         formats: get(formats, "items"),
-        handleUpdate: () => getFormats()
+        handleUpdate: () => getFormats(),
       }}
     />
     <Pagination
       {...{
         handleUpdate: () => getFormats(),
         count: get(formats, "items.length", 0),
-        countAll: get(formats, "count", 0)
+        countAll: get(formats, "count", 0),
       }}
     />
   </PageWrapper>
@@ -300,13 +301,13 @@ export default compose(
     importFormatDefinitionsJSON,
     importFormatDefinitionJSON,
     importFormatDefinitionsByteArray,
-    importFormatDefinitionByteArray
+    importFormatDefinitionByteArray,
   }),
   lifecycle({
     componentDidMount() {
       const { getFormats } = this.props;
 
       getFormats();
-    }
+    },
   })
 )(Formats);

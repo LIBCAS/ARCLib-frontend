@@ -11,15 +11,21 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
     {...{
       thCells: [
         { label: texts.USERNAME },
+        { label: texts.FULL_NAME },
+        { label: texts.INSTITUTION },
+        { label: texts.EMAIL },
         { label: texts.CREATED },
         { label: texts.UPDATED },
         { label: texts.PRODUCER },
-        { label: "" }
+        { label: "" },
       ],
-      items: map(users, item => ({
+      items: map(users, (item) => ({
         onClick: () => history.push(`/users/${item.id}`),
         items: [
           { label: get(item, "username", "") },
+          { label: get(item, "fullName", "") },
+          { label: get(item, "institution", "") },
+          { label: get(item, "email", "") },
           { label: formatDateTime(item.created) },
           { label: formatDateTime(item.updated) },
           { label: get(item, "producer.name", "") },
@@ -27,42 +33,45 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
             label: (
               <Button
                 {...{
-                  onClick: e => {
+                  onClick: (e) => {
                     e.stopPropagation();
                     setDialog("UserDelete", { ...item });
-                  }
+                  },
                 }}
               >
                 {texts.DELETE}
               </Button>
             ),
-            className: "text-right"
-          }
-        ]
+            className: "text-right",
+          },
+        ],
       })),
       filterItems: [
         {
           type: filterTypes.TEXT,
           field: "username",
-          handleUpdate
+          handleUpdate,
         },
+        null,
+        null,
+        null,
         {
           type: filterTypes.DATETIME,
           field: "created",
-          handleUpdate
+          handleUpdate,
         },
         {
           type: filterTypes.DATETIME,
           field: "updated",
-          handleUpdate
+          handleUpdate,
         },
         {
           type: filterTypes.TEXT,
           field: "producerName",
-          handleUpdate
+          handleUpdate,
         },
-        null
-      ]
+        null,
+      ],
     }}
   />
 );

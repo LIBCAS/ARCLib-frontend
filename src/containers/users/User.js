@@ -14,8 +14,8 @@ const User = ({ history, user, texts, ...props }) => (
     {...{
       breadcrumb: [
         { label: texts.USERS, url: "/users" },
-        { label: get(user, "username", "") }
-      ]
+        { label: get(user, "username", "") },
+      ],
     }}
   >
     {user && (
@@ -25,13 +25,13 @@ const User = ({ history, user, texts, ...props }) => (
           user,
           texts,
           initialValues: {
-            username: get(user, "username", ""),
-            fullName: get(user, "fullName", ""),
+            ...user,
             created: formatDateTime(get(user, "created")),
             updated: formatDateTime(get(user, "updated")),
-            producer: get(user, "producer.id", "")
+            producer: get(user, "producer.id", ""),
+            roles: (user.roles || []).map(({ id }) => id),
           },
-          ...props
+          ...props,
         }}
       />
     )}
@@ -42,13 +42,13 @@ export default compose(
   withRouter,
   renameProp("user", "loggedUser"),
   connect(({ users: { user } }) => ({ user }), {
-    getUser
+    getUser,
   }),
   lifecycle({
     componentWillMount() {
       const { match, getUser } = this.props;
 
       getUser(match.params.id);
-    }
+    },
   })
 )(User);

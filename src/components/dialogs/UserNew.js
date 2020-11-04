@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers, withState } from "recompose";
-import { reduxForm, Field } from "redux-form";
+import { reduxForm, Field, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { find, get, map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -11,9 +11,10 @@ import ErrorBlock from "../ErrorBlock";
 import { TextField, SelectField, Validation } from "../form";
 import { saveUser, getUsers } from "../../actions/usersActions";
 import {
-  isSuperAdmin,
-  removeStartEndWhiteSpaceInSelectedFields
+  hasPermission,
+  removeStartEndWhiteSpaceInSelectedFields,
 } from "../../utils";
+import { Permission } from "../../enums";
 
 const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
   <DialogContainer
@@ -21,7 +22,7 @@ const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
       title: texts.USER_NEW,
       name: "UserNew",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -31,23 +32,23 @@ const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
             component: TextField,
             label: texts.USERNAME,
             name: "username",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
-          isSuperAdmin(user)
+          hasPermission(Permission.PRODUCER_RECORDS_READ)
             ? {
                 component: SelectField,
                 label: texts.PRODUCER,
                 name: "producer",
                 validate: [Validation.required[language]],
-                options: map(producers, producer => ({
+                options: map(producers, (producer) => ({
                   label: producer.name,
-                  value: producer.id
-                }))
+                  value: producer.id,
+                })),
               }
             : {
                 text:
-                  texts.THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER
-              }
+                  texts.THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER,
+              },
         ],
         ({ text, ...field }, key) =>
           text ? (
@@ -66,12 +67,13 @@ export default compose(
     ({ producer: { producers } }) => ({
       producers,
       initialValues: {
-        producer: get(producers, "[0].id")
-      }
+        producer: get(producers, "[0].id"),
+      },
     }),
     {
       saveUser,
-      getUsers
+      getUsers,
+      reset,
     }
   ),
   withRouter,
@@ -84,27 +86,29 @@ export default compose(
       producers,
       user,
       texts,
-      setFail
+      setFail,
+      reset,
     }) => async ({ producer, ...formData }) => {
       if (
         await saveUser({
           id: uuidv1(),
           ...removeStartEndWhiteSpaceInSelectedFields(formData, ["username"]),
-          producer: isSuperAdmin(user)
-            ? find(producers, item => item.id === producer)
-            : get(user, "producer")
+          producer: hasPermission(Permission.PRODUCER_RECORDS_READ)
+            ? find(producers, (item) => item.id === producer)
+            : get(user, "producer"),
         })
       ) {
         getUsers();
+        reset("UserNewDialogForm");
         closeDialog();
         setFail(null);
       } else {
         setFail(texts.USER_NEW_FAILED);
       }
-    }
+    },
   }),
   reduxForm({
     form: "UserNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(UserNew);

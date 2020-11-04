@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -59,6 +59,7 @@ export default compose(
   connect(null, {
     saveValidationProfile,
     getValidationProfiles,
+    reset,
   }),
   withRouter,
   withHandlers({
@@ -67,6 +68,7 @@ export default compose(
       saveValidationProfile,
       getValidationProfiles,
       texts,
+      reset,
     }) => async (formData) => {
       const response = await saveValidationProfile({
         id: uuidv1(),
@@ -75,6 +77,7 @@ export default compose(
 
       if (response === 200) {
         getValidationProfiles();
+        reset("ValidationProfileNewDialogForm");
         closeDialog();
       } else {
         if (response === 409) {

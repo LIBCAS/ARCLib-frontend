@@ -3,19 +3,19 @@ import { isString } from "lodash";
 /**
  * Checks if variable has value.
  */
-export const hasValue = item =>
+export const hasValue = (item) =>
   item !== undefined && item !== null && item !== "";
 
 /**
  * Checks if variable is a blank string.
  */
-export const isBlankString = value =>
+export const isBlankString = (value) =>
   isString(value) ? value.match(/^\s*$/) : false;
 
 /**
  * Checks CRON string validity.
  */
-export const cronFormatCheck = value => {
+export const cronFormatCheck = (value) => {
   const regexByField = {};
   regexByField["sec"] = "[0-5]?\\d";
   regexByField["min"] = "[0-5]?\\d";
@@ -25,29 +25,31 @@ export const cronFormatCheck = value => {
   regexByField["dayOfWeek"] = "[0-7]";
   regexByField["year"] = "|\\d{4}";
 
-  ["sec", "min", "hour", "day", "month", "dayOfWeek", "year"].forEach(field => {
-    let range =
-      "(?:" +
-      regexByField[field] +
-      "|\\*)" +
-      "(?:" +
-      "(?:-|/|," +
-      ("dayOfWeek" === field ? "|#" : "") +
-      ")" +
-      "(?:" +
-      regexByField[field] +
-      "|\\*)" +
-      ")?";
-    if (field === "day") range += "(?:L|W)?";
-    if (field === "dayOfWeek") range += "(?:L)?";
-    regexByField[field] =
-      (field === "day" || field === "dayOfWeek" ? "\\?|" : "") +
-      "\\*|" +
-      range +
-      "(?:," +
-      range +
-      ")*";
-  });
+  ["sec", "min", "hour", "day", "month", "dayOfWeek", "year"].forEach(
+    (field) => {
+      let range =
+        "(?:" +
+        regexByField[field] +
+        "|\\*)" +
+        "(?:" +
+        "(?:-|/|," +
+        ("dayOfWeek" === field ? "|#" : "") +
+        ")" +
+        "(?:" +
+        regexByField[field] +
+        "|\\*)" +
+        ")?";
+      if (field === "day") range += "(?:L|W)?";
+      if (field === "dayOfWeek") range += "(?:L)?";
+      regexByField[field] =
+        (field === "day" || field === "dayOfWeek" ? "\\?|" : "") +
+        "\\*|" +
+        range +
+        "(?:," +
+        range +
+        ")*";
+    }
+  );
 
   const monthValues = "JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC";
   const monthRange = "(?:" + monthValues + ")(?:(?:-)(?:" + monthValues + "))?";
@@ -93,13 +95,13 @@ export const cronFormatCheck = value => {
 /**
  * Checks email validity.
  */
-export const emailFormatCheck = value =>
-  /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value);
+export const emailFormatCheck = (value) =>
+  value && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value);
 
 /**
  * Checks JSON validity.
  */
-export const JSONValidityCheck = value => {
+export const JSONValidityCheck = (value) => {
   try {
     JSON.parse(value);
   } catch (e) {
@@ -112,7 +114,7 @@ export const JSONValidityCheck = value => {
 /**
  * Checks email validity.
  */
-export const localhostOrIPv4Check = value =>
+export const localhostOrIPv4Check = (value) =>
   /^(localhost|((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]))$/.test(
     value
   );

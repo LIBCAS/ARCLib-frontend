@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { find, get, map, isEmpty } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -13,7 +13,7 @@ import { TextField, SelectField, Checkbox, Validation } from "../form";
 import { saveRoutine, getRoutines } from "../../actions/routineActions";
 import {
   openUrlInNewTab,
-  removeStartEndWhiteSpaceInSelectedFields
+  removeStartEndWhiteSpaceInSelectedFields,
 } from "../../utils";
 import { CRON_URL } from "../../constants";
 
@@ -23,14 +23,14 @@ const IngestRoutineNew = ({
   texts,
   language,
   setDialog,
-  change
+  change,
 }) => (
   <DialogContainer
     {...{
       title: texts.INGEST_ROUTINE_NEW,
       name: "IngestRoutineNew",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -40,17 +40,23 @@ const IngestRoutineNew = ({
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.PRODUCER_PROFILE,
             name: "producerProfile",
             validate: [Validation.required[language]],
-            options: map(get(producerProfiles, "items"), producerProfile => ({
+            options: map(get(producerProfiles, "items"), (producerProfile) => ({
               label: producerProfile.name,
-              value: producerProfile.id
-            }))
+              value: producerProfile.id,
+            })),
+          },
+          {
+            component: TextField,
+            label: texts.TRANSFER_AREA_PATH,
+            name: "transferAreaPath",
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
@@ -61,18 +67,16 @@ const IngestRoutineNew = ({
                   {...{
                     glyph: "new-window",
                     tooltip: texts.OPENS_PAGE_WITH_CRON_EXPRESSION_INFORMATION,
-                    onClick: () => openUrlInNewTab(CRON_URL)
+                    onClick: () => openUrlInNewTab(CRON_URL),
                   }}
                 />
               </span>
             ),
             name: "job.timing",
-            validate: [Validation.required[language], Validation.cron[language]]
-          },
-          {
-            component: Checkbox,
-            label: texts.ACTIVE,
-            name: "job.active"
+            validate: [
+              Validation.required[language],
+              Validation.cron[language],
+            ],
           },
           {
             component: TextField,
@@ -80,7 +84,7 @@ const IngestRoutineNew = ({
             name: "workflowConfig",
             validate: [
               Validation.required[language],
-              Validation.json[language]
+              Validation.json[language],
             ],
             type: "textarea",
             buttons: [
@@ -91,7 +95,7 @@ const IngestRoutineNew = ({
                     title: texts.UPLOAD_WORKFLOW_CONFIGURATION,
                     label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                     multiple: false,
-                    onDrop: files => {
+                    onDrop: (files) => {
                       const file = files[0];
 
                       if (file) {
@@ -106,17 +110,16 @@ const IngestRoutineNew = ({
                         };
                       }
                     },
-                    afterClose: () => setDialog("IngestRoutineNew")
-                  })
-              }
-            ]
+                    afterClose: () => setDialog("IngestRoutineNew"),
+                  }),
+              },
+            ],
           },
           {
-            component: TextField,
-            label: texts.TRANSFER_AREA_PATH,
-            name: "transferAreaPath",
-            validate: [Validation.required[language]]
-          }
+            component: Checkbox,
+            label: texts.ACTIVE,
+            name: "job.active",
+          },
         ],
         ({ buttons, name, ...field }, key) => (
           <div {...{ key }}>
@@ -142,12 +145,13 @@ export default compose(
       producerProfiles,
       initialValues: {
         producerProfile: get(producerProfiles, "items[0].id"),
-        active: false
-      }
+        active: false,
+      },
     }),
     {
       saveRoutine,
-      getRoutines
+      getRoutines,
+      reset,
     }
   ),
   withRouter,
@@ -157,37 +161,39 @@ export default compose(
       saveRoutine,
       getRoutines,
       producerProfiles,
-      texts
+      texts,
+      reset,
     }) => async ({ producerProfile, ...formData }) => {
       const response = await saveRoutine({
         id: uuidv1(),
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
           "name",
           "job.timing",
-          "transferAreaPath"
+          "transferAreaPath",
         ]),
         producerProfile: find(
           get(producerProfiles, "items"),
-          item => item.id === producerProfile
-        )
+          (item) => item.id === producerProfile
+        ),
       });
 
       if (response === 200) {
         getRoutines();
+        reset("IngestRoutineNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError(
           response === 409
             ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
             : {
-                transferAreaPath: texts.INGEST_ROUTINE_NEW_FAILED
+                transferAreaPath: texts.INGEST_ROUTINE_NEW_FAILED,
               }
         );
       }
-    }
+    },
   }),
   reduxForm({
     form: "IngestRoutineNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(IngestRoutineNew);

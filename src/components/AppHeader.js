@@ -21,7 +21,7 @@ const ButtonLanguage = ({ language, changeLanguage, className }) => (
       size: "large",
       ghost: true,
       className: `button-language${className ? ` ${className}` : ""}`,
-      onClick: () => changeLanguage()
+      onClick: () => changeLanguage(),
     }}
   >
     {languagesLabels[language]}
@@ -42,12 +42,13 @@ const AppHeader = ({
   texts,
   collapsed,
   setCollapsed,
-  user
+  user,
 }) => {
   const isIE = navigator.appVersion.toString().indexOf(".NET") > 0;
 
   const dropdownMenuItems = [
-    { url: "/", label: texts.SIGN_OUT, onClick: () => signOut() }
+    { url: "/profile", label: texts.PROFILE },
+    { url: "/", label: texts.SIGN_OUT, onClick: () => signOut() },
   ];
 
   let allItems = [];
@@ -56,10 +57,10 @@ const AppHeader = ({
     forEach(menuItems, ({ items, ...item }) => {
       if (!isEmpty(items)) {
         allItems.push({ ...item, className: `${item.className} disabled` });
-        forEach(items, item =>
+        forEach(items, (item) =>
           allItems.push({
             ...item,
-            label: <span {...{ style: { marginLeft: 24 } }}>{item.label}</span>
+            label: <span {...{ style: { marginLeft: 24 } }}>{item.label}</span>,
           })
         );
       } else {
@@ -73,7 +74,7 @@ const AppHeader = ({
     {
       label: languagesLabels[language],
       onClick: () => changeLanguage(),
-      className: "item-language"
+      className: "item-language",
     },
     dropdownMenuItems
   );
@@ -85,8 +86,8 @@ const AppHeader = ({
           center: authStyle,
           normal: !authStyle,
           ie: isIE,
-          "with-menu": showVerticalMenu
-        })
+          "with-menu": showVerticalMenu,
+        }),
       }}
     >
       {!authStyle ? (
@@ -95,8 +96,8 @@ const AppHeader = ({
             {...{
               className: classNames("top", {
                 "with-menu": showVerticalMenu,
-                "with-menu-button": collapsed || noRoleStyle
-              })
+                "with-menu-button": collapsed || noRoleStyle,
+              }),
             }}
           >
             {collapsed && (
@@ -105,7 +106,7 @@ const AppHeader = ({
                   size: "large",
                   ghost: true,
                   className: "menu-button",
-                  onClick: () => setCollapsed(false)
+                  onClick: () => setCollapsed(false),
                 }}
               >
                 <Glyphicon {...{ glyph: "menu-hamburger" }} />
@@ -114,8 +115,8 @@ const AppHeader = ({
             <h2
               {...{
                 className: classNames("title", {
-                  "title-hidden": !collapsed && !noRoleStyle
-                })
+                  "title-hidden": !collapsed && !noRoleStyle,
+                }),
               }}
             >
               ARCLib
@@ -125,7 +126,7 @@ const AppHeader = ({
                 {...{
                   language,
                   changeLanguage,
-                  className: "margin-right-small"
+                  className: "margin-right-small",
                 }}
               />
               <div {...{ className: "dropdown dropdown-user" }}>
@@ -135,7 +136,7 @@ const AppHeader = ({
                       <Menu
                         {...{
                           theme: "dark",
-                          onClick: e => {
+                          onClick: (e) => {
                             if (
                               get(dropdownMenuItems[Number(e.key)], "onClick")
                             ) {
@@ -147,14 +148,14 @@ const AppHeader = ({
                                 dropdownMenuItems[Number(e.key)].url
                               );
                             }
-                          }
+                          },
                         }}
                       >
                         {map(dropdownMenuItems, (menuItem, i) => (
                           <Menu.Item
                             {...{
                               key: i,
-                              className: menuItem.className
+                              className: menuItem.className,
                             }}
                           >
                             {menuItem.label}
@@ -163,14 +164,14 @@ const AppHeader = ({
                       </Menu>
                     ),
                     placement: "bottomRight",
-                    trigger: ["click"]
+                    trigger: ["click"],
                   }}
                 >
                   <Button
                     {...{
                       size: "large",
                       ghost: true,
-                      className: "user-button"
+                      className: "user-button",
                     }}
                   >
                     <Icon {...{ type: "user" }} />
@@ -183,7 +184,7 @@ const AppHeader = ({
                   size: "large",
                   ghost: true,
                   className: "menu-all-button",
-                  onClick: () => setShowVerticalMenu(!showVerticalMenu)
+                  onClick: () => setShowVerticalMenu(!showVerticalMenu),
                 }}
               >
                 <Glyphicon {...{ glyph: "menu-hamburger" }} />
@@ -198,7 +199,7 @@ const AppHeader = ({
               <Menu
                 {...{
                   theme: "dark",
-                  onClick: e => {
+                  onClick: (e) => {
                     if (get(allItems[Number(e.key)], "onClick")) {
                       allItems[Number(e.key)].onClick();
                     }
@@ -209,22 +210,25 @@ const AppHeader = ({
                   },
                   className: "menu-all",
                   selectedKeys: hasValue(
-                    findIndex(allItems, menuItem => match.url === menuItem.url)
+                    findIndex(
+                      allItems,
+                      (menuItem) => match.url === menuItem.url
+                    )
                   )
                     ? [
                         `${findIndex(
                           allItems,
-                          menuItem => match.url === menuItem.url
-                        )}`
+                          (menuItem) => match.url === menuItem.url
+                        )}`,
                       ]
-                    : undefined
+                    : undefined,
                 }}
               >
                 {map(allItems, (menuItem, i) => (
                   <Menu.Item
                     {...{
                       key: i,
-                      className: menuItem.className
+                      className: menuItem.className,
                     }}
                   >
                     {menuItem.label}
@@ -240,7 +244,7 @@ const AppHeader = ({
           <ButtonLanguage
             {...{
               language,
-              changeLanguage
+              changeLanguage,
             }}
           />
         </div>
@@ -253,7 +257,7 @@ export default compose(
   withRouter,
   connect(({ app: { user, language, texts } }) => ({ user, language, texts }), {
     signOut,
-    changeLanguage
+    changeLanguage,
   }),
   withState("showVerticalMenu", "setShowVerticalMenu", false)
 )(AppHeader);

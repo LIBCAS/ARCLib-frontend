@@ -15,8 +15,9 @@ import {
   provenanceExtractedFromSipEventType,
   eventIdentifierType,
   agentIdentifierType,
+  Permission,
 } from "../../enums";
-import { isSuperAdmin, isAdmin, isProduction } from "../../utils";
+import { isProduction, hasPermission } from "../../utils";
 
 const IndexSearch = ({
   history,
@@ -29,11 +30,14 @@ const IndexSearch = ({
   sort,
 }) => {
   let index = -1;
+
+  const isSuperAdmin = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
+
   const fields = map(
     [
       {
         filters: [
-          isSuperAdmin(user)
+          isSuperAdmin
             ? {
                 label: texts.PRODUCER_NAME,
                 field: "producer_name",
@@ -50,7 +54,7 @@ const IndexSearch = ({
             field: "aip_state",
             type: filterTypes.ENUM,
             options:
-              isSuperAdmin(user) || isAdmin(user)
+              isSuperAdmin || hasPermission(Permission.ADMIN_PRIVILEGE)
                 ? [
                     filterOptionAll[language],
                     ...map(aipStates, (value, label) => ({ value, label })),
@@ -454,7 +458,7 @@ const IndexSearch = ({
   );
 
   const sortOptions = compact([
-    isSuperAdmin(user)
+    isSuperAdmin
       ? { label: texts.PRODUCER_NAME, value: "producer_name" }
       : null,
     { label: texts.RESPONSIBLE_PERSON_NAME, value: "user_name" },

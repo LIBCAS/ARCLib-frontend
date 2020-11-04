@@ -1,5 +1,5 @@
 import React from "react";
-import { map, find, filter, isEmpty, set, get } from "lodash";
+import { map, find, filter, isEmpty, set, get, compact } from "lodash";
 import { connect } from "react-redux";
 import { compose, withState, withHandlers, lifecycle } from "recompose";
 import { reduxForm, Field, SubmissionError } from "redux-form";
@@ -10,7 +10,8 @@ import { TextField, SelectField, Validation } from "../form";
 import Table from "../table/Table";
 import { setDialog } from "../../actions/appActions";
 import { solveIncidents, cancelIncidents } from "../../actions/incidentActions";
-import { formatDateTime } from "../../utils";
+import { formatDateTime, hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const operations = { SOLVE: "SOLVE", CANCEL: "CANCEL" };
 
@@ -23,102 +24,104 @@ const Incidents = ({
   setDialog,
   incidents,
   texts,
-  language
-}) => (
-  <div {...{ className: "flex-col" }}>
-    <Table
-      {...{
-        thCells: [
-          { label: "" },
-          { label: texts.CREATED },
-          { label: texts.INGEST_WORKFLOW_ID },
-          { label: texts.BPM_TASK_ID },
-          { label: texts.RESPONSIBLE_PERSON }
-        ],
-        items: map(incidents, item => ({
-          onClick: () => setDialog("IncidentDetail", { incident: item }),
-          items: [
-            {
-              label: (
-                <Checkbox
-                  {...{
-                    checked: !!find(selected, s => s === item.id),
-                    onClick: e => {
-                      e.stopPropagation();
-                      setSelected(
-                        !!find(selected, s => s === item.id)
-                          ? filter(selected, s => s !== item.id)
-                          : !isEmpty(selected)
+  language,
+}) => {
+  const editEnabled = hasPermission(Permission.INCIDENT_RECORDS_WRITE);
+  return (
+    <div {...{ className: "flex-col" }}>
+      <Table
+        {...{
+          thCells: compact([
+            editEnabled && { label: "" },
+            { label: texts.CREATED },
+            { label: texts.INGEST_WORKFLOW_ID },
+            { label: texts.BPM_TASK_ID },
+            { label: texts.RESPONSIBLE_PERSON },
+          ]),
+          items: map(incidents, (item) => ({
+            onClick: () => setDialog("IncidentDetail", { incident: item }),
+            items: compact([
+              editEnabled && {
+                label: (
+                  <Checkbox
+                    {...{
+                      checked: !!find(selected, (s) => s === item.id),
+                      onClick: (e) => {
+                        e.stopPropagation();
+                        setSelected(
+                          !!find(selected, (s) => s === item.id)
+                            ? filter(selected, (s) => s !== item.id)
+                            : !isEmpty(selected)
                             ? [...selected, item.id]
                             : [item.id]
-                      );
-                    }
-                  }}
-                />
-              ),
-              className: "td-checkbox"
-            },
-            { label: formatDateTime(item.created) },
-            { label: get(item, "externalId", "") },
-            { label: get(item, "activityId", "") },
-            { label: get(item, "responsiblePerson.username", "") }
-          ]
-        }))
-      }}
-    />
-    {!isEmpty(selected) && (
-      <form {...{ onSubmit: handleSubmit, className: "margin-top-small" }}>
-        {map(
-          [
-            {
-              component: SelectField,
-              name: "operation",
-              label: texts.OPERATION,
-              defaultValue: operations.SOLVE,
-              validate: [Validation.required[language]],
-              options: [
-                { label: texts.SOLVE, value: operations.SOLVE },
-                { label: texts.CANCEL, value: operations.CANCEL }
-              ],
-              onChange: (_, value) => setOperation(value)
-            },
-            {
-              component: TextField,
-              name: "text",
-              label:
-                operation === operations.SOLVE
-                  ? texts.WORKFLOW_CONFIGURATION
-                  : texts.REASON,
-              validate:
-                operation === operations.SOLVE
-                  ? [Validation.required[language], Validation.json[language]]
-                  : [Validation.required[language]],
-              type: "textarea"
-            }
-          ],
-          (field, key) => (
-            <Field {...{ key, id: `incidents-table-${key}`, ...field }} />
-          )
-        )}
-        <div {...{ className: "flex-row flex-right margin-bottom-small" }}>
-          <Button {...{ onClick: () => setSelected([]) }}>
-            {texts.STORNO}
-          </Button>
-          <Button
-            {...{
-              primary: true,
-              type: "submit",
-              className: "margin-left-small"
-            }}
-          >
-            {texts.SUBMIT}
-          </Button>
-        </div>
-      </form>
-    )}
-  </div>
-);
-
+                        );
+                      },
+                    }}
+                  />
+                ),
+                className: "td-checkbox",
+              },
+              { label: formatDateTime(item.created) },
+              { label: get(item, "externalId", "") },
+              { label: get(item, "activityId", "") },
+              { label: get(item, "responsiblePerson.username", "") },
+            ]),
+          })),
+        }}
+      />
+      {!isEmpty(selected) && editEnabled && (
+        <form {...{ onSubmit: handleSubmit, className: "margin-top-small" }}>
+          {map(
+            [
+              {
+                component: SelectField,
+                name: "operation",
+                label: texts.OPERATION,
+                defaultValue: operations.SOLVE,
+                validate: [Validation.required[language]],
+                options: [
+                  { label: texts.SOLVE, value: operations.SOLVE },
+                  { label: texts.CANCEL, value: operations.CANCEL },
+                ],
+                onChange: (_, value) => setOperation(value),
+              },
+              {
+                component: TextField,
+                name: "text",
+                label:
+                  operation === operations.SOLVE
+                    ? texts.WORKFLOW_CONFIGURATION
+                    : texts.REASON,
+                validate:
+                  operation === operations.SOLVE
+                    ? [Validation.required[language], Validation.json[language]]
+                    : [Validation.required[language]],
+                type: "textarea",
+              },
+            ],
+            (field, key) => (
+              <Field {...{ key, id: `incidents-table-${key}`, ...field }} />
+            )
+          )}
+          <div {...{ className: "flex-row flex-right margin-bottom-small" }}>
+            <Button {...{ onClick: () => setSelected([]) }}>
+              {texts.STORNO}
+            </Button>
+            <Button
+              {...{
+                primary: true,
+                type: "submit",
+                className: "margin-left-small",
+              }}
+            >
+              {texts.SUBMIT}
+            </Button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+};
 export default compose(
   connect(
     () => ({ initialValues: { operation: operations.SOLVE, text: "" } }),
@@ -131,7 +134,7 @@ export default compose(
       const { getIncidents, batch } = this.props;
 
       getIncidents(batch.id);
-    }
+    },
   }),
   withHandlers({
     onSubmit: ({
@@ -141,7 +144,7 @@ export default compose(
       batch,
       solveIncidents,
       cancelIncidents,
-      texts
+      texts,
     }) => async ({ operation, text }) => {
       const body = { ids: selected };
 
@@ -153,7 +156,7 @@ export default compose(
           getIncidents(batch.id);
         } else {
           throw new SubmissionError({
-            text: texts.INCIDENTS_SOLVE_FAILED
+            text: texts.INCIDENTS_SOLVE_FAILED,
           });
         }
       } else {
@@ -162,13 +165,13 @@ export default compose(
           getIncidents(batch.id);
         } else {
           throw new SubmissionError({
-            text: texts.INCIDENTS_CANCEL_FAILED
+            text: texts.INCIDENTS_CANCEL_FAILED,
           });
         }
       }
-    }
+    },
   }),
   reduxForm({
-    form: "incidents-table"
+    form: "incidents-table",
   })
 )(Incidents);

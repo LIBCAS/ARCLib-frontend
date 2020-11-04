@@ -18,8 +18,8 @@ const Format = ({ history, format, getFormat, texts, ...props }) => {
         {...{
           breadcrumb: [
             { label: texts.FORMATS, url: "/formats" },
-            { label: get(format, "formatName", texts.FORMAT) }
-          ]
+            { label: get(format, "formatName", texts.FORMAT) },
+          ],
         }}
       >
         {format && (
@@ -28,8 +28,8 @@ const Format = ({ history, format, getFormat, texts, ...props }) => {
               history,
               texts,
               format,
-              initialValues: { ...format },
-              ...props
+              initialValues: format,
+              ...props,
             }}
           />
         )}
@@ -40,7 +40,7 @@ const Format = ({ history, format, getFormat, texts, ...props }) => {
       <Route
         {...{
           path: `${match.url}/format-definition/:id`,
-          render: () => <FormatDefinition {...{ texts, ...props }} />
+          render: () => <FormatDefinition {...{ texts, ...props }} />,
         }}
       />
     ) : (
@@ -53,7 +53,7 @@ export default compose(
   withRouter,
   connect(
     ({ format: { format } }) => ({
-      format
+      format,
     }),
     { getFormat }
   ),
@@ -62,6 +62,6 @@ export default compose(
       const { match, getFormat } = this.props;
 
       getFormat(match.params.id);
-    }
+    },
   })
 )(Format);

@@ -15,7 +15,8 @@ import { getProducerProfiles } from "../../actions/producerProfileActions";
 import { getSipProfiles } from "../../actions/sipProfileActions";
 import { getValidationProfiles } from "../../actions/validationProfileActions";
 import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
-import { isSuperAdmin, isAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const ProducerProfiles = ({
   history,
@@ -27,23 +28,23 @@ const ProducerProfiles = ({
   getValidationProfiles,
   getWorkflowDefinitions,
   texts,
-  user
+  user,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.PRODUCER_PROFILES }] }}>
-    {(isSuperAdmin(user) || isAdmin(user)) && (
+    {hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
           onClick: () => {
-            if (isSuperAdmin(user)) {
+            if (hasPermission(Permission.PRODUCER_RECORDS_READ)) {
               getProducers(false);
             }
             getSipProfiles();
             getValidationProfiles();
             getWorkflowDefinitions();
             setDialog("ProducerProfileNew");
-          }
+          },
         }}
       >
         {texts.NEW}
@@ -61,10 +62,10 @@ const ProducerProfiles = ({
           { label: texts.VALIDATION_PROFILE, value: "validationProfileName" },
           {
             label: texts.WORKFLOW_DEFINITION,
-            value: "workflowDefinitionName"
-          }
+            value: "workflowDefinitionName",
+          },
         ],
-        handleUpdate: () => getProducerProfiles()
+        handleUpdate: () => getProducerProfiles(),
       }}
     />
     <Table
@@ -73,14 +74,14 @@ const ProducerProfiles = ({
         texts,
         user,
         producerProfiles: get(producerProfiles, "items"),
-        handleUpdate: () => getProducerProfiles()
+        handleUpdate: () => getProducerProfiles(),
       }}
     />
     <Pagination
       {...{
         handleUpdate: () => getProducerProfiles(),
         count: get(producerProfiles, "items.length", 0),
-        countAll: get(producerProfiles, "count", 0)
+        countAll: get(producerProfiles, "count", 0),
       }}
     />
   </PageWrapper>
@@ -96,7 +97,7 @@ export default compose(
       setDialog,
       getSipProfiles,
       getValidationProfiles,
-      getWorkflowDefinitions
+      getWorkflowDefinitions,
     }
   ),
   lifecycle({
@@ -104,6 +105,6 @@ export default compose(
       const { getProducerProfiles } = this.props;
 
       getProducerProfiles();
-    }
+    },
   })
 )(ProducerProfiles);

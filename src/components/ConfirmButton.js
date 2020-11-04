@@ -5,7 +5,7 @@ import {
   withState,
   withHandlers,
   defaultProps,
-  mapProps
+  mapProps,
 } from "recompose";
 import { Modal } from "react-bootstrap";
 
@@ -32,7 +32,7 @@ const ConfirmButton = ({
         show: open,
         onHide: onClose,
         backdrop: "static",
-        animation: false
+        animation: false,
       }}
     >
       <Modal.Header closeButton>
@@ -45,7 +45,7 @@ const ConfirmButton = ({
       <Modal.Footer>
         <Button
           {...{
-            onClick: onClose
+            onClick: onClose,
           }}
         >
           {texts.STORNO}
@@ -54,14 +54,16 @@ const ConfirmButton = ({
           {...{
             primary: true,
             className: "margin-left-small",
-            onClick: () => onSubmit()
+            onClick: () => onSubmit(),
           }}
         >
           {texts.SUBMIT}
         </Button>
       </Modal.Footer>
     </Modal>
-    <Button {...{ onClick: () => setOpen(true), ...props }}>{label}</Button>
+    <div {...{ onClick: (e) => e.stopPropagation() }}>
+      <Button {...{ onClick: () => setOpen(true), ...props }}>{label}</Button>
+    </div>
   </div>
 );
 
@@ -85,7 +87,7 @@ export default compose(
     onClose: ({ setOpen, setFail }) => () => {
       setOpen(false);
       setFail(null);
-    }
+    },
   }),
   mapProps(({ onClick, dispatch, ...rest }) => rest)
 )(ConfirmButton);

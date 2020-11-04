@@ -8,22 +8,23 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/workflowDefinitions/Table";
 import { setDialog } from "../../actions/appActions";
 import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
-import { isAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const WorkflowDefinitions = ({
   history,
   workflowDefinitions,
   setDialog,
   texts,
-  user
+  user,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.WORKFLOW_DEFINITIONS }] }}>
-    {isAdmin(user) && (
+    {hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("WorkflowDefinitionNew")
+          onClick: () => setDialog("WorkflowDefinitionNew"),
         }}
       >
         {texts.NEW}
@@ -37,11 +38,11 @@ export default compose(
   withRouter,
   connect(
     ({ workflowDefinition: { workflowDefinitions } }) => ({
-      workflowDefinitions
+      workflowDefinitions,
     }),
     {
       setDialog,
-      getWorkflowDefinitions
+      getWorkflowDefinitions,
     }
   ),
   lifecycle({
@@ -49,6 +50,6 @@ export default compose(
       const { getWorkflowDefinitions } = this.props;
 
       getWorkflowDefinitions();
-    }
+    },
   })
 )(WorkflowDefinitions);

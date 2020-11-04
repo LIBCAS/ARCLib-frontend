@@ -8,7 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/workflowDefinitions/Detail";
 import {
   clearWorkflowDefinition,
-  getWorkflowDefinition
+  getWorkflowDefinition,
 } from "../../actions/workflowDefinitionActions";
 
 const WorkflowDefinition = ({
@@ -22,10 +22,10 @@ const WorkflowDefinition = ({
       breadcrumb: [
         {
           label: texts.WORKFLOW_DEFINITIONS,
-          url: "/workflow-definitions"
+          url: "/workflow-definitions",
         },
-        { label: get(workflowDefinition, "name", "") }
-      ]
+        { label: get(workflowDefinition, "name", "") },
+      ],
     }}
   >
     {workflowDefinition && (
@@ -34,10 +34,8 @@ const WorkflowDefinition = ({
           history,
           workflowDefinition,
           texts,
-          initialValues: {
-            name: get(workflowDefinition, "name", "")
-          },
-          ...props
+          initialValues: workflowDefinition,
+          ...props,
         }}
       />
     )}
@@ -48,11 +46,11 @@ export default compose(
   withRouter,
   connect(
     ({ workflowDefinition: { workflowDefinition } }) => ({
-      workflowDefinition
+      workflowDefinition,
     }),
     {
       clearWorkflowDefinition,
-      getWorkflowDefinition
+      getWorkflowDefinition,
     }
   ),
   lifecycle({
@@ -60,11 +58,11 @@ export default compose(
       const {
         match,
         clearWorkflowDefinition,
-        getWorkflowDefinition
+        getWorkflowDefinition,
       } = this.props;
 
       clearWorkflowDefinition();
       getWorkflowDefinition(match.params.id);
-    }
+    },
   })
 )(WorkflowDefinition);

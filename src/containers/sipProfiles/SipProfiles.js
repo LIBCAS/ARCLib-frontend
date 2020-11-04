@@ -8,16 +8,17 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/sipProfiles/Table";
 import { setDialog } from "../../actions/appActions";
 import { getSipProfiles } from "../../actions/sipProfileActions";
-import { isAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const SipProfiles = ({ history, sipProfiles, setDialog, texts, user }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.SIP_PROFILES }] }}>
-    {isAdmin(user) && (
+    {hasPermission(Permission.SIP_PROFILE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("SipProfileNew")
+          onClick: () => setDialog("SipProfileNew"),
         }}
       >
         {texts.NEW}
@@ -31,13 +32,13 @@ export default compose(
   withRouter,
   connect(({ sipProfile: { sipProfiles } }) => ({ sipProfiles }), {
     setDialog,
-    getSipProfiles
+    getSipProfiles,
   }),
   lifecycle({
     componentWillMount() {
       const { getSipProfiles } = this.props;
 
       getSipProfiles();
-    }
+    },
   })
 )(SipProfiles);

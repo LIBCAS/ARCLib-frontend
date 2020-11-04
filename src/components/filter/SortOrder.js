@@ -6,12 +6,17 @@ import Sort from "./Sort";
 import Order from "./Order";
 import { setFilter } from "../../actions/appActions";
 
-const SortOrder = ({ sortOptions, className, handleUpdate }) => (
+const SortOrder = ({
+  sortOptions,
+  className,
+  handleUpdate,
+  fullWidth = true,
+}) => (
   <div
     {...{
-      className: `flex-row flex-centered sort-order${
-        className ? ` ${className}` : ""
-      }`
+      className: `${
+        fullWidth ? "flex-row" : "flex-row-normal"
+      } flex-centered sort-order${className ? ` ${className}` : ""}`,
     }}
   >
     {sortOptions && (
@@ -19,7 +24,7 @@ const SortOrder = ({ sortOptions, className, handleUpdate }) => (
         {...{
           className: "field",
           handleUpdate,
-          options: sortOptions
+          options: sortOptions,
         }}
       />
     )}

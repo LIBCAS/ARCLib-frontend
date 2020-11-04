@@ -10,11 +10,12 @@ import Table from "../../components/storageAdministration/Table";
 import {
   getStorages,
   getArchivalStorageConfig,
-  checkStoragesReachability
+  checkStoragesReachability,
 } from "../../actions/storageActions";
 import { setDialog } from "../../actions/appActions";
-import { formatDateTime } from "../../utils";
+import { formatDateTime, hasPermission } from "../../utils";
 import { message } from "antd";
+import { Permission } from "../../enums";
 
 const Storages = ({
   history,
@@ -24,23 +25,25 @@ const Storages = ({
   archivalStorage,
   checkStoragesReachability,
   getArchivalStorageConfig,
-  getStorages
+  getStorages,
 }) => (
   <PageWrapper
     {...{ breadcrumb: [{ label: texts.LOGICAL_STORAGE_ADMINISTRATION }] }}
   >
     <div {...{ className: "flex-row flex-space-between" }}>
-      <Button
-        {...{
-          primary: true,
-          className: "margin-bottom-small margin-right-small",
-          onClick: () => {
-            setDialog("AttachNewStorage");
-          }
-        }}
-      >
-        {texts.ATTACH_NEW_STORAGE}
-      </Button>
+      {hasPermission(Permission.STORAGE_ADMINISTRATION_WRITE) && (
+        <Button
+          {...{
+            primary: true,
+            className: "margin-bottom-small margin-right-small",
+            onClick: () => {
+              setDialog("AttachNewStorage");
+            },
+          }}
+        >
+          {texts.ATTACH_NEW_STORAGE}
+        </Button>
+      )}
       <div {...{ className: "flex-row-normal flex-center" }}>
         <div {...{ className: "margin-bottom-small margin-right-small" }}>
           {texts.AVAILABILITY_OF_STORAGES_LAST_CHECKED}{" "}
@@ -60,7 +63,7 @@ const Storages = ({
               } else {
                 message.error(texts.TEST_FAILED);
               }
-            }
+            },
           }}
         >
           {texts.CHECK_NOW}
@@ -76,13 +79,13 @@ export default compose(
   connect(
     ({ storage: { storages, archivalStorage } }) => ({
       storages,
-      archivalStorage
+      archivalStorage,
     }),
     {
       getStorages,
       setDialog,
       getArchivalStorageConfig,
-      checkStoragesReachability
+      checkStoragesReachability,
     }
   ),
   lifecycle({
@@ -91,6 +94,6 @@ export default compose(
 
       getStorages();
       getArchivalStorageConfig();
-    }
+    },
   })
 )(Storages);

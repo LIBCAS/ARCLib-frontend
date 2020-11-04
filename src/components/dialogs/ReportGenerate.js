@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 
@@ -50,6 +50,7 @@ export default compose(
   connect(null, {
     generateReport,
     setDialog,
+    reset,
   }),
   withRouter,
   withProps({ initialValues: { format: options[0] } }),
@@ -59,10 +60,12 @@ export default compose(
       generateReport,
       texts,
       data: { id, name },
+      reset,
     }) => async ({ format }) => {
       const ok = await generateReport(id, name, format);
 
       if (ok) {
+        reset("ReportGenerateDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError({

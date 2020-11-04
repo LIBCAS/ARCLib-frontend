@@ -10,14 +10,15 @@ import {
   putFormatDefinition,
   getFormatDefinitionByFormatId,
   exportFormatDefinitionJSON,
-  exportFormatDefinitionByteArray
+  exportFormatDefinitionByteArray,
 } from "../../actions/formatActions";
 import {
-  isSuperAdmin,
   hasValue,
   downloadFile,
-  downloadBlob
+  downloadBlob,
+  hasPermission,
 } from "../../utils";
+import { Permission } from "../../enums";
 
 const FormatDefinitionTable = ({
   history,
@@ -27,7 +28,7 @@ const FormatDefinitionTable = ({
   getFormatDefinitionByFormatId,
   user,
   exportFormatDefinitionJSON,
-  exportFormatDefinitionByteArray
+  exportFormatDefinitionByteArray,
 }) => (
   <Table
     {...{
@@ -37,9 +38,9 @@ const FormatDefinitionTable = ({
         { label: texts.LOCAL_DEFINITION },
         { label: texts.PREFERRED },
         { label: texts.INTERNAL_INFORMATION_FILLED },
-        { label: "" }
+        { label: "" },
       ],
-      items: map(formatDefinitions, item => ({
+      items: map(formatDefinitions, (item) => ({
         onClick: () =>
           history.push(
             `/formats/${get(item, "format.formatId")}/format-definition/${get(
@@ -52,16 +53,16 @@ const FormatDefinitionTable = ({
           { label: get(item, "internalVersionNumber", "") },
           { label: get(item, "localDefinition") ? texts.YES : texts.NO },
           {
-            label: isSuperAdmin(user) ? (
-              <div {...{ onClick: e => e.stopPropagation() }}>
+            label: hasPermission(Permission.FORMAT_RECORDS_WRITE) ? (
+              <div {...{ onClick: (e) => e.stopPropagation() }}>
                 <Checkbox
                   {...{
                     value: !!get(item, "preferred"),
-                    onChange: async value => {
+                    onChange: async (value) => {
                       if (value) {
                         await putFormatDefinition({
                           ...item,
-                          preferred: true
+                          preferred: true,
                         });
                         getFormatDefinitionByFormatId(
                           get(item, "format.formatId")
@@ -69,7 +70,7 @@ const FormatDefinitionTable = ({
                       }
                     },
                     disabled: get(item, "preferred"),
-                    className: "table-checkbox"
+                    className: "table-checkbox",
                   }}
                 />
               </div>
@@ -77,17 +78,19 @@ const FormatDefinitionTable = ({
               texts.YES
             ) : (
               texts.NO
-            )
+            ),
           },
           {
-            label: get(item, "internalInformationFilled") ? texts.YES : texts.NO
+            label: get(item, "internalInformationFilled")
+              ? texts.YES
+              : texts.NO,
           },
           {
             label: (
               <div
                 {...{
                   className: "flex-row-normal-nowrap flex-right",
-                  onClick: e => e.stopPropagation()
+                  onClick: (e) => e.stopPropagation(),
                 }}
               >
                 <DropDown
@@ -96,14 +99,14 @@ const FormatDefinitionTable = ({
                     className: "margin-left-small",
                     items: [
                       {
-                        label: texts.BYTE_ARRAY
+                        label: texts.BYTE_ARRAY,
                       },
                       {
-                        label: texts.JSON
-                      }
+                        label: texts.JSON,
+                      },
                     ],
-                    valueFunction: item => get(item, "label"),
-                    onClick: async value => {
+                    valueFunction: (item) => get(item, "label"),
+                    onClick: async (value) => {
                       if (value === texts.JSON) {
                         const json = await exportFormatDefinitionJSON(item.id);
                         if (hasValue(json)) {
@@ -122,14 +125,14 @@ const FormatDefinitionTable = ({
                           downloadBlob(content, "format_definition.bytes");
                         }
                       }
-                    }
+                    },
                   }}
                 />
               </div>
-            )
-          }
-        ]
-      }))
+            ),
+          },
+        ],
+      })),
     }}
   />
 );
@@ -139,6 +142,6 @@ export default compose(
     putFormatDefinition,
     getFormatDefinitionByFormatId,
     exportFormatDefinitionJSON,
-    exportFormatDefinitionByteArray
+    exportFormatDefinitionByteArray,
   })
 )(FormatDefinitionTable);

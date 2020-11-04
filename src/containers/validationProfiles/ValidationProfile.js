@@ -8,7 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/validationProfiles/Detail";
 import {
   clearValidationProfile,
-  getValidationProfile
+  getValidationProfile,
 } from "../../actions/validationProfileActions";
 
 const ValidationProfile = ({ history, validationProfile, texts, ...props }) => (
@@ -16,8 +16,8 @@ const ValidationProfile = ({ history, validationProfile, texts, ...props }) => (
     {...{
       breadcrumb: [
         { label: texts.VALIDATION_PROFILES, url: "/validation-profiles" },
-        { label: get(validationProfile, "name", "") }
-      ]
+        { label: get(validationProfile, "name", "") },
+      ],
     }}
   >
     {validationProfile && (
@@ -26,11 +26,8 @@ const ValidationProfile = ({ history, validationProfile, texts, ...props }) => (
           history,
           validationProfile,
           texts,
-          initialValues: {
-            name: get(validationProfile, "name", ""),
-            xml: get(validationProfile, "xml", "")
-          },
-          ...props
+          initialValues: validationProfile,
+          ...props,
         }}
       />
     )}
@@ -43,7 +40,7 @@ export default compose(
     ({ validationProfile: { validationProfile } }) => ({ validationProfile }),
     {
       clearValidationProfile,
-      getValidationProfile
+      getValidationProfile,
     }
   ),
   lifecycle({
@@ -51,11 +48,11 @@ export default compose(
       const {
         match,
         clearValidationProfile,
-        getValidationProfile
+        getValidationProfile,
       } = this.props;
 
       clearValidationProfile();
       getValidationProfile(match.params.id);
-    }
+    },
   })
 )(ValidationProfile);

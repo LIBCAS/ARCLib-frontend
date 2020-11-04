@@ -12,7 +12,8 @@ import Pagination from "../../components/Pagination";
 import { getUsers } from "../../actions/usersActions";
 import { getProducers } from "../../actions/producerActions";
 import { setDialog } from "../../actions/appActions";
-import { isSuperAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const Users = ({
   history,
@@ -21,24 +22,26 @@ const Users = ({
   setDialog,
   getProducers,
   texts,
-  user
+  user,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.USERS }] }}>
-    <Button
-      {...{
-        primary: true,
-        className: "margin-bottom-small",
-        onClick: () => {
-          if (isSuperAdmin(user)) {
-            getProducers(false);
-          }
+    {hasPermission(Permission.USER_RECORDS_WRITE) && (
+      <Button
+        {...{
+          primary: true,
+          className: "margin-bottom-small",
+          onClick: () => {
+            if (hasPermission(Permission.PRODUCER_RECORDS_READ)) {
+              getProducers(false);
+            }
 
-          setDialog("UserNew");
-        }
-      }}
-    >
-      {texts.NEW}
-    </Button>
+            setDialog("UserNew");
+          },
+        }}
+      >
+        {texts.NEW}
+      </Button>
+    )}
     <SortOrder
       {...{
         className: "margin-bottom",
@@ -46,9 +49,9 @@ const Users = ({
           { label: texts.UPDATED, value: "updated" },
           { label: texts.CREATED, value: "created" },
           { label: texts.USERNAME, value: "username" },
-          { label: texts.PRODUCER, value: "producerName" }
+          { label: texts.PRODUCER, value: "producerName" },
         ],
-        handleUpdate: () => getUsers()
+        handleUpdate: () => getUsers(),
       }}
     />
     <Table
@@ -57,14 +60,14 @@ const Users = ({
         setDialog,
         texts,
         users: get(users, "items"),
-        handleUpdate: () => getUsers()
+        handleUpdate: () => getUsers(),
       }}
     />
     <Pagination
       {...{
         handleUpdate: () => getUsers(),
         count: get(users, "items.length", 0),
-        countAll: get(users, "count", 0)
+        countAll: get(users, "count", 0),
       }}
     />
   </PageWrapper>
@@ -75,13 +78,13 @@ export default compose(
   connect(({ users: { users } }) => ({ users }), {
     getUsers,
     setDialog,
-    getProducers
+    getProducers,
   }),
   lifecycle({
     componentDidMount() {
       const { getUsers } = this.props;
 
       getUsers();
-    }
+    },
   })
 )(Users);

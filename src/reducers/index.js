@@ -14,6 +14,7 @@ import producer from "./producerReducer";
 import producerProfile from "./producerProfileReducer";
 import query from "./queryReducer";
 import risk from "./riskReducer";
+import roles from "./rolesReducer";
 import report from "./reportReducer";
 import routine from "./routineReducer";
 import sipProfile from "./sipProfileReducer";
@@ -45,6 +46,7 @@ export default combineReducers({
   storage,
   tool,
   users,
+  roles,
   validationProfile,
   workflow,
   workflowDefinition,

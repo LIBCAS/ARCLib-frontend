@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -17,7 +17,7 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
       title: texts.PRODUCER_NEW,
       name: "ProducerNew",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -27,14 +27,14 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.TRANSFER_AREA_PATH,
             name: "transferAreaPath",
-            validate: [Validation.required[language]]
-          }
+            validate: [Validation.required[language]],
+          },
         ],
         (field, key) => (
           <Field {...{ key, id: `producer-new-${field.name}`, ...field }} />
@@ -47,7 +47,8 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
 export default compose(
   connect(null, {
     saveProducer,
-    getProducers
+    getProducers,
+    reset,
   }),
   withRouter,
   withHandlers({
@@ -55,32 +56,34 @@ export default compose(
       closeDialog,
       saveProducer,
       getProducers,
-      texts
-    }) => async formData => {
+      texts,
+      reset,
+    }) => async (formData) => {
       const response = await saveProducer({
         id: uuidv1(),
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
           "name",
-          "transferAreaPath"
-        ])
+          "transferAreaPath",
+        ]),
       });
 
       if (response === 200) {
         getProducers();
+        reset("ProducerNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError(
           response === 409
             ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
             : {
-                transferAreaPath: texts.PRODUCER_NEW_FAILED
+                transferAreaPath: texts.PRODUCER_NEW_FAILED,
               }
         );
       }
-    }
+    },
   }),
   reduxForm({
     form: "ProducerNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(ProducerNew);

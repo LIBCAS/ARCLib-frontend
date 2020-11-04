@@ -8,22 +8,23 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/validationProfiles/Table";
 import { setDialog } from "../../actions/appActions";
 import { getValidationProfiles } from "../../actions/validationProfileActions";
-import { isAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const ValidationProfiles = ({
   history,
   validationProfiles,
   setDialog,
   texts,
-  user
+  user,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.VALIDATION_PROFILES }] }}>
-    {isAdmin(user) && (
+    {hasPermission(Permission.VALIDATION_PROFILE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("ValidationProfileNew")
+          onClick: () => setDialog("ValidationProfileNew"),
         }}
       >
         {texts.NEW}
@@ -39,7 +40,7 @@ export default compose(
     ({ validationProfile: { validationProfiles } }) => ({ validationProfiles }),
     {
       setDialog,
-      getValidationProfiles
+      getValidationProfiles,
     }
   ),
   lifecycle({
@@ -47,6 +48,6 @@ export default compose(
       const { getValidationProfiles } = this.props;
 
       getValidationProfiles();
-    }
+    },
   })
 )(ValidationProfiles);

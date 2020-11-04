@@ -42,8 +42,7 @@ import ToolNew from "./ToolNew";
 import UpdateWithLocalDefinition from "./UpdateWithLocalDefinition";
 import UserDelete from "./UserDelete";
 import UserNew from "./UserNew";
-import UserRoleDelete from "./UserRoleDelete";
-import UserRoleNew from "./UserRoleNew";
+import RoleNew from "./RoleNew";
 import ValidationProfileDelete from "./ValidationProfileDelete";
 import ValidationProfileNew from "./ValidationProfileNew";
 import WorkflowDefinitionDelete from "./WorkflowDefinitionDelete";
@@ -96,8 +95,7 @@ export default [
   UpdateWithLocalDefinition,
   UserDelete,
   UserNew,
-  UserRoleDelete,
-  UserRoleNew,
+  RoleNew,
   ValidationProfileDelete,
   ValidationProfileNew,
   WorkflowDefinitionDelete,

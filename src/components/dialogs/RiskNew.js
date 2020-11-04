@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -17,7 +17,7 @@ const RiskNew = ({ handleSubmit, texts, language }) => (
       title: texts.RISK_NEW,
       name: "RiskNew",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -27,14 +27,14 @@ const RiskNew = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.DESCRIPTION,
             name: "description",
-            type: "textarea"
-          }
+            type: "textarea",
+          },
         ],
         (field, key) => (
           <Field {...{ key, id: `risk-new-${field.name}`, ...field }} />
@@ -47,26 +47,30 @@ const RiskNew = ({ handleSubmit, texts, language }) => (
 export default compose(
   connect(null, {
     putRisk,
-    getRisks
+    getRisks,
+    reset,
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({ closeDialog, putRisk, getRisks, texts }) => async formData => {
+    onSubmit: ({ closeDialog, putRisk, getRisks, texts, reset }) => async (
+      formData
+    ) => {
       const response = await putRisk({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"])
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
       });
 
       if (response) {
         getRisks();
+        reset("RiskNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError({ description: texts.RISK_NEW_FAILED });
       }
-    }
+    },
   }),
   reduxForm({
     form: "RiskNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(RiskNew);

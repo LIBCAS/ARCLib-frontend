@@ -12,10 +12,10 @@ import { TextField, Checkbox, SelectField } from "../form";
 import { putTool } from "../../actions/toolActions";
 import { setDialog } from "../../actions/appActions";
 import {
-  isSuperAdmin,
-  removeStartEndWhiteSpaceInSelectedFields
+  hasPermission,
+  removeStartEndWhiteSpaceInSelectedFields,
 } from "../../utils";
-import { toolFunctionsOptions } from "../../enums";
+import { Permission, toolFunctionsOptions } from "../../enums";
 
 const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
   <div>
@@ -35,7 +35,7 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                           component: TextField,
                           label: texts.NAME,
                           name: "name",
-                          disabled: true
+                          disabled: true,
                         },
                         {
                           component: SelectField,
@@ -43,39 +43,39 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                           name: "toolFunction",
                           options: toolFunctionsOptions,
                           lg: 12,
-                          disabled: true
+                          disabled: true,
                         },
                         {
                           component: TextField,
                           label: texts.LICENSE_INFORMATION,
                           name: "licenseInformation",
-                          lg: 12
+                          lg: 12,
                         },
                         {
                           component: TextField,
                           label: texts.VERSION,
                           name: "version",
                           type: "textarea",
-                          disabled: true
+                          disabled: true,
                         },
                         {
                           component: TextField,
                           label: texts.DOCUMENTATION,
                           name: "documentation",
-                          type: "textarea"
+                          type: "textarea",
                         },
                         {
                           component: TextField,
                           label: texts.DESCRIPTION,
                           name: "description",
-                          type: "textarea"
+                          type: "textarea",
                         },
                         {
                           component: Checkbox,
                           label: texts.INTERNAL,
                           name: "internal",
-                          disabled: true
-                        }
+                          disabled: true,
+                        },
                       ],
                       ({ lg, disabled, ...field }, key) => (
                         <Col {...{ key, lg: lg || 24 }}>
@@ -83,8 +83,10 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                             {...{
                               key,
                               id: `tools-detail-${field.name}`,
-                              disabled: !isSuperAdmin(user) || disabled,
-                              ...field
+                              disabled:
+                                !hasPermission(Permission.TOOL_RECORDS_WRITE) ||
+                                disabled,
+                              ...field,
                             }}
                           />
                         </Col>
@@ -99,7 +101,7 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                       {...{
                         primary: true,
                         type: "submit",
-                        className: "margin-left-small"
+                        className: "margin-left-small",
                       }}
                     >
                       {texts.SAVE_AND_CLOSE}
@@ -107,7 +109,7 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                   </div>
                 </form>
               </div>
-            )
+            ),
           },
           {
             title: texts.RELATED_ISSUES,
@@ -131,22 +133,22 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                     texts,
                     issues: get(tool, "possibleIssues"),
                     tool,
-                    setDialog
+                    setDialog,
                   }}
                 />
                 <div {...{ className: "flex-row flex-right" }}>
                   <Button
                     {...{
-                      onClick: () => history.push("/tools")
+                      onClick: () => history.push("/tools"),
                     }}
                   >
                     {texts.CLOSE}
                   </Button>
                 </div>
               </div>
-            )
-          }
-        ]
+            ),
+          },
+        ],
       }}
     />
   </div>
@@ -155,7 +157,7 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
 export default compose(
   connect(
     ({ tool: { tools } }) => ({
-      tools
+      tools,
     }),
     { putTool, setDialog }
   ),
@@ -169,21 +171,21 @@ export default compose(
           ...tool,
           ...removeStartEndWhiteSpaceInSelectedFields(formData, [
             "name",
-            "licenseInformation"
+            "licenseInformation",
           ]),
-          internal: internal === true
+          internal: internal === true,
         })
       ) {
         history.push("/tools");
       } else {
         throw new SubmissionError({
-          internal: texts.SAVE_FAILED
+          internal: texts.SAVE_FAILED,
         });
       }
-    }
+    },
   }),
   reduxForm({
     form: "tools-detail",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(Detail);

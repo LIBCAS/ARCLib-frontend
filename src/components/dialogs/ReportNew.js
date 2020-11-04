@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -62,10 +62,11 @@ export default compose(
   connect(null, {
     saveReport,
     getReports,
+    reset,
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({ closeDialog, saveReport, getReports, texts }) => async (
+    onSubmit: ({ closeDialog, saveReport, getReports, texts, reset }) => async (
       formData
     ) => {
       const ok = await saveReport({
@@ -75,6 +76,7 @@ export default compose(
 
       if (ok) {
         getReports();
+        reset("ReportNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError({

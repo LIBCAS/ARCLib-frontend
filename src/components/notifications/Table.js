@@ -1,39 +1,42 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { map, get } from "lodash";
+import { map, get, compact } from "lodash";
 
 import ConfirmButton from "../ConfirmButton";
 import Table from "../table/Table";
 import {
   deleteNotification,
-  getNotifications
+  getNotifications,
 } from "../../actions/notificationActions";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const NotificationsTable = ({
   history,
   notifications,
   texts,
   deleteNotification,
-  getNotifications
-}) => (
-  <Table
-    {...{
-      thCells: [
-        { label: texts.CREATOR },
-        { label: texts.CRON_EXPRESSION },
-        { label: texts.MESSAGE },
-        { label: "" }
-      ],
-      items: map(notifications, item => ({
-        onClick: () => history.push(`/notifications/${item.id}`),
-        items: [
-          { label: get(item, "creator.fullName", "") },
-          { label: get(item, "cron", "") },
-          { label: get(item, "message", "") },
-          {
-            label: (
-              <div {...{ onClick: e => e.stopPropagation() }}>
+  getNotifications,
+}) => {
+  const deleteEnabled = hasPermission(Permission.NOTIFICATION_RECORDS_WRITE);
+  return (
+    <Table
+      {...{
+        thCells: compact([
+          { label: texts.CREATOR },
+          { label: texts.CRON_EXPRESSION },
+          { label: texts.MESSAGE },
+          deleteEnabled && { label: "" },
+        ]),
+        items: map(notifications, (item) => ({
+          onClick: () => history.push(`/notifications/${item.id}`),
+          items: compact([
+            { label: get(item, "creator.fullName", "") },
+            { label: get(item, "cron", "") },
+            { label: get(item, "message", "") },
+            deleteEnabled && {
+              label: (
                 <ConfirmButton
                   {...{
                     label: texts.DELETE,
@@ -42,18 +45,18 @@ const NotificationsTable = ({
                     onClick: async () => {
                       await deleteNotification(get(item, "id"));
                       getNotifications();
-                    }
+                    },
                   }}
                 />
-              </div>
-            ),
-            className: "text-right"
-          }
-        ]
-      }))
-    }}
-  />
-);
+              ),
+              className: "text-right",
+            },
+          ]),
+        })),
+      }}
+    />
+  );
+};
 
 export default compose(connect(null, { deleteNotification, getNotifications }))(
   NotificationsTable

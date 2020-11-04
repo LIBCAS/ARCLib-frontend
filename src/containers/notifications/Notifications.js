@@ -8,6 +8,8 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/notifications/Table";
 import { getNotifications } from "../../actions/notificationActions";
 import { setDialog } from "../../actions/appActions";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const Notifications = ({ history, notifications, texts, setDialog }) => (
   <PageWrapper
@@ -15,25 +17,27 @@ const Notifications = ({ history, notifications, texts, setDialog }) => (
       breadcrumb: [
         {
           label:
-            texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS
-        }
-      ]
+            texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
+        },
+      ],
     }}
   >
-    <Button
-      {...{
-        primary: true,
-        className: "margin-bottom-small",
-        onClick: () => setDialog("NotificationNew")
-      }}
-    >
-      {texts.NEW}
-    </Button>
+    {hasPermission(Permission.NOTIFICATION_RECORDS_WRITE) && (
+      <Button
+        {...{
+          primary: true,
+          className: "margin-bottom-small",
+          onClick: () => setDialog("NotificationNew"),
+        }}
+      >
+        {texts.NEW}
+      </Button>
+    )}
     <Table
       {...{
         history,
         texts,
-        notifications
+        notifications,
       }}
     />
   </PageWrapper>
@@ -43,13 +47,13 @@ export default compose(
   withRouter,
   connect(({ notification: { notifications } }) => ({ notifications }), {
     getNotifications,
-    setDialog
+    setDialog,
   }),
   lifecycle({
     componentDidMount() {
       const { getNotifications } = this.props;
 
       getNotifications();
-    }
+    },
   })
 )(Notifications);

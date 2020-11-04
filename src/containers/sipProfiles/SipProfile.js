@@ -26,9 +26,7 @@ const SipProfile = ({ history, sipProfile, texts, ...props }) => (
           history,
           sipProfile,
           texts,
-          initialValues: {
-            ...sipProfile
-          },
+          initialValues: sipProfile,
           ...props
         }}
       />

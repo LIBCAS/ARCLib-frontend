@@ -20,7 +20,7 @@ const IngestWorkflows = ({ history, ingestWorkflows, texts }) => (
           { label: formatDateTime(item.created) },
           { label: formatDateTime(item.updated) },
           { label: get(item, "externalId", "") },
-          { label: get(item, "sip.authorialPackage.authorialId", "") },
+          { label: get(item, "sipAuthorialId", "") },
           {
             label: get(
               texts,

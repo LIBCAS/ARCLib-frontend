@@ -23,9 +23,7 @@ const Tool = ({ history, tool, getTool, texts, ...props }) => (
           history,
           texts,
           tool,
-          initialValues: {
-            ...tool
-          },
+          initialValues: tool,
           ...props
         }}
       />

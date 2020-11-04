@@ -9,7 +9,8 @@ import Table from "../../components/ingestRoutines/Table";
 import { setDialog } from "../../actions/appActions";
 import { getRoutines } from "../../actions/routineActions";
 import { getProducerProfiles } from "../../actions/producerProfileActions";
-import { isEditor, isSuperAdmin, isArchivist } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const IngestRoutines = ({
   history,
@@ -17,10 +18,10 @@ const IngestRoutines = ({
   setDialog,
   getProducerProfiles,
   texts,
-  user
+  user,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.INGEST_ROUTINES }] }}>
-    {(isSuperAdmin(user) || isEditor(user) || isArchivist(user)) && (
+    {hasPermission(Permission.INGEST_ROUTINE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
@@ -28,7 +29,7 @@ const IngestRoutines = ({
           onClick: () => {
             getProducerProfiles(false);
             setDialog("IngestRoutineNew");
-          }
+          },
         }}
       >
         {texts.NEW}
@@ -43,13 +44,13 @@ export default compose(
   connect(({ routine: { routines } }) => ({ routines }), {
     getRoutines,
     setDialog,
-    getProducerProfiles
+    getProducerProfiles,
   }),
   lifecycle({
     componentWillMount() {
       const { getRoutines } = this.props;
 
       getRoutines();
-    }
+    },
   })
 )(IngestRoutines);

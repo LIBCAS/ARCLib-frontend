@@ -13,8 +13,8 @@ const Issue = ({ history, issue, getIssue, texts, ...props }) => (
     {...{
       breadcrumb: [
         { label: texts.ISSUE_DICTIONARY, url: "/issue-dictionary" },
-        { label: get(issue, "name", "") }
-      ]
+        { label: get(issue, "name", "") },
+      ],
     }}
   >
     {issue && (
@@ -23,10 +23,8 @@ const Issue = ({ history, issue, getIssue, texts, ...props }) => (
           history,
           texts,
           issue,
-          initialValues: {
-            ...issue
-          },
-          ...props
+          initialValues: issue,
+          ...props,
         }}
       />
     )}
@@ -37,7 +35,7 @@ export default compose(
   withRouter,
   connect(
     ({ issueDictionary: { issue } }) => ({
-      issue
+      issue,
     }),
     { getIssue }
   ),
@@ -46,6 +44,6 @@ export default compose(
       const { match, getIssue } = this.props;
 
       getIssue(match.params.id);
-    }
+    },
   })
 )(Issue);

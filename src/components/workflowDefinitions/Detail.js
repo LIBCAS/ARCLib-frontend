@@ -8,7 +8,11 @@ import Button from "../Button";
 import { TextField, SyntaxHighlighterField, Validation } from "../form";
 import { saveWorkflowDefinition } from "../../actions/workflowDefinitionActions";
 import { setDialog } from "../../actions/appActions";
-import { isAdmin, removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import {
+  hasPermission,
+  removeStartEndWhiteSpaceInSelectedFields,
+} from "../../utils";
+import { Permission } from "../../enums";
 
 const Detail = ({
   history,
@@ -17,55 +21,58 @@ const Detail = ({
   texts,
   language,
   user,
-}) => (
-  <div>
-    <form {...{ onSubmit: handleSubmit }}>
-      {map(
-        [
-          {
-            component: TextField,
-            label: texts.NAME,
-            name: "name",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: SyntaxHighlighterField,
-            label: texts.BPMN_DEFINITION,
-            name: "bpmnDefinition",
-            validate: [Validation.required[language]],
-            fileName: get(workflowDefinition, "name"),
-          },
-        ],
-        (field) => (
-          <Field
-            {...{
-              key: field.name,
-              id: `workflow-definition-detail-${field.name}`,
-              disabled: !isAdmin(user),
-              ...field,
-            }}
-          />
-        )
-      )}
-      <div {...{ className: "flex-row flex-right" }}>
-        <Button {...{ onClick: () => history.push("/workflow-definitions") }}>
-          {isAdmin(user) ? texts.STORNO : texts.CLOSE}
-        </Button>
-        {isAdmin(user) && (
-          <Button
-            {...{
-              primary: true,
-              type: "submit",
-              className: "margin-left-small",
-            }}
-          >
-            {texts.SAVE_AND_CLOSE}
-          </Button>
+}) => {
+  const editEnabled = hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE);
+  return (
+    <div>
+      <form {...{ onSubmit: handleSubmit }}>
+        {map(
+          [
+            {
+              component: TextField,
+              label: texts.NAME,
+              name: "name",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: SyntaxHighlighterField,
+              label: texts.BPMN_DEFINITION,
+              name: "bpmnDefinition",
+              validate: [Validation.required[language]],
+              fileName: get(workflowDefinition, "name"),
+            },
+          ],
+          (field) => (
+            <Field
+              {...{
+                key: field.name,
+                id: `workflow-definition-detail-${field.name}`,
+                disabled: !editEnabled,
+                ...field,
+              }}
+            />
+          )
         )}
-      </div>
-    </form>
-  </div>
-);
+        <div {...{ className: "flex-row flex-right" }}>
+          <Button {...{ onClick: () => history.push("/workflow-definitions") }}>
+            {editEnabled ? texts.STORNO : texts.CLOSE}
+          </Button>
+          {editEnabled && (
+            <Button
+              {...{
+                primary: true,
+                type: "submit",
+                className: "margin-left-small",
+              }}
+            >
+              {texts.SAVE_AND_CLOSE}
+            </Button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default compose(
   connect(null, {

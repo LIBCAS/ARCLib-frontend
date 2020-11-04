@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map, get } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -18,7 +18,7 @@ const ToolNew = ({ handleSubmit, texts, language }) => (
       title: texts.TOOL_NEW,
       name: "ToolNew",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -28,46 +28,46 @@ const ToolNew = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.TOOL_FUNCTION,
             name: "toolFunction",
             options: toolFunctionsOptions,
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.FORMAT_RELATION_TYPE,
             name: "formatRelationType",
             options: formatRelationTypeOptions,
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.VERSION,
             name: "version",
             type: "textarea",
-            rows: 2
+            rows: 2,
           },
           {
             component: TextField,
             label: texts.DOCUMENTATION,
             name: "documentation",
-            type: "textarea"
+            type: "textarea",
           },
           {
             component: TextField,
             label: texts.DESCRIPTION,
             name: "description",
-            type: "textarea"
+            type: "textarea",
           },
           {
             component: Checkbox,
             label: texts.INTERNAL,
-            name: "internal"
-          }
+            name: "internal",
+          },
         ],
         (field, key) => (
           <Field {...{ key, id: `tool-new-${field.name}`, ...field }} />
@@ -80,36 +80,38 @@ const ToolNew = ({ handleSubmit, texts, language }) => (
 export default compose(
   connect(null, {
     putTool,
-    getTools
+    getTools,
+    reset,
   }),
   withRouter,
   withProps({
     initialValues: {
       toolFunction: get(toolFunctionsOptions, "[0].value"),
-      formatRelationType: get(formatRelationTypeOptions, "[0].value")
-    }
+      formatRelationType: get(formatRelationTypeOptions, "[0].value"),
+    },
   }),
   withHandlers({
-    onSubmit: ({ closeDialog, putTool, getTools, texts }) => async ({
+    onSubmit: ({ closeDialog, putTool, getTools, texts, reset }) => async ({
       internal,
       ...formData
     }) => {
       const response = await putTool({
         id: uuidv1(),
         ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
-        internal: internal === true
+        internal: internal === true,
       });
 
       if (response) {
         getTools();
+        reset("ToolNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError({ internal: texts.TOOL_NEW_FAILED });
       }
-    }
+    },
   }),
   reduxForm({
     form: "ToolNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(ToolNew);

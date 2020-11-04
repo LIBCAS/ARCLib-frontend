@@ -24,7 +24,7 @@ const Report = ({ history, report, getReport, texts, ...props }) => (
           texts,
           report,
           getReport,
-          initialValues: { ...report },
+          initialValues: report,
           ...props,
         }}
       />

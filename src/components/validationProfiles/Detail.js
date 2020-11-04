@@ -7,7 +7,11 @@ import { get, map } from "lodash";
 import Button from "../Button";
 import { TextField, SyntaxHighlighterField, Validation } from "../form";
 import { saveValidationProfile } from "../../actions/validationProfileActions";
-import { isAdmin, removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import {
+  hasPermission,
+  removeStartEndWhiteSpaceInSelectedFields,
+} from "../../utils";
+import { Permission } from "../../enums";
 
 const Detail = ({
   handleSubmit,
@@ -16,55 +20,64 @@ const Detail = ({
   language,
   user,
   history,
-}) => (
-  <div>
-    <form {...{ onSubmit: handleSubmit }}>
-      {map(
-        [
-          {
-            component: TextField,
-            label: texts.NAME,
-            name: "name",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: SyntaxHighlighterField,
-            label: texts.XML_DEFINITION,
-            name: "xml",
-            validate: [Validation.required[language]],
-            fileName: get(validationProfile, "name"),
-          },
-        ],
-        (field) => (
-          <Field
-            {...{
-              key: field.name,
-              id: `validation-profile-detail-${field.name}`,
-              disabled: !isAdmin(user),
-              ...field,
-            }}
-          />
-        )
-      )}
-      <div {...{ className: "flex-row flex-right" }}>
-        <Button {...{ onClick: () => history.push("/validation-profiles") }}>
-          {isAdmin(user) ? texts.STORNO : texts.CLOSE}
-        </Button>
-        {isAdmin(user) && (
-          <Button
-            {...{
-              primary: true,
-              type: "submit",
-              className: "margin-left-small",
-            }}
-          >
-            {texts.SAVE_AND_CLOSE}
-          </Button>
+}) => {
+  const editEnabled = hasPermission(Permission.VALIDATION_PROFILE_RECORDS_WRITE);
+  return (
+    <div>
+      <form {...{ onSubmit: handleSubmit }}>
+        {map(
+          [
+            {
+              component: TextField,
+              label: texts.NAME,
+              name: "name",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: TextField,
+              label: texts.EXTERNAL_ID,
+              name: "externalId",
+              disabled: true,
+            },
+            {
+              component: SyntaxHighlighterField,
+              label: texts.XML_DEFINITION,
+              name: "xml",
+              validate: [Validation.required[language]],
+              fileName: get(validationProfile, "name"),
+            },
+          ],
+          (field) => (
+            <Field
+              {...{
+                key: field.name,
+                id: `validation-profile-detail-${field.name}`,
+                disabled: !editEnabled,
+                ...field,
+              }}
+            />
+          )
         )}
-      </div>
-    </form>
-  </div>
-);
+        <div {...{ className: "flex-row flex-right" }}>
+          <Button {...{ onClick: () => history.push("/validation-profiles") }}>
+            {editEnabled ? texts.STORNO : texts.CLOSE}
+          </Button>
+          {editEnabled && (
+            <Button
+              {...{
+                primary: true,
+                type: "submit",
+                className: "margin-left-small",
+              }}
+            >
+              {texts.SAVE_AND_CLOSE}
+            </Button>
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default compose(
   connect(null, {

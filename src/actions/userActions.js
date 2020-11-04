@@ -1,16 +1,14 @@
 import base64 from "base-64";
 import utf8 from "utf8";
 import jwt_decode from "jwt-decode";
-import { isEmpty } from "lodash";
 
 import fetch from "../utils/fetch";
 import * as c from "./constants";
 import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { getUserRoles } from "./usersActions";
 import * as storage from "../utils/storage";
 import { tokenNotEmpty } from "../utils";
 
-export const signIn = (name, password) => async dispatch => {
+export const signIn = (name, password) => async (dispatch) => {
   dispatch(showLoader());
   try {
     storage.remove("token");
@@ -20,8 +18,8 @@ export const signIn = (name, password) => async dispatch => {
       headers: new Headers({
         Authorization: `Basic ${utf8.encode(
           base64.encode(`${name}:${password}`)
-        )}`
-      })
+        )}`,
+      }),
     });
 
     if (response.status === 200) {
@@ -47,32 +45,49 @@ export const signOut = () => async () => {
   return true;
 };
 
-export const getUser = id => async dispatch => {
+export const getUser = (id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/user/${id}`);
 
     if (response.status === 200) {
       const user = await response.json();
 
-      const roles = await dispatch(getUserRoles(id));
-
       dispatch({
         type: c.APP,
         payload: {
-          user: !isEmpty(roles) ? { roles, ...user } : user
-        }
+          user: user,
+        },
       });
     } else {
       dispatch({
         type: c.APP,
         payload: {
-          user: null
-        }
+          user: null,
+        },
       });
     }
 
     dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const updateUser = (params) => async (dispatch) => {
+  try {
+    const response = await fetch("/api/user/me/update", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(params),
+    });
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok;
   } catch (error) {
     console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));

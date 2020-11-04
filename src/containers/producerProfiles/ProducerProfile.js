@@ -7,8 +7,8 @@ import { get } from "lodash";
 import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/producerProfiles/Detail";
 import { getProducerProfile } from "../../actions/producerProfileActions";
-import { prettyJSON } from "../../utils";
-import { isSuperAdmin, isAdmin } from "../../utils";
+import { hasPermission, prettyJSON } from "../../utils";
+import { Permission } from "../../enums";
 
 const ProducerProfile = ({
   history,
@@ -21,8 +21,8 @@ const ProducerProfile = ({
     {...{
       breadcrumb: [
         { label: texts.PRODUCER_PROFILES, url: "/producer-profiles" },
-        { label: get(producerProfile, "name", "") }
-      ]
+        { label: get(producerProfile, "name", "") },
+      ],
     }}
   >
     {get(props.user, "producer") && producerProfile && (
@@ -33,11 +33,10 @@ const ProducerProfile = ({
           producerProfile,
           getProducerProfile,
           initialValues: {
-            name: get(producerProfile, "name", ""),
+            ...producerProfile,
             producer: props.canEditAll
               ? get(producerProfile, "producer.id")
               : get(producerProfile, "producer"),
-            externalId: get(producerProfile, "externalId", ""),
             sipProfile: get(producerProfile, "sipProfile.id", ""),
             validationProfile: get(producerProfile, "validationProfile.id", ""),
             workflowDefinition: get(
@@ -48,9 +47,8 @@ const ProducerProfile = ({
             workflowConfig: prettyJSON(
               get(producerProfile, "workflowConfig", "")
             ),
-            debuggingModeActive: get(producerProfile, "debuggingModeActive", "")
           },
-          ...props
+          ...props,
         }}
       />
     )}
@@ -61,21 +59,23 @@ export default compose(
   withRouter,
   connect(
     ({ producerProfile: { producerProfile } }) => ({
-      producerProfile
+      producerProfile,
     }),
     { getProducerProfile }
   ),
   withProps(({ user, producerProfile }) => ({
-    canEditAll: isSuperAdmin(user),
+    canEditAll:
+      hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) &&
+      hasPermission(Permission.PRODUCER_RECORDS_READ),
     canEdit:
-      isAdmin(user) &&
-      get(producerProfile, "producer.id") === get(user, "producer.id")
+      hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) &&
+      get(producerProfile, "producer.id") === get(user, "producer.id"),
   })),
   lifecycle({
     componentWillMount() {
       const { match, getProducerProfile } = this.props;
 
       getProducerProfile(match.params.id);
-    }
+    },
   })
 )(ProducerProfile);

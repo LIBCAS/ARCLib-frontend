@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -18,7 +18,7 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
       title: texts.ATTACH_NEW_STORAGE,
       name: "AttachNewStorage",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -28,13 +28,13 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.NAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.HOST,
             name: "host",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
@@ -42,9 +42,9 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
             name: "port",
             validate: [
               Validation.required[language],
-              Validation.isNumeric[language]
+              Validation.isNumeric[language],
             ],
-            type: "number"
+            type: "number",
           },
           {
             component: TextField,
@@ -52,29 +52,29 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
             name: "priority",
             validate: [
               Validation.required[language],
-              Validation.isNumeric[language]
+              Validation.isNumeric[language],
             ],
-            type: "number"
+            type: "number",
           },
           {
             component: SelectField,
             label: texts.STORAGE_TYPE,
             name: "storageType",
             validate: [Validation.required[language]],
-            options: storageTypesOptions
+            options: storageTypesOptions,
           },
           {
             component: TextField,
             label: texts.CONFIGURATION_FILE,
             validate: [Validation.required[language]],
-            name: "config"
+            name: "config",
           },
           {
             component: TextField,
             label: texts.NOTE,
             name: "note",
-            type: "textarea"
-          }
+            type: "textarea",
+          },
         ],
         (field, key) => (
           <Field
@@ -89,7 +89,8 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
 export default compose(
   connect(null, {
     attachNewStorage,
-    getStorages
+    getStorages,
+    reset,
   }),
   withProps({ initialValues: { storageType: storageTypes.FS } }),
   withRouter,
@@ -98,29 +99,31 @@ export default compose(
       closeDialog,
       attachNewStorage,
       getStorages,
-      texts
-    }) => async formData => {
+      texts,
+      reset,
+    }) => async (formData) => {
       if (
         await attachNewStorage({
           id: uuidv1(),
           ...removeStartEndWhiteSpaceInSelectedFields(formData, [
             "name",
             "host",
-            "config"
-          ])
+            "config",
+          ]),
         })
       ) {
         getStorages();
+        reset("AttachNewStorageDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError({
-          note: texts.ATTACH_NEW_STORAGE_FAILED
+          note: texts.ATTACH_NEW_STORAGE_FAILED,
         });
       }
-    }
+    },
   }),
   reduxForm({
     form: "AttachNewStorageDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(AttachNewStorage);

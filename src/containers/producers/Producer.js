@@ -23,7 +23,7 @@ const Producer = ({ history, producer, texts, ...props }) => (
           history,
           texts,
           producer,
-          initialValues: { ...producer },
+          initialValues: producer,
           ...props
         }}
       />

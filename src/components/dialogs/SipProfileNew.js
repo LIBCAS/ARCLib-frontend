@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map, get } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -90,6 +90,7 @@ export default compose(
     {
       saveSipProfile,
       getSipProfiles,
+      reset,
     }
   ),
   withRouter,
@@ -99,6 +100,7 @@ export default compose(
       saveSipProfile,
       getSipProfiles,
       texts,
+      reset,
     }) => async (formData) => {
       const response = await saveSipProfile({
         id: uuidv1(),
@@ -113,6 +115,7 @@ export default compose(
 
       if (response === 200) {
         getSipProfiles();
+        reset("SipProfileNewDialogForm");
         closeDialog();
       } else {
         throw new SubmissionError(

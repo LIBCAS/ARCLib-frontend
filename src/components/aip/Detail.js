@@ -11,16 +11,29 @@ import Button from "../Button";
 import DropDown from "../DropDown";
 import Tooltip from "../Tooltip";
 import { downloadAip, downloadXml, getAipInfo } from "../../actions/aipActions";
-import { formatDateTime, isAdmin, isSuperAdmin, isArchivist, isEditor } from "../../utils";
+import { formatDateTime, hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
-const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, downloadAip, downloadXml }) => (
+const Detail = ({
+  aip,
+  texts,
+  setDialog,
+  history,
+  storages,
+  getAipInfo,
+  downloadAip,
+  downloadXml,
+}) => (
   <div>
     <div {...{ className: "margin-bottom-small" }}>
       <div>
         <span
           {...{
             className: "link",
-            onClick: () => history.push(`/ingest-workflows/${get(aip, "ingestWorkflow.externalId")}`)
+            onClick: () =>
+              history.push(
+                `/ingest-workflows/${get(aip, "ingestWorkflow.externalId")}`
+              ),
           }}
         >
           {texts.SWITCH_TO_INGEST_WORKFLOW_DETAIL}
@@ -29,7 +42,7 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
     </div>
     <div
       {...{
-        className: "flex-row flex-right"
+        className: "flex-row flex-right",
       }}
     >
       {map(
@@ -37,8 +50,14 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
           {
             label: texts.DOWNLOAD_AIP,
             className: "margin-bottom-small",
-            onClick: () => downloadAip(get(aip, "ingestWorkflow.sip.id"), get(aip, "indexedFields.debug_mode[0]")),
-            show: get(aip, "indexedFields.aip_state[0]") === "ARCHIVED"
+            onClick: () =>
+              downloadAip(
+                get(aip, "ingestWorkflow.sip.id"),
+                get(aip, "indexedFields.debug_mode[0]")
+              ),
+            show:
+              get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
+              hasPermission(Permission.EXPORT_FILES),
           },
           {
             label: texts.DOWNLOAD_XML,
@@ -49,17 +68,22 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
                 get(aip, "ingestWorkflow.xmlVersionNumber"),
                 get(aip, "indexedFields.debug_mode[0]")
               ),
-            show: get(aip, "indexedFields.aip_state[0]") === "ARCHIVED"
+            show:
+              get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
+              hasPermission(Permission.EXPORT_FILES),
           },
           {
             label: texts.EDIT,
             className: "margin-bottom-small margin-left-small",
-            onClick: () => history.push(`/aip/edit/${get(aip, "ingestWorkflow.externalId")}`),
+            onClick: () =>
+              history.push(
+                `/aip/edit/${get(aip, "ingestWorkflow.externalId")}`
+              ),
             show:
               !get(aip, "indexedFields.debug_mode[0]") &&
               get(aip, "ingestWorkflow.latestVersion") &&
               get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
-              (isSuperAdmin(user) || isEditor(user))
+              hasPermission(Permission.UPDATE_XML),
           },
           {
             label: texts.AIP_DELETE,
@@ -68,13 +92,13 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
             onClick: () =>
               setDialog("AipDelete", {
                 id: get(aip, "ingestWorkflow.sip.id"),
-                externalId: get(aip, "ingestWorkflow.externalId")
+                externalId: get(aip, "ingestWorkflow.externalId"),
               }),
             show:
               !get(aip, "indexedFields.debug_mode[0]") &&
               (get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" ||
                 get(aip, "indexedFields.aip_state[0]") === "REMOVED") &&
-              (isAdmin(user) || isSuperAdmin(user) || isArchivist(user))
+              hasPermission(Permission.DELETION_REQUESTS_WRITE),
           },
           {
             label: texts.AIP_REMOVE,
@@ -83,12 +107,12 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
             onClick: () =>
               setDialog("AipRemove", {
                 id: get(aip, "ingestWorkflow.sip.id"),
-                externalId: get(aip, "ingestWorkflow.externalId")
+                externalId: get(aip, "ingestWorkflow.externalId"),
               }),
             show:
               !get(aip, "indexedFields.debug_mode[0]") &&
               get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
-              (isAdmin(user) || isSuperAdmin(user) || isArchivist(user))
+              hasPermission(Permission.LOGICAL_FILE_REMOVE),
           },
           {
             label: texts.RENEW,
@@ -96,22 +120,22 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
             onClick: () =>
               setDialog("AipRenew", {
                 id: get(aip, "ingestWorkflow.sip.id"),
-                externalId: get(aip, "ingestWorkflow.externalId")
+                externalId: get(aip, "ingestWorkflow.externalId"),
               }),
             show:
               !get(aip, "indexedFields.debug_mode[0]") &&
               get(aip, "indexedFields.aip_state[0]") === "REMOVED" &&
-              (isAdmin(user) || isSuperAdmin(user) || isArchivist(user))
+              hasPermission(Permission.LOGICAL_FILE_RENEW),
           },
           {
             label: texts.FORGET,
             className: "margin-bottom-small margin-left-small",
             onClick: () =>
               setDialog("AipForget", {
-                id: get(aip, "ingestWorkflow.sip.authorialPackage.id")
+                id: get(aip, "ingestWorkflow.sip.authorialPackage.id"),
               }),
-            show: get(aip, "indexedFields.debug_mode[0]")
-          }
+            show: get(aip, "indexedFields.debug_mode[0]"),
+          },
         ],
         ({ show, label, tooltip, ...props }, key) =>
           show &&
@@ -120,7 +144,7 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
               {...{
                 key,
                 title: tooltip,
-                content: <Button {...props}>{label}</Button>
+                content: <Button {...props}>{label}</Button>,
               }}
             />
           ) : (
@@ -129,22 +153,25 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
       )}
       {get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
       !get(aip, "indexedFields.debug_mode[0]") &&
-      isSuperAdmin(user) ? (
+      hasPermission(Permission.SUPER_ADMIN) ? (
         <DropDown
           {...{
             label: texts.TEST_ON_STORAGE,
             className: "margin-bottom-small margin-left-small",
             items: storages,
-            labelFunction: item => get(item, "name"),
-            valueFunction: item => get(item, "id"),
-            onClick: async value => {
-              const info = await getAipInfo(get(aip, "ingestWorkflow.sip.id"), value);
+            labelFunction: (item) => get(item, "name"),
+            valueFunction: (item) => get(item, "id"),
+            onClick: async (value) => {
+              const info = await getAipInfo(
+                get(aip, "ingestWorkflow.sip.id"),
+                value
+              );
 
               setDialog("AipInfo", {
                 ...info,
-                aipId: get(aip, "ingestWorkflow.sip.id")
+                aipId: get(aip, "ingestWorkflow.sip.id"),
               });
-            }
+            },
           }}
         />
       ) : (
@@ -165,43 +192,43 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
             {
               label: texts.CREATED,
               component: TextField,
-              name: "created"
+              name: "created",
             },
             {
               label: texts.VERSION,
               component: TextField,
-              name: "version"
+              name: "version",
             },
             {
               label: texts.ID,
               component: TextField,
-              name: "indexedFields.id[0]"
+              name: "indexedFields.id[0]",
             },
             {
               label: texts.AUTHORIAL_ID,
               component: TextField,
-              name: "indexedFields.authorial_id[0]"
+              name: "indexedFields.authorial_id[0]",
             },
             {
               label: texts.AIP_ID,
               component: TextField,
-              name: "indexedFields.sip_id[0]"
+              name: "indexedFields.sip_id[0]",
             },
             {
               label: texts.RESPONSIBLE_PERSON_NAME,
               component: TextField,
-              name: "indexedFields.user_name[0]"
+              name: "indexedFields.user_name[0]",
             },
             {
               label: texts.PRODUCER_NAME,
               component: TextField,
-              name: "indexedFields.producer_name[0]"
+              name: "indexedFields.producer_name[0]",
             },
             {
               label: texts.LABEL,
               component: TextField,
-              name: "indexedFields.label[0]"
-            }
+              name: "indexedFields.label[0]",
+            },
           ],
           (field, key) => (
             <Col {...{ key, xs: 24, lg: 12, xxl: 6 }}>
@@ -209,7 +236,7 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
                 {...{
                   id: `aip-detail-${field.name}`,
                   disabled: true,
-                  ...field
+                  ...field,
                 }}
               />
             </Col>
@@ -221,12 +248,14 @@ const Detail = ({ aip, texts, setDialog, history, user, storages, getAipInfo, do
       <Tree
         {...{
           className: "margin-top-small",
-          data: get(aip, "ingestWorkflow.sip.folderStructure")
+          data: get(aip, "ingestWorkflow.sip.folderStructure"),
         }}
       />
     )}
     <div {...{ className: "flex-row flex-right" }}>
-      <Button {...{ onClick: () => history.push("/aip-search") }}>{texts.CLOSE}</Button>
+      <Button {...{ onClick: () => history.push("/aip-search") }}>
+        {texts.CLOSE}
+      </Button>
     </div>
   </div>
 );
@@ -241,11 +270,11 @@ export default compose(
         aip,
         "indexedFields.xml_version_number[0]",
         ""
-      )}`
-    }
+      )}`,
+    },
   })),
   reduxForm({
     form: "aip-detail",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(Detail);

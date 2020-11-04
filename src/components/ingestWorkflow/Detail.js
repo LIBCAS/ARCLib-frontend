@@ -107,6 +107,19 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
                         show: true,
                       },
                       {
+                        label: texts.TRANSFER_AREA_PATH,
+                        component: TextField,
+                        name: "transferAreaPath",
+                        show: true,
+                      },
+                      {
+                        label: texts.INITIAL_WORKFLOW_CONFIGURATION,
+                        component: TextField,
+                        name: "ingestWorkflow.initialConfig",
+                        show: true,
+                        type: "textarea",
+                      },
+                      {
                         label: texts.MESSAGE,
                         component: TextField,
                         name: "ingestWorkflow.failureInfo.msg",

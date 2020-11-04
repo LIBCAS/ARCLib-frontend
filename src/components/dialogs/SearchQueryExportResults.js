@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
+import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map, get } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -18,7 +18,7 @@ const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
       title: texts.EXPORT_SEARCH_RESULTS,
       name: "SearchQueryExportResults",
       handleSubmit,
-      submitLabel: texts.SUBMIT
+      submitLabel: texts.SUBMIT,
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -31,8 +31,8 @@ const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
           validate: [
             Validation.required[language],
             Validation.enterValidDate[language],
-            Validation.enterCurrentOrFutureDate[language]
-          ]
+            Validation.enterCurrentOrFutureDate[language],
+          ],
         }}
       />
       {map(
@@ -42,8 +42,8 @@ const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
             label: texts.EXPORT_TYPE,
             name: "type",
             validate: [Validation.required[language]],
-            options: exportTypeOptions[language]
-          }
+            options: exportTypeOptions[language],
+          },
         ],
         (field, key) => (
           <Field
@@ -59,12 +59,13 @@ export default compose(
   withRouter,
   connect(null, {
     saveExportRoutine,
-    getSavedQueries
+    getSavedQueries,
+    reset,
   }),
   withProps(({ language }) => ({
     initialValues: {
-      type: get(exportTypeOptions, `[${language}][0].value`)
-    }
+      type: get(exportTypeOptions, `[${language}][0].value`),
+    },
   })),
   withHandlers({
     onSubmit: ({
@@ -72,27 +73,29 @@ export default compose(
       saveExportRoutine,
       texts,
       data,
-      getSavedQueries
-    }) => async formData => {
+      getSavedQueries,
+      reset,
+    }) => async (formData) => {
       if (
         await saveExportRoutine({
           id: uuidv1(),
           ...data,
-          ...formData
+          ...formData,
         })
       ) {
+        reset("SearchQueryExportResultsDialogForm");
         closeDialog();
 
         await getSavedQueries();
       } else {
         throw new SubmissionError({
-          exportType: texts.EXPORT_FAILED
+          exportType: texts.EXPORT_FAILED,
         });
       }
-    }
+    },
   }),
   reduxForm({
     form: "SearchQueryExportResultsDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(SearchQueryExportResults);

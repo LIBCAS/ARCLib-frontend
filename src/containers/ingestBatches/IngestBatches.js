@@ -2,58 +2,144 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose, lifecycle, withState } from "recompose";
 import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import { get, filter as lodashFilter } from "lodash";
 
 import PageWrapper from "../../components/PageWrapper";
 import SortOrder from "../../components/filter/SortOrder";
 import Table from "../../components/ingestBatches/Table";
 import Pagination from "../../components/Pagination";
+import SelectField from "../../components/SelectField";
 import { getBatches } from "../../actions/batchActions";
+import { getUsers } from "../../actions/usersActions";
+import { setFilter } from "../../actions/appActions";
+import { filterOperationsTypes } from "../../enums";
 
-const IngestBatches = ({ history, batches, getBatches, texts, language }) => (
-  <PageWrapper {...{ breadcrumb: [{ label: texts.INGEST_BATCHES }] }}>
-    <SortOrder
-      {...{
-        className: "margin-bottom-small",
-        sortOptions: [
-          { label: texts.UPDATED, value: "updated" },
-          { label: texts.CREATED, value: "created" },
-          { label: texts.PRODUCER, value: "producerName" },
-          { label: texts.STATE, value: "state" },
-        ],
-        handleUpdate: () => getBatches(),
-      }}
-    />
-    <Table
-      {...{
-        history,
-        language,
-        texts,
-        batches: get(batches, "items"),
-        handleUpdate: () => getBatches(),
-      }}
-    />
-    <Pagination
-      {...{
-        handleUpdate: () => getBatches(),
-        count: get(batches, "items.length", 0),
-        countAll: get(batches, "count", 0),
-      }}
-    />
-  </PageWrapper>
-);
+const enableUrl = `/ingest-batches`;
+
+const IngestBatches = ({
+  history,
+  batches,
+  getBatches,
+  texts,
+  language,
+  users,
+  filter,
+  setFilter,
+  selectKey,
+  setSelectKey,
+}) => {
+  const refresh = () => getBatches();
+
+  return (
+    <PageWrapper {...{ breadcrumb: [{ label: texts.INGEST_BATCHES }] }}>
+      {users ? (
+        <div>
+          <div className="flex-row flex-centered">
+            <SortOrder
+              {...{
+                fullWidth: false,
+                className: "margin-bottom-small",
+                sortOptions: [
+                  { label: texts.UPDATED, value: "updated" },
+                  { label: texts.CREATED, value: "created" },
+                  { label: texts.PRODUCER, value: "producerName" },
+                  { label: texts.STATE, value: "state" },
+                ],
+                handleUpdate: refresh,
+              }}
+            />
+            <SelectField
+              {...{
+                key: `${selectKey}`,
+                placeholder: texts.FILTER_BY_USER,
+                className: "margin-bottom-small margin-left-very-small",
+                style: { minWidth: 200 },
+                options: users,
+                onChange: (value) => {
+                  if (!value) {
+                    setSelectKey(!selectKey);
+                  }
+                  setFilter({
+                    filter: [
+                      ...lodashFilter(
+                        filter.filter,
+                        (f) => f.field !== "userId"
+                      ),
+                      ...(value
+                        ? [
+                            {
+                              field: "userId",
+                              operation: filterOperationsTypes.EQ,
+                              value,
+                            },
+                          ]
+                        : []),
+                    ],
+                  });
+                  setTimeout(refresh);
+                },
+              }}
+            />
+          </div>
+          <Table
+            {...{
+              history,
+              language,
+              texts,
+              batches: get(batches, "items"),
+              handleUpdate: refresh,
+            }}
+          />
+          <Pagination
+            {...{
+              handleUpdate: refresh,
+              count: get(batches, "items.length", 0),
+              countAll: get(batches, "count", 0),
+            }}
+          />
+        </div>
+      ) : (
+        <div />
+      )}
+    </PageWrapper>
+  );
+};
 
 export default compose(
   withRouter,
   withState("timeoutId", "setTimeoutId", null),
-  connect(({ batch: { batches } }) => ({ batches }), { getBatches }),
+  withState("fetching", "setFetching", false),
+  withState("users", "setUsers", null),
+  withState("selectKey", "setSelectKey", false),
+  connect(({ app: { filter }, batch: { batches } }) => ({ filter, batches }), {
+    getBatches,
+    getUsers,
+    setFilter,
+  }),
   lifecycle({
     async componentDidMount() {
-      const { getBatches, setTimeoutId } = this.props;
+      const {
+        getBatches,
+        setTimeoutId,
+        getUsers,
+        setUsers,
+        texts,
+      } = this.props;
 
       this.mounted = true;
 
-      const enableUrl = `/ingest-batches`;
+      setUsers([
+        {
+          value: "",
+          label: `-- ${texts.RESET} --`,
+        },
+        ...get(await getUsers({ page: 0, pageSize: 9999 }), "items", []).map(
+          ({ id, fullName }) => ({
+            value: id,
+            label: fullName || "Neznámý",
+          })
+        ),
+      ]);
 
       const ok = await getBatches(true, enableUrl);
 

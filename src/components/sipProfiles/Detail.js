@@ -14,11 +14,11 @@ import {
 } from "../form";
 import { saveSipProfile } from "../../actions/sipProfileActions";
 import {
-  isAdmin,
+  hasPermission,
   openUrlInNewTab,
   removeStartEndWhiteSpaceInSelectedFields,
 } from "../../utils";
-import { packageTypeOptions } from "../../enums";
+import { packageTypeOptions, Permission } from "../../enums";
 import InfoIcon from "../InfoIcon";
 import { GLOB_URL } from "../../constants";
 
@@ -29,112 +29,121 @@ const Detail = ({
   texts,
   language,
   user,
-}) => (
-  <div>
-    <form {...{ onSubmit: handleSubmit }}>
-      {map(
-        [
-          {
-            component: TextField,
-            label: texts.NAME,
-            name: "name",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: SyntaxHighlighterField,
-            label: texts.XSL_TRANSFORMATION,
-            name: "xsl",
-            validate: [Validation.required[language]],
-            fileName: get(sipProfile, "name"),
-          },
-          {
-            component: TextField,
-            label: (
-              <span>
-                {texts.PATH_TO_XML}
-                <InfoIcon
-                  {...{
-                    glyph: "new-window",
-                    tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
-                    onClick: () => openUrlInNewTab(GLOB_URL),
-                  }}
-                />
-              </span>
-            ),
-            name: "pathToSipId.pathToXmlGlobPattern",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: TextField,
-            label: texts.XPATH_TO_ID,
-            name: "pathToSipId.xpathToId",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: TextField,
-            label: (
-              <span>
-                {texts.SIP_METADATA_PATH}
-                <InfoIcon
-                  {...{
-                    glyph: "new-window",
-                    tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
-                    onClick: () => openUrlInNewTab(GLOB_URL),
-                  }}
-                />
-              </span>
-            ),
-            name: "sipMetadataPathGlobPattern",
-            validate: [Validation.required[language]],
-          },
-          {
-            component: SelectField,
-            label: texts.SIP_PACKAGE_TYPE,
-            name: "packageType",
-            validate: [Validation.required[language]],
-            options: packageTypeOptions,
-          },
-          {
-            component: Checkbox,
-            label: texts.EDITABLE,
-            name: "editable",
-            disabled: true,
-          },
-        ],
-        (field) => (
-          <Field
-            {...{
-              key: field.name,
-              id: `sip-profile-detail-${field.name}`,
-              disabled: !isAdmin(user) || !get(sipProfile, "editable"),
-              ...field,
-            }}
-          />
-        )
-      )}
-      <div {...{ className: "flex-row flex-right" }}>
-        <Button {...{ onClick: () => history.push("/sip-profiles") }}>
-          {isAdmin(user) && get(sipProfile, "editable")
-            ? texts.STORNO
-            : texts.CLOSE}
-        </Button>
-        {isAdmin(user) && get(sipProfile, "editable") ? (
-          <Button
-            {...{
-              primary: true,
-              type: "submit",
-              className: "margin-left-small",
-            }}
-          >
-            {texts.SAVE_AND_CLOSE}
-          </Button>
-        ) : (
-          <div />
+}) => {
+  const editEnabled = hasPermission(Permission.SIP_PROFILE_RECORDS_WRITE);
+  return (
+    <div>
+      <form {...{ onSubmit: handleSubmit }}>
+        {map(
+          [
+            {
+              component: TextField,
+              label: texts.NAME,
+              name: "name",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: TextField,
+              label: texts.EXTERNAL_ID,
+              name: "externalId",
+              disabled: true,
+            },
+            {
+              component: SyntaxHighlighterField,
+              label: texts.XSL_TRANSFORMATION,
+              name: "xsl",
+              validate: [Validation.required[language]],
+              fileName: get(sipProfile, "name"),
+            },
+            {
+              component: TextField,
+              label: (
+                <span>
+                  {texts.PATH_TO_XML}
+                  <InfoIcon
+                    {...{
+                      glyph: "new-window",
+                      tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
+                      onClick: () => openUrlInNewTab(GLOB_URL),
+                    }}
+                  />
+                </span>
+              ),
+              name: "pathToSipId.pathToXmlGlobPattern",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: TextField,
+              label: texts.XPATH_TO_ID,
+              name: "pathToSipId.xpathToId",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: TextField,
+              label: (
+                <span>
+                  {texts.SIP_METADATA_PATH}
+                  <InfoIcon
+                    {...{
+                      glyph: "new-window",
+                      tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
+                      onClick: () => openUrlInNewTab(GLOB_URL),
+                    }}
+                  />
+                </span>
+              ),
+              name: "sipMetadataPathGlobPattern",
+              validate: [Validation.required[language]],
+            },
+            {
+              component: SelectField,
+              label: texts.SIP_PACKAGE_TYPE,
+              name: "packageType",
+              validate: [Validation.required[language]],
+              options: packageTypeOptions,
+            },
+            {
+              component: Checkbox,
+              label: texts.EDITABLE,
+              name: "editable",
+              disabled: true,
+            },
+          ],
+          (field) => (
+            <Field
+              {...{
+                key: field.name,
+                id: `sip-profile-detail-${field.name}`,
+                disabled: !editEnabled || !get(sipProfile, "editable"),
+                ...field,
+              }}
+            />
+          )
         )}
-      </div>
-    </form>
-  </div>
-);
+        <div {...{ className: "flex-row flex-right" }}>
+          <Button {...{ onClick: () => history.push("/sip-profiles") }}>
+            {editEnabled && get(sipProfile, "editable")
+              ? texts.STORNO
+              : texts.CLOSE}
+          </Button>
+          {editEnabled && get(sipProfile, "editable") ? (
+            <Button
+              {...{
+                primary: true,
+                type: "submit",
+                className: "margin-left-small",
+              }}
+            >
+              {texts.SAVE_AND_CLOSE}
+            </Button>
+          ) : (
+            <div />
+          )}
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default compose(
   connect(null, {

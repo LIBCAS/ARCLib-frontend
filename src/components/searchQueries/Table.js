@@ -1,13 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withHandlers } from "recompose";
-import { map, get } from "lodash";
+import { map, get, flatten } from "lodash";
 
 import Button from "../Button";
 import Table from "../table/Table";
 import { setDialog, showLoader } from "../../actions/appActions";
 import { getSavedQuery, setQuery } from "../../actions/queryActions";
-import { formatDateTime, isAdmin } from "../../utils";
+import { formatDateTime, hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const SearchQueriesTable = ({
   history,
@@ -16,7 +17,7 @@ const SearchQueriesTable = ({
   setQuery,
   texts,
   user,
-  loadQuery
+  loadQuery,
 }) => (
   <Table
     {...{
@@ -25,9 +26,9 @@ const SearchQueriesTable = ({
         { label: texts.UPDATED, style: { minWidth: 150 } },
         { label: texts.EXPORT_TIME, style: { minWidth: 150 } },
         { label: texts.EXPORT_LOCATION_PATH, style: { minWidth: 200 } },
-        { label: "" }
+        { label: "" },
       ],
-      items: map(queries, item => ({
+      items: map(queries, (item) => ({
         items: [
           { label: get(item, "name") },
           { label: formatDateTime(item.updated) },
@@ -38,73 +39,82 @@ const SearchQueriesTable = ({
               <div
                 {...{
                   className:
-                    "flex-row-normal-nowrap flex-right margin-bottom-px1"
+                    "flex-row-normal-nowrap flex-right margin-bottom-px1",
                 }}
               >
                 {map(
                   [
                     {
                       label: texts.EXPORT_SEARCH_RESULTS,
-                      onClick: e => {
+                      onClick: (e) => {
                         e.stopPropagation();
                         setDialog("SearchQueryExportResults", {
-                          aipQuery: { id: item.id }
+                          aipQuery: { id: item.id },
                         });
                       },
-                      show: !item.exportTime
+                      show:
+                        !item.exportTime &&
+                        hasPermission(Permission.EXPORT_ROUTINE_READ),
                     },
                     {
                       label: texts.EXPORT_ROUTINE_DELETE,
-                      onClick: e => {
+                      onClick: (e) => {
                         e.stopPropagation();
                         setDialog("ExportRoutineDelete", {
-                          id: item.exportRoutineId
+                          id: item.exportRoutineId,
                         });
                       },
                       className: "margin-left-small",
-                      show: item.exportTime
+                      show:
+                        item.exportTime &&
+                        hasPermission(Permission.EXPORT_ROUTINE_WRITE),
                     },
                     {
                       label: texts.SHOW_SEARCH_RESULTS,
-                      onClick: async e => {
+                      onClick: async (e) => {
                         e.stopPropagation();
                         const query = await loadQuery(item.id);
                         setDialog("SearchQueryDetail", {
-                          items: get(query, "result.items")
+                          items: get(query, "result.items"),
                         });
                       },
                       className: "margin-left-small",
-                      show: true
+                      show: true,
                     },
                     {
                       label: texts.NEW_SEARCH_BASED_ON_QUERY,
-                      onClick: async e => {
+                      onClick: async (e) => {
                         e.stopPropagation();
                         const query = await loadQuery(item.id);
+                        query.query.filter = flatten(
+                          get(query, "query.filter", []).map((f) =>
+                            f.operation === "NESTED" ? f.filter : f
+                          )
+                        );
                         setQuery(query);
                         history.push("/aip-search");
                       },
                       className: "margin-left-small",
-                      show: true
+                      show: true,
                     },
                     {
                       label: texts.DELETE,
-                      onClick: e => {
+                      onClick: (e) => {
                         e.stopPropagation();
                         setDialog("SearchQueryDelete", {
-                          id: item.id
+                          id: item.id,
                         });
                       },
                       className: "margin-left-small",
-                      show: isAdmin(user)
-                    }
+                      show: hasPermission(Permission.AIP_QUERY_RECORDS_WRITE),
+                    },
                   ],
                   ({ show, label, ...button }, key) =>
                     show && (
                       <Button
                         {...{
                           key,
-                          ...button
+                          ...button,
                         }}
                       >
                         {label}
@@ -113,10 +123,10 @@ const SearchQueriesTable = ({
                 )}
               </div>
             ),
-            className: "text-right"
-          }
-        ]
-      }))
+            className: "text-right",
+          },
+        ],
+      })),
     }}
   />
 );
@@ -124,11 +134,11 @@ const SearchQueriesTable = ({
 export default compose(
   connect(null, { setDialog, setQuery, getSavedQuery, showLoader }),
   withHandlers({
-    loadQuery: ({ getSavedQuery, showLoader }) => async id => {
+    loadQuery: ({ getSavedQuery, showLoader }) => async (id) => {
       showLoader();
       const query = await getSavedQuery(id);
       showLoader(false);
       return query;
-    }
+    },
   })
 )(SearchQueriesTable);

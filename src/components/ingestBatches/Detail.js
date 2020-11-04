@@ -1,5 +1,5 @@
 import React from "react";
-import { get, map } from "lodash";
+import { compact, get, map } from "lodash";
 import { compose, withProps } from "recompose";
 import { connect } from "react-redux";
 import { reduxForm, Field } from "redux-form";
@@ -16,8 +16,12 @@ import {
   suspendBatch,
 } from "../../actions/batchActions";
 import { setDialog } from "../../actions/appActions";
-import { ingestBatchState, ingestBatchStateTexts } from "../../enums";
-import { prettyJSON } from "../../utils";
+import {
+  ingestBatchState,
+  ingestBatchStateTexts,
+  Permission,
+} from "../../enums";
+import { hasPermission, prettyJSON } from "../../utils";
 
 const Detail = ({
   history,
@@ -110,7 +114,7 @@ const Detail = ({
     <Tabs
       {...{
         id: "ingest-batches-detail-tabs",
-        items: [
+        items: compact([
           {
             title: texts.INGEST_BATCH,
             content: (
@@ -192,7 +196,7 @@ const Detail = ({
               />
             ),
           },
-          {
+          hasPermission(Permission.INCIDENT_RECORDS_READ) && {
             title: texts.INCIDENTS,
             content: (
               <div {...{ className: "flex-col" }}>
@@ -218,7 +222,7 @@ const Detail = ({
               </div>
             ),
           },
-        ],
+        ]),
       }}
     />
     <div {...{ className: "flex-row flex-right" }}>
@@ -233,10 +237,10 @@ export default compose(
   connect(null, { cancelBatch, resumeBatch, suspendBatch, setDialog }),
   withProps(({ batch, language }) => ({
     initialValues: {
+      ...batch,
       producerProfile: get(batch, "producerProfile.producer.name", ""),
       workflowConfig: prettyJSON(get(batch, "workflowConfig", "")),
       state: get(ingestBatchStateTexts[language], get(batch, "state")),
-      transferAreaPath: get(batch, "transferAreaPath", ""),
     },
   })),
   reduxForm({

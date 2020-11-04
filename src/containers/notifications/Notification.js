@@ -26,9 +26,7 @@ const Notification = ({ history, notification, texts, ...props }) => (
           history,
           texts,
           notification,
-          initialValues: {
-            ...notification
-          },
+          initialValues: notification,
           ...props
         }}
       />

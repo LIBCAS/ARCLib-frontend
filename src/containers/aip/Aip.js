@@ -9,15 +9,16 @@ import Detail from "../../components/aip/Detail";
 import { clearAip, getAip } from "../../actions/aipActions";
 import { setDialog } from "../../actions/appActions";
 import { getStorages } from "../../actions/storageActions";
-import { isSuperAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const Aip = ({ aip, texts, history, storages, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [
         { label: texts.AIP_SEARCH, url: "/aip-search" },
-        { label: get(aip, "ingestWorkflow.externalId", texts.AIP) }
-      ]
+        { label: get(aip, "ingestWorkflow.externalId", texts.AIP) },
+      ],
     }}
   >
     {aip && <Detail {...{ aip, texts, history, storages, ...props }} />}
@@ -30,17 +31,17 @@ export default compose(
     clearAip,
     getAip,
     setDialog,
-    getStorages
+    getStorages,
   }),
   lifecycle({
     componentWillMount() {
-      const { match, clearAip, getAip, getStorages, user } = this.props;
+      const { match, clearAip, getAip, getStorages } = this.props;
 
       clearAip();
       getAip(match.params.id);
-      if (isSuperAdmin(user)) {
+      if (hasPermission(Permission.STORAGE_ADMINISTRATION_READ)) {
         getStorages();
       }
-    }
+    },
   })
 )(Aip);

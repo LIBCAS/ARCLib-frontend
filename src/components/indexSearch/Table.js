@@ -6,7 +6,8 @@ import Button from "../Button";
 import Tooltip from "../Tooltip";
 import Table from "../table/Table";
 import { downloadAip, downloadXml } from "../../actions/aipActions";
-import { formatDateTime } from "../../utils";
+import { formatDateTime, hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const columns = [
   "authorial_id",
@@ -91,7 +92,8 @@ const PackagesTable = ({
             },
             {
               label:
-                get(item, "aipState") === "ARCHIVED" ? (
+                get(item, "aipState") === "ARCHIVED" &&
+                hasPermission(Permission.EXPORT_FILES) ? (
                   <div
                     {...{
                       className:

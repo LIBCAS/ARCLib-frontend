@@ -10,6 +10,7 @@ import Aip from "./containers/aip/Aip";
 import AipEditor from "./containers/aip/AipEditor";
 import ArchivalStorageAdministration from "./containers/archivalStorageAdministration/ArchivalStorageAdministration";
 import Authentication from "./containers/Authentication";
+import Profile from "./containers/profile/Profile";
 import DeletionRequests from "./containers/deletionRequests/DeletionRequests";
 import ErrorPage from "./containers/ErrorPage";
 import IndexSearch from "./containers/indexSearch/IndexSearch";
@@ -29,18 +30,14 @@ import SipProfilesContainer from "./containers/sipProfiles/SipProfilesContainer"
 import StorageAdministration from "./containers/storageAdministration/StorageAdministration";
 import ToolsContainer from "./containers/tools/ToolsContainer";
 import UsersContainer from "./containers/users/UsersContainer";
+import RolesContainer from "./containers/roles/RolesContainer";
 import ValidationProfilesContainer from "./containers/validationProfiles/ValidationProfilesContainer";
 import WorkflowDefinitionsContainer from "./containers/workflowDefinitions/WorkflowDefinitionsContainer";
 import ReportsContainer from "./containers/reports/ReportsContainer";
 import Route from "./components/routing/Route";
 import { getUser, keepAlive } from "./actions/userActions";
-import {
-  isAdmin,
-  isSuperAdmin,
-  isArchivist,
-  isEditor,
-  hasRoles,
-} from "./utils";
+import { filterByPermission, hasPermissions } from "./utils";
+import { Permission } from "./enums";
 
 const App = ({ store, user, language, texts }) => {
   const containerProps = {
@@ -55,220 +52,158 @@ const App = ({ store, user, language, texts }) => {
           <Dialogs {...containerProps} />
           <Switch>
             {map(
-              [
+              filterByPermission([
                 {
                   path: "/",
-                  render: (props) => (
-                    <Authentication {...{ ...containerProps, ...props }} />
-                  ),
+                  Component: Authentication,
                   exact: true,
-                  show: true,
+                },
+                {
+                  path: "/profile",
+                  Component: Profile,
+                  exact: true,
                 },
                 {
                   path: "/aip/edit/:id",
-                  render: (props) => (
-                    <AipEditor {...{ ...containerProps, ...props }} />
-                  ),
-                  show: isSuperAdmin(user) || isEditor(user),
+                  Component: AipEditor,
+                  permission: Permission.AIP_RECORDS_READ,
                 },
                 {
                   path: "/aip/:id",
-                  render: (props) => (
-                    <Aip {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: Aip,
+                  permission: Permission.AIP_RECORDS_READ,
                 },
                 {
                   path: "/aip-search",
-                  render: (props) => (
-                    <IndexSearch {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: IndexSearch,
+                  permission: Permission.AIP_RECORDS_READ,
                 },
                 {
                   path: "/ingest",
-                  render: (props) => (
-                    <Ingest {...{ ...containerProps, ...props }} />
-                  ),
-                  show: isSuperAdmin(user) || isArchivist(user),
+                  Component: Ingest,
+                  permission: Permission.BATCH_PROCESSING_WRITE,
                 },
                 {
                   path: "/ingest-batches",
-                  render: (props) => (
-                    <IngestBatchesContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: IngestBatchesContainer,
+                  permission: Permission.BATCH_PROCESSING_READ,
                 },
                 {
                   path: "/ingest-routines",
-                  render: (props) => (
-                    <IngestRoutinesContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: IngestRoutinesContainer,
+                  permission: Permission.INGEST_ROUTINE_RECORDS_READ,
                 },
                 {
                   path: "/validation-profiles",
-                  render: (props) => (
-                    <ValidationProfilesContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: ValidationProfilesContainer,
+                  permission: Permission.VALIDATION_PROFILE_RECORDS_READ,
                 },
                 {
                   path: "/sip-profiles",
-                  render: (props) => (
-                    <SipProfilesContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: SipProfilesContainer,
+                  permission: Permission.SIP_PROFILE_RECORDS_READ,
                 },
                 {
                   path: "/logical-storage-administration",
-                  render: (props) => (
-                    <StorageAdministration
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: isSuperAdmin(user),
+                  Component: StorageAdministration,
+                  permission: Permission.STORAGE_ADMINISTRATION_READ,
                 },
                 {
                   path: "/archival-storage-administration",
-                  render: (props) => (
-                    <ArchivalStorageAdministration
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: isSuperAdmin(user),
+                  Component: ArchivalStorageAdministration,
+                  permission: Permission.STORAGE_ADMINISTRATION_READ,
                 },
                 {
                   path: "/workflow-definitions",
-                  render: (props) => (
-                    <WorkflowDefinitionsContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: WorkflowDefinitionsContainer,
+                  permission: Permission.WORKFLOW_DEFINITION_RECORDS_READ,
                 },
                 {
                   path: "/deletion-requests",
-                  render: (props) => (
-                    <DeletionRequests {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: DeletionRequests,
+                  permission: Permission.DELETION_REQUESTS_READ,
                 },
                 {
                   path: "/ingest-workflows/:id",
-                  render: (props) => (
-                    <IngestWorkflow {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: IngestWorkflow,
+                  permission: Permission.BATCH_PROCESSING_READ,
                 },
                 {
                   path: "/producers",
-                  render: (props) => (
-                    <ProducersContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: isSuperAdmin(user),
+                  Component: ProducersContainer,
+                  permission: Permission.PRODUCER_RECORDS_READ,
                 },
                 {
                   path: "/producer-profiles",
-                  render: (props) => (
-                    <ProducerProfilesContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: ProducerProfilesContainer,
+                  permission: Permission.PRODUCER_PROFILE_RECORDS_READ,
                 },
                 {
                   path: "/search-queries",
-                  render: (props) => (
-                    <SearchQueries {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: SearchQueries,
+                  permission: Permission.AIP_QUERY_RECORDS_READ,
                 },
                 {
                   path: "/users",
-                  render: (props) => (
-                    <UsersContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: isAdmin(user) || isSuperAdmin(user),
+                  Component: UsersContainer,
+                  permission: Permission.USER_RECORDS_READ,
+                },
+                {
+                  path: "/roles",
+                  Component: RolesContainer,
+                  permission: Permission.USER_RECORDS_READ,
                 },
                 {
                   path: "/formats",
-                  render: (props) => (
-                    <FormatsContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: FormatsContainer,
+                  permission: Permission.FORMAT_RECORDS_READ,
                 },
                 {
                   path: "/reports",
-                  render: (props) => (
-                    <ReportsContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: isSuperAdmin(user),
+                  Component: ReportsContainer,
+                  permission: Permission.REPORT_TEMPLATE_RECORDS_READ,
                 },
                 {
                   path: "/risks",
-                  render: (props) => (
-                    <RisksContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: RisksContainer,
+                  permission: Permission.RISK_RECORDS_READ,
                 },
                 {
                   path: "/issue-dictionary",
-                  render: (props) => (
-                    <IssueDictionaryContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: true,
+                  Component: IssueDictionaryContainer,
+                  permission: Permission.ISSUE_DEFINITIONS_READ,
                 },
                 {
                   path: "/tools",
-                  render: (props) => (
-                    <ToolsContainer {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: ToolsContainer,
+                  permission: Permission.TOOL_RECORDS_READ,
                 },
                 {
                   path: "/notifications",
-                  render: (props) => (
-                    <NotificationsContainer
-                      {...{ ...containerProps, ...props }}
-                    />
-                  ),
-                  show: isSuperAdmin(user),
+                  Component: NotificationsContainer,
+                  permission: Permission.NOTIFICATION_RECORDS_READ,
                 },
                 {
                   path: "/error",
-                  render: (props) => (
-                    <ErrorPage {...{ ...containerProps, ...props }} />
-                  ),
-                  show: true,
+                  Component: ErrorPage,
                 },
-              ],
-              ({ show, render, path, ...item }, key) =>
-                show && (
+              ]),
+              ({ Component, path, ...item }, key) => {
+                const RenderComponent =
+                  path === "/" || hasPermissions() ? Component : NoRole;
+                return (
                   <Route
                     {...{
                       ...item,
                       key,
                       path,
-                      render:
-                        path === "/" || hasRoles(user)
-                          ? render
-                          : (props) => (
-                              <NoRole {...{ ...containerProps, ...props }} />
-                            ),
+                      render: (props) => (
+                        <RenderComponent {...{ ...containerProps, ...props }} />
+                      ),
                     }}
                   />
-                )
+                );
+              }
             )}
           </Switch>
         </div>

@@ -1,6 +1,7 @@
 import React from "react";
+import { connect } from "react-redux";
 import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field } from "redux-form";
+import { reduxForm, Field, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { map } from "lodash";
 import uuidv1 from "uuid/v1";
@@ -15,7 +16,7 @@ const UpdateWithLocalDefinitionIdentifierNew = ({
   texts,
   language,
   setDialog,
-  data
+  data,
 }) => (
   <DialogContainer
     {...{
@@ -23,7 +24,7 @@ const UpdateWithLocalDefinitionIdentifierNew = ({
       name: "UpdateWithLocalDefinitionIdentifierNew",
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setDialog("UpdateWithLocalDefinition", { ...data })
+      onClose: () => setDialog("UpdateWithLocalDefinition", { ...data }),
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -33,25 +34,25 @@ const UpdateWithLocalDefinitionIdentifierNew = ({
             component: TextField,
             label: texts.IDENTIFIER,
             name: "identifier",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.IDENTIFIER_TYPE,
             name: "identifierType",
-            options: map(identifierTypes, identifierType => ({
+            options: map(identifierTypes, (identifierType) => ({
               value: identifierType,
-              label: identifierType
+              label: identifierType,
             })),
-            validate: [Validation.required[language]]
-          }
+            validate: [Validation.required[language]],
+          },
         ],
         (field, key) => (
           <Field
             {...{
               key,
               id: `update-with-local-definition-identifier-new-${field.name}`,
-              ...field
+              ...field,
             }}
           />
         )
@@ -62,23 +63,26 @@ const UpdateWithLocalDefinitionIdentifierNew = ({
 
 export default compose(
   withRouter,
+  connect(null, { reset }),
   withProps({
     initialValues: {
-      identifierType: identifierTypes.PUID
-    }
+      identifierType: identifierTypes.PUID,
+    },
   }),
   withHandlers({
-    onSubmit: ({ setDialog, data }) => async ({ ...formData }) => {
+    onSubmit: ({ setDialog, data, reset }) => async ({ ...formData }) => {
       data.addIdentifier({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["identifier"])
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["identifier"]),
       });
 
+      reset("UpdateWithLocalDefinitionIdentifierNewDialogForm");
+
       setDialog("UpdateWithLocalDefinition", { ...data });
-    }
+    },
   }),
   reduxForm({
     form: "UpdateWithLocalDefinitionIdentifierNewDialogForm",
-    enableReinitialize: true
+    enableReinitialize: true,
   })
 )(UpdateWithLocalDefinitionIdentifierNew);

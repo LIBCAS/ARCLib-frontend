@@ -8,20 +8,21 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/risks/Table";
 import { getRisks } from "../../actions/riskActions";
 import { setDialog } from "../../actions/appActions";
-import { isSuperAdmin } from "../../utils";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const Risks = ({ history, risks, texts, setDialog, user }) => (
   <PageWrapper
     {...{
-      breadcrumb: [{ label: texts.RISKS }]
+      breadcrumb: [{ label: texts.RISKS }],
     }}
   >
-    {isSuperAdmin(user) && (
+    {hasPermission(Permission.RISK_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("RiskNew")
+          onClick: () => setDialog("RiskNew"),
         }}
       >
         {texts.NEW}
@@ -33,7 +34,7 @@ const Risks = ({ history, risks, texts, setDialog, user }) => (
         texts,
         user,
         setDialog,
-        risks
+        risks,
       }}
     />
   </PageWrapper>
@@ -43,13 +44,13 @@ export default compose(
   withRouter,
   connect(({ risk: { risks } }) => ({ risks }), {
     getRisks,
-    setDialog
+    setDialog,
   }),
   lifecycle({
     componentDidMount() {
       const { getRisks } = this.props;
 
       getRisks();
-    }
+    },
   })
 )(Risks);

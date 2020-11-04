@@ -17,9 +17,9 @@ const ArchivalStorageAdministration = ({
     {...{
       breadcrumb: [
         {
-          label: texts.ARCHIVAL_STORAGE_ADMINISTRATION
-        }
-      ]
+          label: texts.ARCHIVAL_STORAGE_ADMINISTRATION,
+        },
+      ],
     }}
   >
     {archivalStorage && (
@@ -28,10 +28,8 @@ const ArchivalStorageAdministration = ({
           history,
           texts,
           archivalStorage,
-          initialValues: {
-            ...archivalStorage
-          },
-          ...props
+          initialValues: archivalStorage,
+          ...props,
         }}
       />
     )}
@@ -42,7 +40,7 @@ export default compose(
   withRouter,
   connect(
     ({ storage: { archivalStorage } }) => ({
-      archivalStorage
+      archivalStorage,
     }),
     { getArchivalStorageConfig }
   ),
@@ -51,6 +49,6 @@ export default compose(
       const { getArchivalStorageConfig } = this.props;
 
       getArchivalStorageConfig();
-    }
+    },
   })
 )(ArchivalStorageAdministration);

@@ -3,7 +3,7 @@ import { get } from "lodash";
 import * as c from "./constants";
 import fetch from "../utils/fetch";
 import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createAipSearchParams, downloadFileFromUrl } from "../utils";
+import { createAipSearchParams, downloadBlob } from "../utils";
 
 export const getAipList = () => async (dispatch, getState) => {
   dispatch({
@@ -148,8 +148,9 @@ export const downloadAip = (aipId, debug = false) => async (dispatch) => {
     const response = await fetch(url);
 
     if (response.ok) {
+      const blob = await response.blob();
       dispatch(showLoader(false));
-      downloadFileFromUrl(`${window.location.origin}${url}`, `${aipId}.zip`);
+      downloadBlob(blob, `${aipId}.zip`);
       return true;
     }
 
@@ -201,11 +202,9 @@ export const downloadXml = (aipId, xmlVersion, debug = false) => async (
     const response = await fetch(url);
 
     if (response.ok) {
+      const blob = await response.blob();
       dispatch(showLoader(false));
-      downloadFileFromUrl(
-        `${window.location.origin}${url}`,
-        `${aipId}_xml_${xmlVersion}.xml`
-      );
+      downloadBlob(blob, `${aipId}_xml_${xmlVersion}.xml`);
       return true;
     }
 

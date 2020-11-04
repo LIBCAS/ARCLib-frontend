@@ -3,32 +3,39 @@ import fetch from "../utils/fetch";
 import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
 import { createFilterPagerParams } from "../utils";
 
-export const getUsers = () => async (dispatch, getState) => {
-  dispatch({
-    type: c.USERS,
-    payload: {
-      users: null
-    }
-  });
+export const getUsers = (params) => async (dispatch, getState) => {
+  const useDispatch = !params;
+
+  if (useDispatch) {
+    dispatch({
+      type: c.USERS,
+      payload: {
+        users: null,
+      },
+    });
+  }
 
   try {
     const response = await fetch("/api/user", {
-      params: createFilterPagerParams(getState)
+      params: params || createFilterPagerParams(getState),
     });
 
+    let users = null;
     if (response.status === 200) {
-      const users = await response.json();
+      users = await response.json();
 
-      dispatch({
-        type: c.USERS,
-        payload: {
-          users
-        }
-      });
+      if (useDispatch) {
+        dispatch({
+          type: c.USERS,
+          payload: {
+            users,
+          },
+        });
+      }
     }
 
     dispatch(await openErrorDialogIfRequestFailed(response));
-    return response.status === 200;
+    return useDispatch ? response.status === 200 : users;
   } catch (error) {
     console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));
@@ -36,14 +43,14 @@ export const getUsers = () => async (dispatch, getState) => {
   }
 };
 
-export const getUser = id => async dispatch => {
+export const getUser = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.USERS,
     payload: {
-      user: null
-    }
+      user: null,
+    },
   });
 
   try {
@@ -52,13 +59,11 @@ export const getUser = id => async dispatch => {
     if (response.status === 200) {
       const user = await response.json();
 
-      const roles = await dispatch(getUserRoles(id));
-
       dispatch({
         type: c.USERS,
         payload: {
-          user: { roles, ...user }
-        }
+          user,
+        },
       });
     }
 
@@ -73,11 +78,11 @@ export const getUser = id => async dispatch => {
   }
 };
 
-export const deleteUser = id => async dispatch => {
+export const deleteUser = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
 
     dispatch(showLoader(false));
@@ -91,15 +96,15 @@ export const deleteUser = id => async dispatch => {
   }
 };
 
-export const saveUser = body => async dispatch => {
+export const saveUser = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${body.id}`, {
       method: "PUT",
       headers: new Headers({
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -108,8 +113,8 @@ export const saveUser = body => async dispatch => {
       dispatch({
         type: c.USERS,
         payload: {
-          user
-        }
+          user,
+        },
       });
 
       dispatch(showLoader(false));
@@ -127,34 +132,15 @@ export const saveUser = body => async dispatch => {
   }
 };
 
-export const getUserRoles = id => async dispatch => {
-  try {
-    const response = await fetch(`/api/user/${id}/roles`);
-
-    if (response.status === 200) {
-      const roles = await response.json();
-
-      return roles;
-    }
-
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const saveUserRoles = (userId, body) => async dispatch => {
+export const saveUserRoles = (userId, body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${userId}/roles`, {
       method: "PUT",
       headers: new Headers({
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     dispatch(showLoader(false));
@@ -163,25 +149,6 @@ export const saveUserRoles = (userId, body) => async dispatch => {
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const getUserRolesToAssign = () => async dispatch => {
-  try {
-    const response = await fetch("/api/user/roles");
-
-    if (response.status === 200) {
-      const roles = await response.json();
-
-      return roles;
-    }
-
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }

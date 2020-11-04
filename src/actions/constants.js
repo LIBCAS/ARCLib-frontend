@@ -17,6 +17,7 @@ export const PRODUCER = "PRODUCER";
 export const PRODUCER_PROFILE = "PRODUCER_PROFILE";
 export const REPORT = "REPORT";
 export const RISK = "RISK";
+export const ROLES = "ROLES";
 export const ROUTINE = "ROUTINE";
 export const SIP_PROFILE = "SIP_PROFILE";
 export const STORAGE = "STORAGE";

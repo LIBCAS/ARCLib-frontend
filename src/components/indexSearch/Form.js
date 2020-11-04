@@ -32,8 +32,14 @@ import {
   filterTypeOperations,
   filterOperationsText,
   filterBoolOptions,
+  Permission,
 } from "../../enums";
-import { hasValue, formatDateTime, formatDate } from "../../utils";
+import {
+  hasValue,
+  formatDateTime,
+  formatDate,
+  hasPermission,
+} from "../../utils";
 import * as storage from "../../utils/storage";
 
 const Form = ({
@@ -442,29 +448,31 @@ const Form = ({
       >
         {texts.COLLAPSE_ALL}
       </Button>
-      <div
-        {...{
-          className:
-            "index-search-form-button textfield-with-button margin-left-small",
-        }}
-      >
-        <TextFieldWithButton
+      {hasPermission(Permission.AIP_QUERY_RECORDS_WRITE) && (
+        <div
           {...{
-            id: "index-search-text-field-with-button",
-            placeholder: texts.QUERY_NAME,
-            label: texts.SAVE,
-            onClick: async () => {
-              if (await saveAndgetAipList(queryName)) {
-                setQuery(null);
-              }
-              saveQuery();
-            },
-            primary: true,
-            buttonDisabled: isEmpty(queryName),
-            onChange: (value) => setQueryName(value),
+            className:
+              "index-search-form-button textfield-with-button margin-left-small",
           }}
-        />
-      </div>
+        >
+          <TextFieldWithButton
+            {...{
+              id: "index-search-text-field-with-button",
+              placeholder: texts.QUERY_NAME,
+              label: texts.SAVE,
+              onClick: async () => {
+                if (await saveAndgetAipList(queryName)) {
+                  setQuery(null);
+                }
+                saveQuery();
+              },
+              primary: true,
+              buttonDisabled: isEmpty(queryName),
+              onChange: (value) => setQueryName(value),
+            }}
+          />
+        </div>
+      )}
       <Button
         {...{
           primary: true,

@@ -8,20 +8,24 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/reports/Table";
 import { setDialog } from "../../actions/appActions";
 import { getReports } from "../../actions/reportActions";
+import { hasPermission } from "../../utils";
+import { Permission } from "../../enums";
 
 const Reports = ({ history, reports, setDialog, texts, user }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.REPORTS }] }}>
-    <Button
-      {...{
-        primary: true,
-        className: "margin-bottom-small",
-        onClick: () => {
-          setDialog("ReportNew");
-        },
-      }}
-    >
-      {texts.NEW}
-    </Button>
+    {hasPermission(Permission.REPORT_TEMPLATE_RECORDS_WRITE) && (
+      <Button
+        {...{
+          primary: true,
+          className: "margin-bottom-small",
+          onClick: () => {
+            setDialog("ReportNew");
+          },
+        }}
+      >
+        {texts.NEW}
+      </Button>
+    )}
     <Table
       {...{
         history,
