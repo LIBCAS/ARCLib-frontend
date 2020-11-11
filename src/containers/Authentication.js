@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import PageWrapper from "../components/PageWrapper";
 import { TextField, Validation } from "../components/form";
 import { signIn } from "../actions/userActions";
+import { getHomepage } from "../utils";
 
 const Authentication = ({ handleSubmit, texts, language }) => (
   <PageWrapper {...{ authStyle: true, className: "form" }}>
@@ -19,21 +20,21 @@ const Authentication = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.USERNAME,
             name: "name",
-            validate: [Validation.required[language]]
+            validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.PASSWORD,
             name: "password",
-            type: "password"
-          }
+            type: "password",
+          },
         ],
         (field, key) => (
           <Field
             {...{
               key,
               id: `authentication-${field.name}`,
-              ...field
+              ...field,
             }}
           />
         )
@@ -50,15 +51,17 @@ export default compose(
   connect(null, { signIn }),
   withHandlers({
     onSubmit: ({ signIn, history, texts }) => async ({ name, password }) => {
-      const signSuccess = await signIn(name, password);
-      if (signSuccess) history.push("/ingest-batches");
-      else
+      const ok = await signIn(name, password);
+      if (ok) {
+        history.push(getHomepage());
+      } else {
         throw new SubmissionError({
-          password: texts.INCORRECT_USERNAME_OR_PASSWORD
+          password: texts.INCORRECT_USERNAME_OR_PASSWORD,
         });
-    }
+      }
+    },
   }),
   reduxForm({
-    form: "sign-in"
+    form: "sign-in",
   })
 )(Authentication);

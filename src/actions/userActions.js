@@ -1,6 +1,5 @@
 import base64 from "base-64";
 import utf8 from "utf8";
-import jwt_decode from "jwt-decode";
 
 import fetch from "../utils/fetch";
 import * as c from "./constants";
@@ -10,6 +9,14 @@ import { tokenNotEmpty } from "../utils";
 
 export const signIn = (name, password) => async (dispatch) => {
   dispatch(showLoader());
+
+  dispatch({
+    type: c.APP,
+    payload: {
+      user: null,
+    },
+  });
+
   try {
     storage.remove("token");
 
@@ -24,13 +31,19 @@ export const signIn = (name, password) => async (dispatch) => {
 
     if (response.status === 200) {
       const token = response.headers.get("bearer");
+
+      if (!token) {
+        dispatch(showLoader(false));
+        return false;
+      }
+
       storage.set("token", token);
-      const decoded = jwt_decode(token);
-      await dispatch(getUser(decoded.sub));
+
+      await dispatch(getUser());
     }
 
     dispatch(showLoader(false));
-    return response.status === 200;
+    return true;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
@@ -45,9 +58,9 @@ export const signOut = () => async () => {
   return true;
 };
 
-export const getUser = (id) => async (dispatch) => {
+export const getUser = () => async (dispatch) => {
   try {
-    const response = await fetch(`/api/user/${id}`);
+    const response = await fetch("/api/user/me");
 
     if (response.status === 200) {
       const user = await response.json();

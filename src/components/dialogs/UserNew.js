@@ -12,11 +12,12 @@ import { TextField, SelectField, Validation } from "../form";
 import { saveUser, getUsers } from "../../actions/usersActions";
 import {
   hasPermission,
+  isRoleDisabled,
   removeStartEndWhiteSpaceInSelectedFields,
 } from "../../utils";
 import { Permission } from "../../enums";
 
-const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
+const UserNew = ({ handleSubmit, producers, roles, texts, language, fail }) => (
   <DialogContainer
     {...{
       title: texts.USER_NEW,
@@ -49,6 +50,17 @@ const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
                 text:
                   texts.THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER,
               },
+          {
+            component: SelectField,
+            label: texts.ROLES,
+            name: "roles",
+            options: map(roles, (role) => ({
+              value: role.id,
+              label: role.description || role.name || "",
+              disabled: isRoleDisabled(role),
+            })),
+            isMultiple: true,
+          },
         ],
         ({ text, ...field }, key) =>
           text ? (
@@ -64,8 +76,9 @@ const UserNew = ({ handleSubmit, producers, user, texts, language, fail }) => (
 
 export default compose(
   connect(
-    ({ producer: { producers } }) => ({
+    ({ producer: { producers }, roles: { roles } }) => ({
       producers,
+      roles,
       initialValues: {
         producer: get(producers, "[0].id"),
       },
@@ -84,6 +97,7 @@ export default compose(
       saveUser,
       getUsers,
       producers,
+      roles,
       user,
       texts,
       setFail,
@@ -96,6 +110,9 @@ export default compose(
           producer: hasPermission(Permission.PRODUCER_RECORDS_READ)
             ? find(producers, (item) => item.id === producer)
             : get(user, "producer"),
+          roles: (formData.roles || []).map((id) =>
+            find(roles, (r) => r.id === id)
+          ),
         })
       ) {
         getUsers();

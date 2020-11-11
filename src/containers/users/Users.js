@@ -10,6 +10,7 @@ import SortOrder from "../../components/filter/SortOrder";
 import Table from "../../components/users/Table";
 import Pagination from "../../components/Pagination";
 import { getUsers } from "../../actions/usersActions";
+import { getRoles } from "../../actions/rolesActions";
 import { getProducers } from "../../actions/producerActions";
 import { setDialog } from "../../actions/appActions";
 import { hasPermission } from "../../utils";
@@ -22,7 +23,7 @@ const Users = ({
   setDialog,
   getProducers,
   texts,
-  user,
+  getRoles,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.USERS }] }}>
     {hasPermission(Permission.USER_RECORDS_WRITE) && (
@@ -34,6 +35,8 @@ const Users = ({
             if (hasPermission(Permission.PRODUCER_RECORDS_READ)) {
               getProducers(false);
             }
+
+            getRoles();
 
             setDialog("UserNew");
           },
@@ -79,6 +82,7 @@ export default compose(
     getUsers,
     setDialog,
     getProducers,
+    getRoles,
   }),
   lifecycle({
     componentDidMount() {

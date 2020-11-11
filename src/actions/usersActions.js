@@ -43,6 +43,21 @@ export const getUsers = (params) => async (dispatch, getState) => {
   }
 };
 
+export const getUsersByParams = (params) => async (dispatch) => {
+  try {
+    const response = await fetch("/api/user/list_names", {
+      params,
+    });
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.ok ? await response.json() : false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
 export const getUser = (id) => async (dispatch) => {
   dispatch(showLoader());
 

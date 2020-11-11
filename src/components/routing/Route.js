@@ -6,9 +6,9 @@ import JWTDecode from "jwt-decode";
 import getTime from "date-fns/get_time";
 
 import * as storage from "../../utils/storage";
-import { tokenNotEmpty } from "../../utils";
+import { getHomepage, hasPermissions, tokenNotEmpty } from "../../utils";
 
-const AuthenticatedRoute = props => {
+const AuthenticatedRoute = (props) => {
   return <Route {...props} />;
 };
 
@@ -43,9 +43,17 @@ export default compose(
         if (location.pathname !== "/") {
           history.replace("/");
         }
-      } else if (signed && location.pathname === "/") {
-        history.replace("/ingest-batches");
+      } else if (signed) {
+        if (
+          !hasPermissions() &&
+          location.pathname !== "/no-role" &&
+          location.pathname !== "/profile"
+        ) {
+          history.replace("/no-role");
+        } else if (location.pathname === "/") {
+          history.replace(getHomepage());
+        }
       }
-    }
+    },
   })
 )(AuthenticatedRoute);

@@ -9,7 +9,7 @@ import classNames from "classnames";
 import AppHeader from "./AppHeader";
 import SiderMenu from "./SiderMenu";
 import BreadCrumb from "./BreadCrumb";
-import { isProduction, filterByPermission } from "../utils";
+import { isProduction, filterByPermission, hasPermissions } from "../utils";
 import * as storage from "../utils/storage";
 import { Permission } from "../enums";
 
@@ -160,15 +160,19 @@ const PageWrapper = ({
           style: mainLayoutStyle,
         }}
       >
-        <SiderMenu
-          {...{
-            menuItems,
-            collapsed,
-            setCollapsed,
-            className: classNames({ hidden: authStyle || noRoleStyle }),
-            menuStyle,
-          }}
-        />
+        {hasPermissions() ? (
+          <SiderMenu
+            {...{
+              menuItems,
+              collapsed,
+              setCollapsed,
+              className: classNames({ hidden: authStyle || noRoleStyle }),
+              menuStyle,
+            }}
+          />
+        ) : (
+          <div />
+        )}
         <Layout>
           <AppHeader
             {...{

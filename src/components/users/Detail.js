@@ -10,7 +10,7 @@ import { setDialog, showLoader } from "../../actions/appActions";
 import { getProducers } from "../../actions/producerActions";
 import { saveUser, getUser } from "../../actions/usersActions";
 import { getRoles } from "../../actions/rolesActions";
-import { hasPermission } from "../../utils";
+import { hasPermission, isRoleDisabled } from "../../utils";
 import { Permission } from "../../enums";
 
 const Detail = ({
@@ -81,6 +81,7 @@ const Detail = ({
                 options: map(roles, (role) => ({
                   value: role.id,
                   label: role.description || role.name || "",
+                  disabled: isRoleDisabled(role),
                 })),
                 isMultiple: true,
               },

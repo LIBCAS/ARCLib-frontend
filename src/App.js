@@ -1,9 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import { connect } from "react-redux";
 import { compose, lifecycle } from "recompose";
-import { map, isEmpty, get } from "lodash";
+import { map } from "lodash";
 
 import Dialogs from "./containers/Dialogs";
 import Aip from "./containers/aip/Aip";
@@ -36,7 +36,7 @@ import WorkflowDefinitionsContainer from "./containers/workflowDefinitions/Workf
 import ReportsContainer from "./containers/reports/ReportsContainer";
 import Route from "./components/routing/Route";
 import { getUser, keepAlive } from "./actions/userActions";
-import { filterByPermission, hasPermissions } from "./utils";
+import { filterByPermission, getHomepage, hasPermissions } from "./utils";
 import { Permission } from "./enums";
 
 const App = ({ store, user, language, texts }) => {
@@ -45,6 +45,7 @@ const App = ({ store, user, language, texts }) => {
     language,
     texts,
   };
+
   return (
     <Provider {...{ store }}>
       <Router>
@@ -187,10 +188,12 @@ const App = ({ store, user, language, texts }) => {
                   path: "/error",
                   Component: ErrorPage,
                 },
+                {
+                  path: "/no-role",
+                  Component: NoRole,
+                },
               ]),
-              ({ Component, path, ...item }, key) => {
-                const RenderComponent =
-                  path === "/" || hasPermissions() ? Component : NoRole;
+              ({ Component, path, permission, ...item }, key) => {
                 return (
                   <Route
                     {...{
@@ -198,13 +201,14 @@ const App = ({ store, user, language, texts }) => {
                       key,
                       path,
                       render: (props) => (
-                        <RenderComponent {...{ ...containerProps, ...props }} />
+                        <Component {...{ ...containerProps, ...props }} />
                       ),
                     }}
                   />
                 );
               }
             )}
+            <Redirect to={getHomepage()} />
           </Switch>
         </div>
       </Router>
@@ -219,14 +223,16 @@ export default compose(
   }),
   lifecycle({
     componentWillMount() {
-      const { user, getUser, keepAlive } = this.props;
+      const { getUser, keepAlive } = this.props;
 
       window.interval = setInterval(keepAlive, 270000);
 
-      if (!isEmpty(user) && window.location.pathname !== "/error") {
-        if (get(user, "id", get(user, "sub"))) {
-          getUser(get(user, "id", get(user, "sub")));
-        }
+      if (
+        hasPermissions() &&
+        window.location.pathname !== "/error" &&
+        window.location.pathname !== "/no-role"
+      ) {
+        getUser();
       }
     },
     componentWillUnmount() {

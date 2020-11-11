@@ -10,7 +10,7 @@ import Table from "../../components/ingestBatches/Table";
 import Pagination from "../../components/Pagination";
 import SelectField from "../../components/SelectField";
 import { getBatches } from "../../actions/batchActions";
-import { getUsers } from "../../actions/usersActions";
+import { getUsersByParams } from "../../actions/usersActions";
 import { setFilter } from "../../actions/appActions";
 import { filterOperationsTypes } from "../../enums";
 
@@ -113,7 +113,7 @@ export default compose(
   withState("selectKey", "setSelectKey", false),
   connect(({ app: { filter }, batch: { batches } }) => ({ filter, batches }), {
     getBatches,
-    getUsers,
+    getUsersByParams,
     setFilter,
   }),
   lifecycle({
@@ -121,7 +121,7 @@ export default compose(
       const {
         getBatches,
         setTimeoutId,
-        getUsers,
+        getUsersByParams,
         setUsers,
         texts,
       } = this.props;
@@ -133,7 +133,7 @@ export default compose(
           value: "",
           label: `-- ${texts.RESET} --`,
         },
-        ...get(await getUsers({ page: 0, pageSize: 9999 }), "items", []).map(
+        ...((await getUsersByParams({ page: 0, pageSize: 9999 })) || []).map(
           ({ id, fullName }) => ({
             value: id,
             label: fullName || "Neznámý",
