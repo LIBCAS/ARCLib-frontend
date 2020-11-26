@@ -49,7 +49,7 @@ const PageWrapper = ({
     {
       url: "/producer-profiles",
       label: texts.PRODUCER_PROFILES,
-      permission: Permission.PRODUCER_RECORDS_READ,
+      permission: Permission.PRODUCER_PROFILE_RECORDS_READ,
     },
     {
       url: "/ingest",
@@ -147,7 +147,7 @@ const PageWrapper = ({
       label: texts.REPORTS,
       permission: Permission.REPORT_TEMPLATE_RECORDS_READ,
     },
-  ]);
+  ]).filter(({ url, items }) => url || (items && items.length));
 
   return (
     <div>

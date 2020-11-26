@@ -8,7 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Detail from "../../components/sipProfiles/Detail";
 import {
   clearSipProfile,
-  getSipProfile
+  getSipProfile,
 } from "../../actions/sipProfileActions";
 
 const SipProfile = ({ history, sipProfile, texts, ...props }) => (
@@ -16,8 +16,8 @@ const SipProfile = ({ history, sipProfile, texts, ...props }) => (
     {...{
       breadcrumb: [
         { label: texts.SIP_PROFILES, url: "/sip-profiles" },
-        { label: get(sipProfile, "name", "") }
-      ]
+        { label: get(sipProfile, "name", "") },
+      ],
     }}
   >
     {sipProfile && (
@@ -26,8 +26,11 @@ const SipProfile = ({ history, sipProfile, texts, ...props }) => (
           history,
           sipProfile,
           texts,
-          initialValues: sipProfile,
-          ...props
+          initialValues: {
+            ...sipProfile,
+            producer: get(sipProfile, "producer.id", ""),
+          },
+          ...props,
         }}
       />
     )}
@@ -38,7 +41,7 @@ export default compose(
   withRouter,
   connect(({ sipProfile: { sipProfile } }) => ({ sipProfile }), {
     clearSipProfile,
-    getSipProfile
+    getSipProfile,
   }),
   lifecycle({
     componentWillMount() {
@@ -46,6 +49,6 @@ export default compose(
 
       clearSipProfile();
       getSipProfile(match.params.id);
-    }
+    },
   })
 )(SipProfile);

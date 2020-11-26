@@ -26,7 +26,10 @@ const ValidationProfile = ({ history, validationProfile, texts, ...props }) => (
           history,
           validationProfile,
           texts,
-          initialValues: validationProfile,
+          initialValues: {
+            ...validationProfile,
+            producer: get(validationProfile, "producer.id", ""),
+          },
           ...props,
         }}
       />

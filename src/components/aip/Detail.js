@@ -153,7 +153,7 @@ const Detail = ({
       )}
       {get(aip, "indexedFields.aip_state[0]") === "ARCHIVED" &&
       !get(aip, "indexedFields.debug_mode[0]") &&
-      hasPermission(Permission.SUPER_ADMIN) ? (
+      hasPermission(Permission.AIP_RECORDS_READ) ? (
         <DropDown
           {...{
             label: texts.TEST_ON_STORAGE,

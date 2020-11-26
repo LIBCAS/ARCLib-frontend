@@ -166,7 +166,7 @@ export default compose(
     componentWillMount() {
       const { getProducers, getRoles } = this.props;
 
-      if (hasPermission(Permission.PRODUCER_RECORDS_READ)) {
+      if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
         getProducers();
       }
 

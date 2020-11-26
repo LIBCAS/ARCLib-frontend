@@ -37,7 +37,7 @@ const ProducerProfiles = ({
           primary: true,
           className: "margin-bottom-small",
           onClick: () => {
-            if (hasPermission(Permission.PRODUCER_RECORDS_READ)) {
+            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
               getProducers(false);
             }
             getSipProfiles();

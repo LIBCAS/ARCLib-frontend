@@ -518,8 +518,6 @@ export const CZ = {
     "Minimální počet uložišt je kontrolován při spuštění aplikace a při operaci odebrání uložiště.",
   THE_PACKAGE_WAS_PROCESSED_IN_DEBUG_MODE:
     "Balík byl zpracován v režimu ladění.",
-  THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER:
-    "Uživateli bude přidělen stejný dodavatel, jenž je přidělen k vašemu účtu.",
   THE_USER_MUST_HAVE_ASSIGNED_A_PRODUCER:
     "Uživatel musí mít přiřazeného dodavatele.",
   THREAT_LEVEL: "Úroveň ohrožení",

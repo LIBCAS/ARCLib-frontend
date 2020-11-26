@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
+import { compose, withHandlers, withState, withProps } from "recompose";
 import { reduxForm, Field, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
 import { find, get, map } from "lodash";
@@ -17,7 +17,15 @@ import {
 } from "../../utils";
 import { Permission } from "../../enums";
 
-const UserNew = ({ handleSubmit, producers, roles, texts, language, fail }) => (
+const UserNew = ({ 
+  producersEnabled,
+  user,
+  handleSubmit, 
+  producers, 
+  roles, 
+  texts, 
+  language, 
+  fail }) => (
   <DialogContainer
     {...{
       title: texts.USER_NEW,
@@ -35,21 +43,24 @@ const UserNew = ({ handleSubmit, producers, roles, texts, language, fail }) => (
             name: "username",
             validate: [Validation.required[language]],
           },
-          hasPermission(Permission.PRODUCER_RECORDS_READ)
-            ? {
-                component: SelectField,
-                label: texts.PRODUCER,
-                name: "producer",
-                validate: [Validation.required[language]],
-                options: map(producers, (producer) => ({
+          {
+            component: SelectField,
+            label: texts.PRODUCER,
+            name: "producer",
+            validate: [Validation.required[language]],
+            options: producersEnabled
+              ? map(producers, (producer) => ({
                   label: producer.name,
                   value: producer.id,
-                })),
-              }
-            : {
-                text:
-                  texts.THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER,
-              },
+                }))
+              : [
+                  {
+                    label: get(user, "producer.name"),
+                    value: get(user, "producer.id"),
+                  },
+                ],
+            disabled: !producersEnabled,
+          },
           {
             component: SelectField,
             label: texts.ROLES,
@@ -89,10 +100,27 @@ export default compose(
       reset,
     }
   ),
+  withProps({
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
+  }),
+  withProps(
+    ({
+      producersEnabled,
+      user,
+      producers,
+    }) => ({
+      initialValues: {
+        producer: producersEnabled
+          ? get(producers, "[0].id")
+          : get(user, "producer.name")
+      },
+    })
+  ),
   withRouter,
   withState("fail", "setFail", null),
   withHandlers({
     onSubmit: ({
+      producersEnabled,
       closeDialog,
       saveUser,
       getUsers,
@@ -107,9 +135,9 @@ export default compose(
         await saveUser({
           id: uuidv1(),
           ...removeStartEndWhiteSpaceInSelectedFields(formData, ["username"]),
-          producer: hasPermission(Permission.PRODUCER_RECORDS_READ)
-            ? find(producers, (item) => item.id === producer)
-            : get(user, "producer"),
+          producer: producersEnabled
+          ? find(producers, (item) => item.id === producer)
+          : get(user, "producer"),
           roles: (formData.roles || []).map((id) =>
             find(roles, (r) => r.id === id)
           ),

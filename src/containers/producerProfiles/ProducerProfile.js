@@ -66,7 +66,7 @@ export default compose(
   withProps(({ user, producerProfile }) => ({
     canEditAll:
       hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) &&
-      hasPermission(Permission.PRODUCER_RECORDS_READ),
+      hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
     canEdit:
       hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) &&
       get(producerProfile, "producer.id") === get(user, "producer.id"),

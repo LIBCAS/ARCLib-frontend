@@ -49,7 +49,7 @@ export const getHomepage = () => {
       [
         [Permission.BATCH_PROCESSING_READ, "/ingest-batches"],
         [Permission.PRODUCER_PROFILE_RECORDS_READ, "/producer-profiles"],
-        [Permission.PRODUCER_RECORDS_READ, "/produces"],
+        [Permission.PRODUCER_RECORDS_READ, "/producers"],
         [Permission.INGEST_ROUTINE_RECORDS_READ, "/ingest-routines"],
         [Permission.VALIDATION_PROFILE_RECORDS_READ, "/validation-profiles"],
         [Permission.SIP_PROFILE_RECORDS_READ, "/sip-profiles"],

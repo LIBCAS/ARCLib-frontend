@@ -8,17 +8,31 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/sipProfiles/Table";
 import { setDialog } from "../../actions/appActions";
 import { getSipProfiles } from "../../actions/sipProfileActions";
+import { getProducers } from "../../actions/producerActions";
 import { hasPermission } from "../../utils";
 import { Permission } from "../../enums";
 
-const SipProfiles = ({ history, sipProfiles, setDialog, texts, user }) => (
+const SipProfiles = ({
+  history,
+  sipProfiles,
+  setDialog,
+  texts,
+  user,
+  getProducers,
+}) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.SIP_PROFILES }] }}>
     {hasPermission(Permission.SIP_PROFILE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("SipProfileNew"),
+          onClick: () => {
+            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
+              getProducers(false);
+            }
+
+            setDialog("SipProfileNew");
+          },
         }}
       >
         {texts.NEW}
@@ -33,6 +47,7 @@ export default compose(
   connect(({ sipProfile: { sipProfiles } }) => ({ sipProfiles }), {
     setDialog,
     getSipProfiles,
+    getProducers,
   }),
   lifecycle({
     componentWillMount() {

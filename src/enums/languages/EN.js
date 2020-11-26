@@ -518,8 +518,6 @@ export const EN = {
     "The minimum number of storages is checked when the application is starting and during the removal of storage.",
   THE_PACKAGE_WAS_PROCESSED_IN_DEBUG_MODE:
     "The package was processed in debug mode.",
-  THE_SAME_PRODUCER_ASSIGNED_TO_YOUR_ACCOUNT_WILL_BE_ASSIGNED_TO_THE_USER:
-    "The same vendor assigned to your account will be assigned to the user.",
   THE_USER_MUST_HAVE_ASSIGNED_A_PRODUCER:
     "The user must have assigned a producer.",
   THREAT_LEVEL: "Threat level",

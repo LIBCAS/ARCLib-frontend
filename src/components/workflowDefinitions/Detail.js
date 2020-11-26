@@ -1,13 +1,18 @@
 import React from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { get, map } from "lodash";
+import { compose, withHandlers, lifecycle, withProps } from "recompose";
+import { get, map, find } from "lodash";
 
 import Button from "../Button";
-import { TextField, SyntaxHighlighterField, Validation } from "../form";
+import {
+  TextField,
+  SelectField,
+  SyntaxHighlighterField,
+  Validation,
+} from "../form";
 import { saveWorkflowDefinition } from "../../actions/workflowDefinitionActions";
-import { setDialog } from "../../actions/appActions";
+import { getProducers } from "../../actions/producerActions";
 import {
   hasPermission,
   removeStartEndWhiteSpaceInSelectedFields,
@@ -20,9 +25,11 @@ const Detail = ({
   workflowDefinition,
   texts,
   language,
-  user,
+  producers,
 }) => {
-  const editEnabled = hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE);
+  const editEnabled = hasPermission(
+    Permission.WORKFLOW_DEFINITION_RECORDS_WRITE
+  );
   return (
     <div>
       <form {...{ onSubmit: handleSubmit }}>
@@ -33,6 +40,16 @@ const Detail = ({
               label: texts.NAME,
               name: "name",
               validate: [Validation.required[language]],
+            },
+            {
+              component: SelectField,
+              label: texts.PRODUCER,
+              name: "producer",
+              validate: [Validation.required[language]],
+              options: map(producers, (producer) => ({
+                value: producer.id,
+                label: producer.name || "",
+              })),
             },
             {
               component: SyntaxHighlighterField,
@@ -75,9 +92,17 @@ const Detail = ({
 };
 
 export default compose(
-  connect(null, {
-    saveWorkflowDefinition,
-    setDialog,
+  connect(
+    ({ producer: { producers } }) => ({
+      producers,
+    }),
+    {
+      saveWorkflowDefinition,
+      getProducers,
+    }
+  ),
+  withProps({
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
   }),
   withHandlers({
     onSubmit: ({
@@ -85,16 +110,35 @@ export default compose(
       saveWorkflowDefinition,
       workflowDefinition,
       texts,
+      producers,
+      producersEnabled,
     }) => async (formData) => {
       if (
         await saveWorkflowDefinition({
           ...workflowDefinition,
           ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+          ...(producersEnabled
+            ? {
+                producer: find(
+                  producers,
+                  (item) => item.id === formData.producer
+                ),
+              }
+            : {}),
         })
       ) {
         history.push("/workflow-definitions");
       } else {
         throw new SubmissionError({ bpmnDefinition: texts.SAVE_FAILED });
+      }
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { getProducers, producersEnabled } = this.props;
+
+      if (producersEnabled) {
+        getProducers();
       }
     },
   }),

@@ -88,7 +88,11 @@ const SearchQueriesTable = ({
                         const query = await loadQuery(item.id);
                         query.query.filter = flatten(
                           get(query, "query.filter", []).map((f) =>
-                            f.operation === "NESTED" ? f.filter : f
+                            f.operation === "NESTED" ||
+                            f.operation === "AND" ||
+                            f.operation === "OR"
+                              ? f.filter
+                              : f
                           )
                         );
                         setQuery(query);

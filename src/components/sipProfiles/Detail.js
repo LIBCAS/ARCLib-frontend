@@ -1,8 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { get, map } from "lodash";
+import { compose, withHandlers, lifecycle, withProps } from "recompose";
+import { get, map, find } from "lodash";
 
 import Button from "../Button";
 import {
@@ -13,6 +13,7 @@ import {
   Checkbox,
 } from "../form";
 import { saveSipProfile } from "../../actions/sipProfileActions";
+import { getProducers } from "../../actions/producerActions";
 import {
   hasPermission,
   openUrlInNewTab,
@@ -28,7 +29,7 @@ const Detail = ({
   sipProfile,
   texts,
   language,
-  user,
+  producers,
 }) => {
   const editEnabled = hasPermission(Permission.SIP_PROFILE_RECORDS_WRITE);
   return (
@@ -47,6 +48,16 @@ const Detail = ({
               label: texts.EXTERNAL_ID,
               name: "externalId",
               disabled: true,
+            },
+            {
+              component: SelectField,
+              label: texts.PRODUCER,
+              name: "producer",
+              validate: [Validation.required[language]],
+              options: map(producers, (producer) => ({
+                value: producer.id,
+                label: producer.name || "",
+              })),
             },
             {
               component: SyntaxHighlighterField,
@@ -146,13 +157,27 @@ const Detail = ({
 };
 
 export default compose(
-  connect(null, {
-    saveSipProfile,
+  connect(
+    ({ producer: { producers } }) => ({
+      producers,
+    }),
+    {
+      saveSipProfile,
+      getProducers,
+    }
+  ),
+  withProps({
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
   }),
   withHandlers({
-    onSubmit: ({ saveSipProfile, sipProfile, texts, history }) => async (
-      formData
-    ) => {
+    onSubmit: ({
+      saveSipProfile,
+      sipProfile,
+      texts,
+      history,
+      producers,
+      producersEnabled,
+    }) => async (formData) => {
       const response = await saveSipProfile({
         ...sipProfile,
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
@@ -161,6 +186,14 @@ export default compose(
           "pathToSipId.xpathToId",
           "sipMetadataPathGlobPattern",
         ]),
+        ...(producersEnabled
+          ? {
+              producer: find(
+                producers,
+                (item) => item.id === formData.producer
+              ),
+            }
+          : {}),
       });
 
       if (response === 200) {
@@ -173,6 +206,15 @@ export default compose(
                 packageType: texts.SAVE_FAILED,
               }
         );
+      }
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      const { getProducers, producersEnabled } = this.props;
+
+      if (producersEnabled) {
+        getProducers();
       }
     },
   }),

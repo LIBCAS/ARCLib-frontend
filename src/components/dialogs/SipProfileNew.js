@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withHandlers } from "recompose";
+import { compose, withHandlers, withProps } from "recompose";
 import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
-import { map, get } from "lodash";
+import { map, get, find } from "lodash";
 import uuidv1 from "uuid/v1";
 
 import DialogContainer from "./DialogContainer";
@@ -17,10 +17,19 @@ import {
   saveSipProfile,
   getSipProfiles,
 } from "../../actions/sipProfileActions";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
-import { packageTypeOptions } from "../../enums";
+import {
+  hasPermission,
+  removeStartEndWhiteSpaceInSelectedFields,
+} from "../../utils";
+import { Permission, packageTypeOptions } from "../../enums";
 
-const SipProfileNew = ({ handleSubmit, texts, language }) => (
+const SipProfileNew = ({ 
+  producersEnabled,
+  user,
+  handleSubmit, 
+  texts, 
+  language, 
+  producers }) => (
   <DialogContainer
     {...{
       title: texts.SIP_PROFILE_NEW,
@@ -38,6 +47,24 @@ const SipProfileNew = ({ handleSubmit, texts, language }) => (
             label: texts.NAME,
             name: "name",
             validate: [Validation.required[language]],
+          },
+          {
+            component: SelectField,
+            label: texts.PRODUCER,
+            name: "producer",
+            validate: [Validation.required[language]],
+            options: producersEnabled
+              ? map(producers, (producer) => ({
+                  label: producer.name,
+                  value: producer.id,
+                }))
+              : [
+                  {
+                    label: get(user, "producer.name"),
+                    value: get(user, "producer.id"),
+                  },
+                ],
+            disabled: !producersEnabled,
           },
           {
             component: SyntaxHighlighterField,
@@ -72,11 +99,14 @@ const SipProfileNew = ({ handleSubmit, texts, language }) => (
             options: packageTypeOptions,
           },
         ],
-        (field) => (
-          <Field
-            {...{ key: field.name, id: `sip-profile-${field.name}`, ...field }}
-          />
-        )
+        ({ text, ...field }, key) =>
+          text ? (
+            <p {...{ key }}>{text}</p>
+          ) : (
+            <Field
+              {...{ key, id: `sip-profile-new-${field.name}`, ...field }}
+            />
+          )
       )}
     </form>
   </DialogContainer>
@@ -84,8 +114,12 @@ const SipProfileNew = ({ handleSubmit, texts, language }) => (
 
 export default compose(
   connect(
-    () => ({
-      initialValues: { packageType: get(packageTypeOptions, "[0].value") },
+    ({ producer: { producers } }) => ({
+      producers,
+      initialValues: {
+        packageType: get(packageTypeOptions, "[0].value"),
+        producer: get(producers, "[0].id"),
+      },
     }),
     {
       saveSipProfile,
@@ -93,15 +127,34 @@ export default compose(
       reset,
     }
   ),
+  withProps({
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
+  }),
+  withProps(
+    ({
+      producersEnabled,
+      user,
+      producers,
+    }) => ({
+      initialValues: {
+        producer: producersEnabled
+          ? get(producers, "[0].id")
+          : get(user, "producer.name")
+      },
+    })
+  ),
   withRouter,
   withHandlers({
     onSubmit: ({
+      producersEnabled,
+      user,
       closeDialog,
       saveSipProfile,
       getSipProfiles,
       texts,
       reset,
-    }) => async (formData) => {
+      producers,
+    }) => async ({ producer, ...formData }) => {
       const response = await saveSipProfile({
         id: uuidv1(),
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
@@ -111,6 +164,9 @@ export default compose(
           "sipMetadataPathGlobPattern",
         ]),
         editable: true,
+        producer: producersEnabled
+        ? find(producers, (item) => item.id === producer)
+        : get(user, "producer"),
       });
 
       if (response === 200) {

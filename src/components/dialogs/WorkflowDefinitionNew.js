@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
+import { compose, withHandlers, withState, withProps } from "recompose";
 import { reduxForm, Field, SubmissionError, reset } from "redux-form";
 import { withRouter } from "react-router-dom";
-import { map, get } from "lodash";
+import { map, get, find } from "lodash";
 import uuidv1 from "uuid/v1";
 import { FormGroup, ControlLabel } from "react-bootstrap";
 import { message } from "antd";
@@ -12,15 +12,18 @@ import TextField from "../TextField";
 import Button from "../Button";
 import ErrorBlock from "../ErrorBlock";
 import DialogContainer from "./DialogContainer";
-import { TextField as FormTextField, Validation } from "../form";
+import { TextField as FormTextField, SelectField, Validation } from "../form";
 import {
   saveWorkflowDefinition,
   getWorkflowDefinitions,
 } from "../../actions/workflowDefinitionActions";
 import { setDialog } from "../../actions/appActions";
-import { hasValue } from "../../utils";
+import { hasPermission, hasValue } from "../../utils";
+import { Permission } from "../../enums";
 
 const WorkflowDefinitionNew = ({
+  producersEnabled,
+  user,
   handleSubmit,
   texts,
   language,
@@ -33,6 +36,7 @@ const WorkflowDefinitionNew = ({
   fileName,
   setFileName,
   setDialog,
+  producers,
 }) => (
   <DialogContainer
     {...{
@@ -53,6 +57,24 @@ const WorkflowDefinitionNew = ({
             validate: [Validation.required[language]],
           },
           {
+            component: SelectField,
+            label: texts.PRODUCER,
+            name: "producer",
+            validate: [Validation.required[language]],
+            options: producersEnabled
+              ? map(producers, (producer) => ({
+                  label: producer.name,
+                  value: producer.id,
+                }))
+              : [
+                  {
+                    label: get(user, "producer.name"),
+                    value: get(user, "producer.id"),
+                  },
+                ],
+            disabled: !producersEnabled,
+          },
+          {
             label: texts.BPMN_DEFINITION,
             value: xmlContent,
             fileName,
@@ -63,8 +85,13 @@ const WorkflowDefinitionNew = ({
             syntaxHighlighter: true,
           },
         ],
-        ({ syntaxHighlighter, value, onChange, fileName, ...field }, key) =>
-          syntaxHighlighter ? (
+        (
+          { text, syntaxHighlighter, value, onChange, fileName, ...field },
+          key
+        ) =>
+          text ? (
+            <p {...{ key }}>{text}</p>
+          ) : syntaxHighlighter ? (
             <div {...{ key }}>
               <div
                 {...{
@@ -142,12 +169,36 @@ const WorkflowDefinitionNew = ({
 );
 
 export default compose(
-  connect(null, {
-    saveWorkflowDefinition,
-    getWorkflowDefinitions,
-    setDialog,
-    reset,
+  connect(
+    ({ producer: { producers } }) => ({
+      producers,
+      initialValues: {
+        producer: get(producers, "[0].id"),
+      },
+    }),
+    {
+      saveWorkflowDefinition,
+      getWorkflowDefinitions,
+      setDialog,
+      reset,
+    }
+  ),
+  withProps({
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
   }),
+  withProps(
+    ({
+      producersEnabled,
+      user,
+      producers,
+    }) => ({
+      initialValues: {
+        producer: producersEnabled
+          ? get(producers, "[0].id")
+          : get(user, "producer.name")
+      },
+    })
+  ),
   withRouter,
   withState("xmlContent", "setXmlContent", ""),
   withState("fileName", "setFileName", ""),
@@ -155,6 +206,8 @@ export default compose(
   withState("xmlContentFail", "setXmlContentFail", ""),
   withHandlers({
     onSubmit: ({
+      producersEnabled,
+      user,
       closeDialog,
       saveWorkflowDefinition,
       getWorkflowDefinitions,
@@ -162,7 +215,8 @@ export default compose(
       xmlContent,
       setXmlContentFail,
       reset,
-    }) => async (formData) => {
+      producers,
+    }) => async ({ producer, ...formData }) => {
       if (hasValue(xmlContent)) {
         setXmlContentFail(null);
         if (
@@ -170,6 +224,9 @@ export default compose(
             id: uuidv1(),
             ...formData,
             bpmnDefinition: xmlContent,
+            producer: producersEnabled
+            ? find(producers, (item) => item.id === producer)
+            : get(user, "producer"),
           })
         ) {
           getWorkflowDefinitions();

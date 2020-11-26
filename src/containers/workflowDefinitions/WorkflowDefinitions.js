@@ -8,6 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/workflowDefinitions/Table";
 import { setDialog } from "../../actions/appActions";
 import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
+import { getProducers } from "../../actions/producerActions";
 import { hasPermission } from "../../utils";
 import { Permission } from "../../enums";
 
@@ -17,6 +18,7 @@ const WorkflowDefinitions = ({
   setDialog,
   texts,
   user,
+  getProducers,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.WORKFLOW_DEFINITIONS }] }}>
     {hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE) && (
@@ -24,7 +26,13 @@ const WorkflowDefinitions = ({
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("WorkflowDefinitionNew"),
+          onClick: () => {
+            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
+              getProducers(false);
+            }
+
+            setDialog("WorkflowDefinitionNew");
+          },
         }}
       >
         {texts.NEW}
@@ -43,6 +51,7 @@ export default compose(
     {
       setDialog,
       getWorkflowDefinitions,
+      getProducers,
     }
   ),
   lifecycle({

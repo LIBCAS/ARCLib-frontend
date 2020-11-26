@@ -182,7 +182,7 @@ export default compose(
     }
   ),
   withProps({
-    producersEnabled: hasPermission(Permission.PRODUCER_RECORDS_READ),
+    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
   }),
   withProps(
     ({

@@ -34,7 +34,10 @@ const WorkflowDefinition = ({
           history,
           workflowDefinition,
           texts,
-          initialValues: workflowDefinition,
+          initialValues: {
+            ...workflowDefinition,
+            producer: get(workflowDefinition, "producer.id", ""),
+          },
           ...props,
         }}
       />

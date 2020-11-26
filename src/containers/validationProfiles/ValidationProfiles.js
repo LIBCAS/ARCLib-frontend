@@ -8,6 +8,7 @@ import PageWrapper from "../../components/PageWrapper";
 import Table from "../../components/validationProfiles/Table";
 import { setDialog } from "../../actions/appActions";
 import { getValidationProfiles } from "../../actions/validationProfileActions";
+import { getProducers } from "../../actions/producerActions";
 import { hasPermission } from "../../utils";
 import { Permission } from "../../enums";
 
@@ -17,6 +18,7 @@ const ValidationProfiles = ({
   setDialog,
   texts,
   user,
+  getProducers,
 }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.VALIDATION_PROFILES }] }}>
     {hasPermission(Permission.VALIDATION_PROFILE_RECORDS_WRITE) && (
@@ -24,7 +26,13 @@ const ValidationProfiles = ({
         {...{
           primary: true,
           className: "margin-bottom-small",
-          onClick: () => setDialog("ValidationProfileNew"),
+          onClick: () => {
+            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
+              getProducers(false);
+            }
+
+            setDialog("ValidationProfileNew");
+          },
         }}
       >
         {texts.NEW}
@@ -41,6 +49,7 @@ export default compose(
     {
       setDialog,
       getValidationProfiles,
+      getProducers,
     }
   ),
   lifecycle({
