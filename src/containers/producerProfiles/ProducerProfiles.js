@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import SortOrder from "../../components/filter/SortOrder";
-import Table from "../../components/producerProfiles/Table";
-import Pagination from "../../components/Pagination";
-import { setDialog } from "../../actions/appActions";
-import { getProducers } from "../../actions/producerActions";
-import { getProducerProfiles } from "../../actions/producerProfileActions";
-import { getSipProfiles } from "../../actions/sipProfileActions";
-import { getValidationProfiles } from "../../actions/validationProfileActions";
-import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import SortOrder from '../../components/filter/SortOrder';
+import Table from '../../components/producerProfiles/Table';
+import Pagination from '../../components/Pagination';
+import { setDialog } from '../../actions/appActions';
+import { getProducers } from '../../actions/producerActions';
+import { getProducerProfiles } from '../../actions/producerProfileActions';
+import { getSipProfiles } from '../../actions/sipProfileActions';
+import { getValidationProfiles } from '../../actions/validationProfileActions';
+import { getWorkflowDefinitions } from '../../actions/workflowDefinitionActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const ProducerProfiles = ({
   history,
@@ -35,7 +35,7 @@ const ProducerProfiles = ({
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
+          className: 'margin-bottom-small',
           onClick: () => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
               getProducers(false);
@@ -43,7 +43,7 @@ const ProducerProfiles = ({
             getSipProfiles();
             getValidationProfiles();
             getWorkflowDefinitions();
-            setDialog("ProducerProfileNew");
+            setDialog('ProducerProfileNew');
           },
         }}
       >
@@ -52,17 +52,17 @@ const ProducerProfiles = ({
     )}
     <SortOrder
       {...{
-        className: "margin-bottom",
+        className: 'margin-bottom',
         sortOptions: [
-          { label: texts.UPDATED, value: "updated" },
-          { label: texts.CREATED, value: "created" },
-          { label: texts.NAME, value: "name" },
-          { label: texts.PRODUCER, value: "producerName" },
-          { label: texts.SIP_PROFILE, value: "sipProfileName" },
-          { label: texts.VALIDATION_PROFILE, value: "validationProfileName" },
+          { label: texts.UPDATED, value: 'updated' },
+          { label: texts.CREATED, value: 'created' },
+          { label: texts.NAME, value: 'name' },
+          { label: texts.PRODUCER, value: 'producerName' },
+          { label: texts.SIP_PROFILE, value: 'sipProfileName' },
+          { label: texts.VALIDATION_PROFILE, value: 'validationProfileName' },
           {
             label: texts.WORKFLOW_DEFINITION,
-            value: "workflowDefinitionName",
+            value: 'workflowDefinitionName',
           },
         ],
         handleUpdate: () => getProducerProfiles(),
@@ -73,15 +73,15 @@ const ProducerProfiles = ({
         history,
         texts,
         user,
-        producerProfiles: get(producerProfiles, "items"),
+        producerProfiles: get(producerProfiles, 'items'),
         handleUpdate: () => getProducerProfiles(),
       }}
     />
     <Pagination
       {...{
         handleUpdate: () => getProducerProfiles(),
-        count: get(producerProfiles, "items.length", 0),
-        countAll: get(producerProfiles, "count", 0),
+        count: get(producerProfiles, 'items.length', 0),
+        countAll: get(producerProfiles, 'count', 0),
       }}
     />
   </PageWrapper>
@@ -89,17 +89,14 @@ const ProducerProfiles = ({
 
 export default compose(
   withRouter,
-  connect(
-    ({ producerProfile: { producerProfiles } }) => ({ producerProfiles }),
-    {
-      getProducers,
-      getProducerProfiles,
-      setDialog,
-      getSipProfiles,
-      getValidationProfiles,
-      getWorkflowDefinitions,
-    }
-  ),
+  connect(({ producerProfile: { producerProfiles } }) => ({ producerProfiles }), {
+    getProducers,
+    getProducerProfiles,
+    setDialog,
+    getSipProfiles,
+    getValidationProfiles,
+    getWorkflowDefinitions,
+  }),
   lifecycle({
     componentDidMount() {
       const { getProducerProfiles } = this.props;

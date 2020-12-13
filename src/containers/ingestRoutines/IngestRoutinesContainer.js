@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import IngestRoutines from "./IngestRoutines";
-import IngestRoutine from "./IngestRoutine";
+import IngestRoutines from './IngestRoutines';
+import IngestRoutine from './IngestRoutine';
 
-const IngestRoutinesContainer = props => {
+const IngestRoutinesContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const IngestRoutinesContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <IngestRoutine {...props} />
+          render: () => <IngestRoutine {...props} />,
         }}
       />
     );

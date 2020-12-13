@@ -1,16 +1,14 @@
-import React from "react";
-import { map, isEmpty, get } from "lodash";
+import React from 'react';
+import { map, isEmpty, get } from 'lodash';
 
-import Tree from "../Tree";
+import Tree from '../Tree';
 
 const TreeContainer = ({ data }) => {
   const loop = (data) =>
     map(data, (item, i) => ({
-      title: get(item, "caption", ""),
+      title: get(item, 'caption', ''),
       selectable: false,
-      items: !isEmpty(get(item, "children"))
-        ? loop(get(item, "children"))
-        : undefined,
+      items: !isEmpty(get(item, 'children')) ? loop(get(item, 'children')) : undefined,
     }));
 
   return (

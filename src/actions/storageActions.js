@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getStorages = () => async dispatch => {
+export const getStorages = () => async (dispatch) => {
   dispatch({
     type: c.STORAGE,
     payload: {
-      storages: null
-    }
+      storages: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/arcstorage/administration/storage");
+    const response = await fetch('/api/arcstorage/administration/storage');
 
     if (response.status === 200) {
       const storages = await response.json();
@@ -19,8 +19,8 @@ export const getStorages = () => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          storages
-        }
+          storages,
+        },
       });
 
       return storages;
@@ -35,20 +35,51 @@ export const getStorages = () => async dispatch => {
   }
 };
 
-export const getStorage = id => async dispatch => {
+export const getStoragesBasic = () => async (dispatch) => {
+  dispatch({
+    type: c.STORAGE,
+    payload: {
+      storages: null,
+    },
+  });
+
+  try {
+    const response = await fetch('/api/arcstorage/administration/storage/basic');
+
+    if (response.status === 200) {
+      const storages = await response.json();
+
+      dispatch({
+        type: c.STORAGE,
+        payload: {
+          storages,
+        },
+      });
+
+      return storages;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const getStorage = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.STORAGE,
     payload: {
-      storage: null
-    }
+      storage: null,
+    },
   });
 
   try {
-    const response = await fetch(
-      `/api/arcstorage/administration/storage/${id}`
-    );
+    const response = await fetch(`/api/arcstorage/administration/storage/${id}`);
 
     if (response.status === 200) {
       const storage = await response.json();
@@ -56,8 +87,8 @@ export const getStorage = id => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          storage
-        }
+          storage,
+        },
       });
 
       dispatch(showLoader(false));
@@ -75,20 +106,18 @@ export const getStorage = id => async dispatch => {
   }
 };
 
-export const getStorageSyncStatus = id => async dispatch => {
+export const getStorageSyncStatus = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.STORAGE,
     payload: {
-      storageSyncStatus: null
-    }
+      storageSyncStatus: null,
+    },
   });
 
   try {
-    const response = await fetch(
-      `/api/arcstorage/administration/storage/sync/${id}`
-    );
+    const response = await fetch(`/api/arcstorage/administration/storage/sync/${id}`);
 
     if (response.status === 200) {
       const storageSyncStatus = await response.json();
@@ -96,8 +125,8 @@ export const getStorageSyncStatus = id => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          storageSyncStatus
-        }
+          storageSyncStatus,
+        },
       });
 
       dispatch(showLoader(false));
@@ -115,15 +144,12 @@ export const getStorageSyncStatus = id => async dispatch => {
   }
 };
 
-export const deleteStorage = id => async dispatch => {
+export const deleteStorage = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/arcstorage/administration/storage/${id}`,
-      {
-        method: "DELETE"
-      }
-    );
+    const response = await fetch(`/api/arcstorage/administration/storage/${id}`, {
+      method: 'DELETE',
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -136,19 +162,16 @@ export const deleteStorage = id => async dispatch => {
   }
 };
 
-export const updateStorage = body => async dispatch => {
+export const updateStorage = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      "/api/arcstorage/administration/storage/update",
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch('/api/arcstorage/administration/storage/update', {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
 
     if (response.status === 200) {
       const storage = await response.json();
@@ -156,8 +179,8 @@ export const updateStorage = body => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          storage
-        }
+          storage,
+        },
       });
 
       dispatch(showLoader(false));
@@ -175,40 +198,15 @@ export const updateStorage = body => async dispatch => {
   }
 };
 
-export const continueSync = body => async dispatch => {
+export const continueSync = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/arcstorage/administration/storage/sync/${body.id}`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
-
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return response.status === 200;
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const attachNewStorage = body => async dispatch => {
-  dispatch(showLoader());
-  try {
-    const response = await fetch("/api/arcstorage/administration/storage", {
-      method: "POST",
+    const response = await fetch(`/api/arcstorage/administration/storage/sync/${body.id}`, {
+      method: 'POST',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     dispatch(showLoader(false));
@@ -222,18 +220,40 @@ export const attachNewStorage = body => async dispatch => {
   }
 };
 
-export const getArchivalStorageConfig = () => async dispatch => {
+export const attachNewStorage = (body) => async (dispatch) => {
+  dispatch(showLoader());
+  try {
+    const response = await fetch('/api/arcstorage/administration/storage', {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.status === 200;
+  } catch (error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+export const getArchivalStorageConfig = () => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.STORAGE,
     payload: {
-      archivalStorage: null
-    }
+      archivalStorage: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/arcstorage/administration/config");
+    const response = await fetch('/api/arcstorage/administration/config');
 
     if (response.status === 200) {
       const archivalStorage = await response.json();
@@ -241,8 +261,8 @@ export const getArchivalStorageConfig = () => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          archivalStorage
-        }
+          archivalStorage,
+        },
       });
 
       dispatch(showLoader(false));
@@ -260,15 +280,15 @@ export const getArchivalStorageConfig = () => async dispatch => {
   }
 };
 
-export const postArchivalStorageConfig = body => async dispatch => {
+export const postArchivalStorageConfig = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch("/api/arcstorage/administration/config", {
-      method: "POST",
+    const response = await fetch('/api/arcstorage/administration/config', {
+      method: 'POST',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     dispatch(showLoader(false));
@@ -282,18 +302,15 @@ export const postArchivalStorageConfig = body => async dispatch => {
   }
 };
 
-export const checkStoragesReachability = () => async dispatch => {
+export const checkStoragesReachability = () => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      "/api/arcstorage/administration/storage/check_reachability",
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        })
-      }
-    );
+    const response = await fetch('/api/arcstorage/administration/storage/check_reachability', {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -306,12 +323,12 @@ export const checkStoragesReachability = () => async dispatch => {
   }
 };
 
-export const archivalStorageCleanup = (all = false) => async dispatch => {
+export const archivalStorageCleanup = (all = false) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch("/api/arcstorage/administration/cleanup", {
+    const response = await fetch('/api/arcstorage/administration/cleanup', {
       params: { all },
-      method: "POST"
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
@@ -325,20 +342,18 @@ export const archivalStorageCleanup = (all = false) => async dispatch => {
   }
 };
 
-export const getStorageState = id => async dispatch => {
+export const getStorageState = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.STORAGE,
     payload: {
-      storageState: null
-    }
+      storageState: null,
+    },
   });
 
   try {
-    const response = await fetch(
-      `/api/arcstorage/administration/storage/${id}/state`
-    );
+    const response = await fetch(`/api/arcstorage/administration/storage/${id}/state`);
 
     if (response.status === 200) {
       const storageState = await response.json();
@@ -346,8 +361,8 @@ export const getStorageState = id => async dispatch => {
       dispatch({
         type: c.STORAGE,
         payload: {
-          storageState
-        }
+          storageState,
+        },
       });
 
       dispatch(showLoader(false));

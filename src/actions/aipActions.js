@@ -1,9 +1,9 @@
-import { get } from "lodash";
+import { get } from 'lodash';
 
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createAipSearchParams, downloadBlob } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createAipSearchParams, downloadBlob } from '../utils';
 
 export const getAipList = () => async (dispatch, getState) => {
   dispatch({
@@ -142,7 +142,7 @@ export const getAip = (id, withLoader = true) => async (dispatch) => {
 export const downloadAip = (aipId, debug = false) => async (dispatch) => {
   dispatch(showLoader());
 
-  const url = `/api${debug ? "/debug" : ""}/aip/export/${aipId}?all=true`;
+  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}?all=true`;
 
   try {
     const response = await fetch(url);
@@ -165,12 +165,8 @@ export const downloadAip = (aipId, debug = false) => async (dispatch) => {
   }
 };
 
-export const getXml = (aipId, xmlVersion, debug = false) => async (
-  dispatch
-) => {
-  const url = `/api${
-    debug ? "/debug" : ""
-  }/aip/export/${aipId}/xml?v=${xmlVersion}`;
+export const getXml = (aipId, xmlVersion, debug = false) => async (dispatch) => {
+  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
 
   try {
     const response = await fetch(url);
@@ -189,14 +185,10 @@ export const getXml = (aipId, xmlVersion, debug = false) => async (
   }
 };
 
-export const downloadXml = (aipId, xmlVersion, debug = false) => async (
-  dispatch
-) => {
+export const downloadXml = (aipId, xmlVersion, debug = false) => async (dispatch) => {
   dispatch(showLoader());
 
-  const url = `/api${
-    debug ? "/debug" : ""
-  }/aip/export/${aipId}/xml?v=${xmlVersion}`;
+  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
 
   try {
     const response = await fetch(url);
@@ -223,7 +215,7 @@ export const forgetAip = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/debug/authorial_package/${id}/forget`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
     dispatch(showLoader(false));
@@ -241,7 +233,7 @@ export const deleteAip = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/deletion_request/aip/${id}`, {
-      method: "POST",
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
@@ -259,7 +251,7 @@ export const removeAip = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/aip/${id}/remove`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
     dispatch(showLoader(false));
@@ -277,29 +269,23 @@ export const renewAip = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/aip/${id}/renew`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
     dispatch(showLoader(false));
-    await openErrorDialogIfRequestFailed(response);
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
-    await openErrorDialogIfRequestFailed(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const updateAip = (
-  id,
-  xmlId,
-  version,
-  reason,
-  xml,
-  hashType,
-  hashValue
-) => async (dispatch) => {
+export const updateAip = (id, xmlId, version, reason, xml, hashType, hashValue) => async (
+  dispatch
+) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/aip/${id}/update`, {
@@ -310,25 +296,25 @@ export const updateAip = (
         hashType,
         hashValue,
       },
-      method: "POST",
+      method: 'POST',
       body: xml,
     });
 
     dispatch(showLoader(false));
 
-    const contentType = response.headers.get("content-type");
+    const contentType = response.headers.get('content-type');
 
     return {
       ok: response.ok,
       status: response.status,
       message:
         !response.ok && contentType
-          ? contentType.indexOf("text/plain") !== -1
+          ? contentType.indexOf('text/plain') !== -1
             ? await response.text()
-            : contentType.indexOf("application/json") !== -1
-            ? get(await response.json(), "message", "")
-            : ""
-          : "",
+            : contentType.indexOf('application/json') !== -1
+            ? get(await response.json(), 'message', '')
+            : ''
+          : '',
     };
   } catch (error) {
     console.log(error);
@@ -343,12 +329,12 @@ export const updateAip = (
 export const registerUpdate = (id) => async () => {
   try {
     const response = await fetch(`/api/aip/${id}/register_update`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
     return {
       ok: response.ok,
-      content: !response.ok ? await response.json() : "",
+      content: !response.ok ? await response.json() : '',
     };
   } catch (error) {
     console.log(error);
@@ -356,24 +342,24 @@ export const registerUpdate = (id) => async () => {
   }
 };
 
-export const cancelUpdate = (id) => async () => {
+export const cancelUpdate = (id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/aip/${id}/cancel_update`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
-    await openErrorDialogIfRequestFailed(response);
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
-    await openErrorDialogIfRequestFailed(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
 export const getKeepAliveTimeout = () => async (dispatch) => {
   try {
-    const response = await fetch("/api/aip/keep_alive_timeout");
+    const response = await fetch('/api/aip/keep_alive_timeout');
 
     if (response.status === 200) {
       const timeout = await response.text();
@@ -381,26 +367,26 @@ export const getKeepAliveTimeout = () => async (dispatch) => {
       return timeout;
     }
 
-    await openErrorDialogIfRequestFailed(response);
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
-    await openErrorDialogIfRequestFailed(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
 
-export const keepAliveUpdate = (id) => async () => {
+export const keepAliveUpdate = (id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/aip/${id}/keep_alive_update`, {
-      method: "PUT",
+      method: 'PUT',
     });
 
-    await openErrorDialogIfRequestFailed(response);
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
   } catch (error) {
     console.log(error);
-    await openErrorDialogIfRequestFailed(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };
@@ -434,12 +420,12 @@ export const getAipInfo = (id, storageId) => async (dispatch) => {
     }
 
     dispatch(showLoader(false));
-    await openErrorDialogIfRequestFailed(response);
+    dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
-    await openErrorDialogIfRequestFailed(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
 };

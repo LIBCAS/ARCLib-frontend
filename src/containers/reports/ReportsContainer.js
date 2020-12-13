@@ -1,8 +1,8 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import Reports from "./Reports";
-import Report from "./Report";
+import Reports from './Reports';
+import Report from './Report';
 
 const ReportsContainer = (props) => {
   const { match, location } = props;

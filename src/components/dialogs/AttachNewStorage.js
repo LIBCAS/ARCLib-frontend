@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import { TextField, SelectField, Validation } from "../form";
-import { attachNewStorage, getStorages } from "../../actions/storageActions";
-import { storageTypes, storageTypesOptions } from "../../enums";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import DialogContainer from './DialogContainer';
+import { TextField, SelectField, Validation } from '../form';
+import { attachNewStorage, getStorages } from '../../actions/storageActions';
+import { storageTypes, storageTypesOptions } from '../../enums';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const AttachNewStorage = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.ATTACH_NEW_STORAGE,
-      name: "AttachNewStorage",
+      name: 'AttachNewStorage',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -27,39 +27,33 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.HOST,
-            name: "host",
+            name: 'host',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.PORT,
-            name: "port",
-            validate: [
-              Validation.required[language],
-              Validation.isNumeric[language],
-            ],
-            type: "number",
+            name: 'port',
+            validate: [Validation.required[language], Validation.isNumeric[language]],
+            type: 'number',
           },
           {
             component: TextField,
             label: texts.PRIORITY,
-            name: "priority",
-            validate: [
-              Validation.required[language],
-              Validation.isNumeric[language],
-            ],
-            type: "number",
+            name: 'priority',
+            validate: [Validation.required[language], Validation.isNumeric[language]],
+            type: 'number',
           },
           {
             component: SelectField,
             label: texts.STORAGE_TYPE,
-            name: "storageType",
+            name: 'storageType',
             validate: [Validation.required[language]],
             options: storageTypesOptions,
           },
@@ -67,19 +61,17 @@ const AttachNewStorage = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.CONFIGURATION_FILE,
             validate: [Validation.required[language]],
-            name: "config",
+            name: 'config',
           },
           {
             component: TextField,
             label: texts.NOTE,
-            name: "note",
-            type: "textarea",
+            name: 'note',
+            type: 'textarea',
           },
         ],
         (field, key) => (
-          <Field
-            {...{ key, id: `attach-new-storage-${field.name}`, ...field }}
-          />
+          <Field {...{ key, id: `attach-new-storage-${field.name}`, ...field }} />
         )
       )}
     </form>
@@ -95,25 +87,17 @@ export default compose(
   withProps({ initialValues: { storageType: storageTypes.FS } }),
   withRouter,
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      attachNewStorage,
-      getStorages,
-      texts,
-      reset,
-    }) => async (formData) => {
+    onSubmit: ({ closeDialog, attachNewStorage, getStorages, texts, reset }) => async (
+      formData
+    ) => {
       if (
         await attachNewStorage({
           id: uuidv1(),
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-            "name",
-            "host",
-            "config",
-          ]),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name', 'host', 'config']),
         })
       ) {
         getStorages();
-        reset("AttachNewStorageDialogForm");
+        reset('AttachNewStorageDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({
@@ -123,7 +107,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "AttachNewStorageDialogForm",
+    form: 'AttachNewStorageDialogForm',
     enableReinitialize: true,
   })
 )(AttachNewStorage);

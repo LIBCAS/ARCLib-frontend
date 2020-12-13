@@ -1,6 +1,6 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
 export const getDeletionRequests = () => async (dispatch) => {
   dispatch({
@@ -11,7 +11,7 @@ export const getDeletionRequests = () => async (dispatch) => {
   });
 
   try {
-    const response = await fetch("/api/deletion_request");
+    const response = await fetch('/api/deletion_request');
 
     if (response.ok) {
       const deletionRequests = await response.json();
@@ -39,7 +39,7 @@ export const acknowledgeDeletionRequest = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/deletion_request/${id}/acknowledge`, {
-      method: "POST",
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
@@ -57,7 +57,7 @@ export const disacknowledgeDeletionRequest = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/deletion_request/${id}/disacknowledge`, {
-      method: "POST",
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
@@ -75,7 +75,7 @@ export const revertDeletionRequest = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/deletion_request/${id}/revert`, {
-      method: "POST",
+      method: 'POST',
     });
 
     dispatch(showLoader(false));

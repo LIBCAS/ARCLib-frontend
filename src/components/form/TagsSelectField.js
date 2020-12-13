@@ -1,8 +1,8 @@
-import React from "react";
-import { FormGroup, ControlLabel } from "react-bootstrap";
+import React from 'react';
+import { FormGroup, ControlLabel } from 'react-bootstrap';
 
-import TagsSelectField from "../TagsSelectField";
-import ErrorBlock from "../ErrorBlock";
+import TagsSelectField from '../TagsSelectField';
+import ErrorBlock from '../ErrorBlock';
 
 const FormTagsSelectField = ({
   meta: { touched, error },
@@ -12,13 +12,13 @@ const FormTagsSelectField = ({
   className,
   ...props
 }) => (
-  <FormGroup {...{ className, controlId: id || "tagsSelectField" }}>
+  <FormGroup {...{ className, controlId: id || 'tagsSelectField' }}>
     {label && <ControlLabel>{label}</ControlLabel>}
     <TagsSelectField
       {...{
         ...props,
         ...input,
-        className: "width-full"
+        className: 'width-full',
       }}
     />
     {touched && <ErrorBlock {...{ label: error }} />}

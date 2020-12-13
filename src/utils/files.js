@@ -12,10 +12,10 @@ export const downloadFile = (content, name, type) => {
  */
 export const downloadBlob = (blob, name) => {
   // pro IE
-  if (navigator.appVersion.toString().indexOf(".NET") > 0) {
+  if (navigator.appVersion.toString().indexOf('.NET') > 0) {
     window.navigator.msSaveBlob(blob, name);
   } else {
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = name;
     document.body.appendChild(a);
@@ -27,8 +27,8 @@ export const downloadBlob = (blob, name) => {
 /**
  * Downloads file from URL
  */
-export const downloadFileFromUrl = (url, name = "unknown") => {
-  const link = document.createElement("a");
+export const downloadFileFromUrl = (url, name = 'unknown') => {
+  const link = document.createElement('a');
   link.href = url;
   link.download = name;
   document.body.appendChild(link);

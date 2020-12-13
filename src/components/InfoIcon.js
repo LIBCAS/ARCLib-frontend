@@ -1,11 +1,11 @@
-import React from "react";
-import { compose, defaultProps } from "recompose";
-import { noop } from "lodash";
-import { Glyphicon } from "react-bootstrap";
-import Tooltip from "./Tooltip";
+import React from 'react';
+import { compose, defaultProps } from 'recompose';
+import { noop } from 'lodash';
+import { Glyphicon } from 'react-bootstrap';
+import Tooltip from './Tooltip';
 
-const InfoIcon = ({ ...props, tooltip, placement }) => (
-  <span {...{ className: "margin-left-very-small" }}>
+const InfoIcon = ({ tooltip, placement, ...props }) => (
+  <span {...{ className: 'margin-left-very-small' }}>
     <Tooltip
       {...{
         title: tooltip,
@@ -14,16 +14,16 @@ const InfoIcon = ({ ...props, tooltip, placement }) => (
           <Glyphicon
             {...{
               ...props,
-              style: { fontSize: 20, cursor: "pointer" }
+              style: { fontSize: 20, cursor: 'pointer' },
             }}
           />
         ),
-        containerStyle: { display: 'inline-block' }
+        containerStyle: { display: 'inline-block' },
       }}
     />
   </span>
 );
 
-export default compose(defaultProps({ onClick: noop, glyph: "info-sign", tooltip: "", placement: "right", }))(
-  InfoIcon
-);
+export default compose(
+  defaultProps({ onClick: noop, glyph: 'info-sign', tooltip: '', placement: 'right' })
+)(InfoIcon);

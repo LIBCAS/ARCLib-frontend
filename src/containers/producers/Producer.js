@@ -1,20 +1,20 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/producers/Detail";
-import { getProducer } from "../../actions/producerActions";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/producers/Detail';
+import { getProducer } from '../../actions/producerActions';
 
 const Producer = ({ history, producer, texts, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [
-        { label: texts.PRODUCERS, url: "/producers" },
-        { label: get(producer, "name", "") }
-      ]
+        { label: texts.PRODUCERS, url: '/producers' },
+        { label: get(producer, 'name', '') },
+      ],
     }}
   >
     {producer && (
@@ -24,7 +24,7 @@ const Producer = ({ history, producer, texts, ...props }) => (
           texts,
           producer,
           initialValues: producer,
-          ...props
+          ...props,
         }}
       />
     )}
@@ -35,7 +35,7 @@ export default compose(
   withRouter,
   connect(
     ({ producer: { producer } }) => ({
-      producer
+      producer,
     }),
     { getProducer }
   ),
@@ -44,6 +44,6 @@ export default compose(
       const { match, getProducer } = this.props;
 
       getProducer(match.params.id);
-    }
+    },
   })
 )(Producer);

@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getWorkflowDefinitions = () => async dispatch => {
+export const getWorkflowDefinitions = () => async (dispatch) => {
   dispatch({
     type: c.WORKFLOW_DEFINITION,
     payload: {
-      workflowDefinitions: null
-    }
+      workflowDefinitions: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/workflow_definition/list_dtos");
+    const response = await fetch('/api/workflow_definition/list_dtos');
 
     if (response.status === 200) {
       const workflowDefinitions = await response.json();
@@ -19,8 +19,8 @@ export const getWorkflowDefinitions = () => async dispatch => {
       dispatch({
         type: c.WORKFLOW_DEFINITION,
         payload: {
-          workflowDefinitions
-        }
+          workflowDefinitions,
+        },
       });
 
       return workflowDefinitions;
@@ -35,14 +35,14 @@ export const getWorkflowDefinitions = () => async dispatch => {
   }
 };
 
-export const getWorkflowDefinition = id => async dispatch => {
+export const getWorkflowDefinition = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.WORKFLOW_DEFINITION,
     payload: {
-      workflowDefinition: null
-    }
+      workflowDefinition: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getWorkflowDefinition = id => async dispatch => {
       dispatch({
         type: c.WORKFLOW_DEFINITION,
         payload: {
-          workflowDefinition
-        }
+          workflowDefinition,
+        },
       });
 
       dispatch(showLoader(false));
@@ -76,15 +76,15 @@ export const getWorkflowDefinition = id => async dispatch => {
 export const clearWorkflowDefinition = () => ({
   type: c.WORKFLOW_DEFINITION,
   payload: {
-    workflowDefinition: null
-  }
+    workflowDefinition: null,
+  },
 });
 
-export const deleteWorkflowDefinition = id => async dispatch => {
+export const deleteWorkflowDefinition = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/workflow_definition/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -98,15 +98,15 @@ export const deleteWorkflowDefinition = id => async dispatch => {
   }
 };
 
-export const saveWorkflowDefinition = body => async dispatch => {
+export const saveWorkflowDefinition = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/workflow_definition/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -115,8 +115,8 @@ export const saveWorkflowDefinition = body => async dispatch => {
       dispatch({
         type: c.WORKFLOW_DEFINITION,
         payload: {
-          workflowDefinition
-        }
+          workflowDefinition,
+        },
       });
 
       dispatch(showLoader(false));

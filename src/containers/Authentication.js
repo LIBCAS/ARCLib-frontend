@@ -1,32 +1,32 @@
-import React from "react";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { map } from "lodash";
+import React from 'react';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
-import Button from "../components/Button";
-import PageWrapper from "../components/PageWrapper";
-import { TextField, Validation } from "../components/form";
-import { signIn } from "../actions/userActions";
-import { getHomepage } from "../utils";
+import Button from '../components/Button';
+import PageWrapper from '../components/PageWrapper';
+import { TextField, Validation } from '../components/form';
+import { signIn } from '../actions/userActions';
+import { getHomepage } from '../utils';
 
 const Authentication = ({ handleSubmit, texts, language }) => (
-  <PageWrapper {...{ authStyle: true, className: "form" }}>
+  <PageWrapper {...{ authStyle: true, className: 'form' }}>
     <form {...{ onSubmit: handleSubmit }}>
       {map(
         [
           {
             component: TextField,
             label: texts.USERNAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.PASSWORD,
-            name: "password",
-            type: "password",
+            name: 'password',
+            type: 'password',
           },
         ],
         (field, key) => (
@@ -39,8 +39,8 @@ const Authentication = ({ handleSubmit, texts, language }) => (
           />
         )
       )}
-      <div {...{ className: "flex-row flex-right" }}>
-        <Button {...{ primary: true, type: "submit" }}>{texts.SIGN_IN}</Button>
+      <div {...{ className: 'flex-row flex-right' }}>
+        <Button {...{ primary: true, type: 'submit' }}>{texts.SIGN_IN}</Button>
       </div>
     </form>
   </PageWrapper>
@@ -62,6 +62,6 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "sign-in",
+    form: 'sign-in',
   })
 )(Authentication);

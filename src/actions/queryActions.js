@@ -1,19 +1,19 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getSavedQueries = () => async dispatch => {
+export const getSavedQueries = () => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.QUERY,
     payload: {
-      queries: null
-    }
+      queries: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/aip/saved_query_dtos");
+    const response = await fetch('/api/aip/saved_query_dtos');
 
     if (response.status === 200) {
       const queries = await response.json();
@@ -21,8 +21,8 @@ export const getSavedQueries = () => async dispatch => {
       dispatch({
         type: c.QUERY,
         payload: {
-          queries
-        }
+          queries,
+        },
       });
 
       dispatch(showLoader(false));
@@ -40,7 +40,7 @@ export const getSavedQueries = () => async dispatch => {
   }
 };
 
-export const getSavedQuery = id => async dispatch => {
+export const getSavedQuery = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/aip/saved_query/${id}`);
@@ -63,16 +63,16 @@ export const getSavedQuery = id => async dispatch => {
   }
 };
 
-export const setQuery = query => ({
+export const setQuery = (query) => ({
   type: c.QUERY,
-  payload: { query }
+  payload: { query },
 });
 
-export const deleteQuery = id => async dispatch => {
+export const deleteQuery = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/aip/saved_query/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));

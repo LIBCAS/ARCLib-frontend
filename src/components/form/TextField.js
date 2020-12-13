@@ -1,9 +1,9 @@
-import React from "react";
-import { FormGroup, ControlLabel } from "react-bootstrap";
-import { compose, defaultProps } from "recompose";
+import React from 'react';
+import { FormGroup, ControlLabel } from 'react-bootstrap';
+import { compose, defaultProps } from 'recompose';
 
-import TextField from "../TextField";
-import ErrorBlock from "../ErrorBlock";
+import TextField from '../TextField';
+import ErrorBlock from '../ErrorBlock';
 
 const FormTextField = ({
   meta: { touched, error },
@@ -14,7 +14,7 @@ const FormTextField = ({
   className,
   placeholder,
   disabled,
-  rows
+  rows,
 }) => (
   <FormGroup {...{ className, controlId: id }}>
     {label && <ControlLabel>{label}</ControlLabel>}
@@ -25,12 +25,12 @@ const FormTextField = ({
         placeholder,
         disabled,
         rows,
-        className: "width-full",
-        id
+        className: 'width-full',
+        id,
       }}
     />
     {touched && <ErrorBlock {...{ label: error }} />}
   </FormGroup>
 );
 
-export default compose(defaultProps({ id: "textfield" }))(FormTextField);
+export default compose(defaultProps({ id: 'textfield' }))(FormTextField);

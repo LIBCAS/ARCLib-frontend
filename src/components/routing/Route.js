@@ -1,12 +1,12 @@
-import React from "react";
-import { Route } from "react-router-dom";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
-import JWTDecode from "jwt-decode";
-import getTime from "date-fns/get_time";
+import React from 'react';
+import { Route } from 'react-router-dom';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import JWTDecode from 'jwt-decode';
+import getTime from 'date-fns/get_time';
 
-import * as storage from "../../utils/storage";
-import { getHomepage, hasPermissions, tokenNotEmpty } from "../../utils";
+import * as storage from '../../utils/storage';
+import { getHomepage, hasPermissions, tokenNotEmpty } from '../../utils';
 
 const AuthenticatedRoute = (props) => {
   return <Route {...props} />;
@@ -19,7 +19,7 @@ export default compose(
       const { history, location } = this.props;
 
       let signed = false;
-      const token = storage.get("token");
+      const token = storage.get('token');
 
       if (!tokenNotEmpty(token)) {
         signed = false;
@@ -38,19 +38,19 @@ export default compose(
       }
 
       if (!signed) {
-        storage.remove("token");
+        storage.remove('token');
 
-        if (location.pathname !== "/") {
-          history.replace("/");
+        if (location.pathname !== '/') {
+          history.replace('/');
         }
       } else if (signed) {
         if (
           !hasPermissions() &&
-          location.pathname !== "/no-role" &&
-          location.pathname !== "/profile"
+          location.pathname !== '/no-role' &&
+          location.pathname !== '/profile'
         ) {
-          history.replace("/no-role");
-        } else if (location.pathname === "/") {
+          history.replace('/no-role');
+        } else if (location.pathname === '/') {
           history.replace(getHomepage());
         }
       }

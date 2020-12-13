@@ -1,21 +1,21 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/storageAdministration/Table";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/storageAdministration/Table';
 import {
   getStorages,
   getArchivalStorageConfig,
   checkStoragesReachability,
-} from "../../actions/storageActions";
-import { setDialog } from "../../actions/appActions";
-import { formatDateTime, hasPermission } from "../../utils";
-import { message } from "antd";
-import { Permission } from "../../enums";
+} from '../../actions/storageActions';
+import { setDialog } from '../../actions/appActions';
+import { formatDateTime, hasPermission } from '../../utils';
+import { message } from 'antd';
+import { Permission } from '../../enums';
 
 const Storages = ({
   history,
@@ -27,33 +27,29 @@ const Storages = ({
   getArchivalStorageConfig,
   getStorages,
 }) => (
-  <PageWrapper
-    {...{ breadcrumb: [{ label: texts.LOGICAL_STORAGE_ADMINISTRATION }] }}
-  >
-    <div {...{ className: "flex-row flex-space-between" }}>
+  <PageWrapper {...{ breadcrumb: [{ label: texts.LOGICAL_STORAGE_ADMINISTRATION }] }}>
+    <div {...{ className: 'flex-row flex-space-between' }}>
       {hasPermission(Permission.STORAGE_ADMINISTRATION_WRITE) && (
         <Button
           {...{
             primary: true,
-            className: "margin-bottom-small margin-right-small",
+            className: 'margin-bottom-small margin-right-small',
             onClick: () => {
-              setDialog("AttachNewStorage");
+              setDialog('AttachNewStorage');
             },
           }}
         >
           {texts.ATTACH_NEW_STORAGE}
         </Button>
       )}
-      <div {...{ className: "flex-row-normal flex-center" }}>
-        <div {...{ className: "margin-bottom-small margin-right-small" }}>
-          {texts.AVAILABILITY_OF_STORAGES_LAST_CHECKED}{" "}
-          <strong>
-            {formatDateTime(get(archivalStorage, "lastReachabilityCheck"))}
-          </strong>
+      <div {...{ className: 'flex-row-normal flex-center' }}>
+        <div {...{ className: 'margin-bottom-small margin-right-small' }}>
+          {texts.AVAILABILITY_OF_STORAGES_LAST_CHECKED}{' '}
+          <strong>{formatDateTime(get(archivalStorage, 'lastReachabilityCheck'))}</strong>
         </div>
         <Button
           {...{
-            className: "margin-bottom-small",
+            className: 'margin-bottom-small',
             onClick: async () => {
               const ok = await checkStoragesReachability();
               getArchivalStorageConfig();

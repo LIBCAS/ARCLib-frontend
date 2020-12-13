@@ -1,19 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers } from 'recompose';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Tabs from "../Tabs";
-import RelatedFormatsTable from "./RelatedFormatsTable";
-import { TextField, Validation } from "../form";
-import { putRisk, getRelatedFormats } from "../../actions/riskActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Tabs from '../Tabs';
+import RelatedFormatsTable from './RelatedFormatsTable';
+import { TextField, Validation } from '../form';
+import { putRisk, getRelatedFormats } from '../../actions/riskActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { Permission } from '../../enums';
 
 const Detail = ({
   history,
@@ -29,10 +26,10 @@ const Detail = ({
   return (
     <Tabs
       {...{
-        id: "risks-detail-tabs",
+        id: 'risks-detail-tabs',
         onChange: (tab) => {
           if (tab === 1) {
-            getRelatedFormats(get(risk, "id"));
+            getRelatedFormats(get(risk, 'id'));
           }
         },
         items: compact([
@@ -45,27 +42,27 @@ const Detail = ({
                     {
                       component: TextField,
                       label: texts.CREATED,
-                      name: "created",
+                      name: 'created',
                       disabled: true,
                     },
                     {
                       component: TextField,
                       label: texts.UPDATED,
-                      name: "updated",
+                      name: 'updated',
                       disabled: true,
                     },
                     {
                       component: TextField,
                       label: texts.NAME,
-                      name: "name",
+                      name: 'name',
                       validate: [Validation.required[language]],
                       disabled: !editEnabled,
                     },
                     {
                       component: TextField,
                       label: texts.DESCRIPTION,
-                      name: "description",
-                      type: "textarea",
+                      name: 'description',
+                      type: 'textarea',
                       disabled: !editEnabled,
                     },
                   ],
@@ -79,16 +76,16 @@ const Detail = ({
                     />
                   )
                 )}
-                <div {...{ className: "flex-row flex-right" }}>
-                  <Button {...{ onClick: () => history.push("/risks") }}>
+                <div {...{ className: 'flex-row flex-right' }}>
+                  <Button {...{ onClick: () => history.push('/risks') }}>
                     {editEnabled ? texts.STORNO : texts.CLOSE}
                   </Button>
                   {editEnabled && (
                     <Button
                       {...{
                         primary: true,
-                        type: "submit",
-                        className: "margin-left-small",
+                        type: 'submit',
+                        className: 'margin-left-small',
                       }}
                     >
                       {texts.SAVE_AND_CLOSE}
@@ -100,11 +97,7 @@ const Detail = ({
           },
           hasPermission(Permission.FORMAT_RECORDS_READ) && {
             title: texts.RELATED_FORMATS,
-            content: (
-              <RelatedFormatsTable
-                {...{ items: relatedFormats, texts, history }}
-              />
-            ),
+            content: <RelatedFormatsTable {...{ items: relatedFormats, texts, history }} />,
           },
         ]),
       }}
@@ -122,18 +115,15 @@ export default compose(
     { putRisk, getRelatedFormats }
   ),
   withHandlers({
-    onSubmit: ({ putRisk, risk, texts, history }) => async ({
-      name,
-      description,
-    }) => {
+    onSubmit: ({ putRisk, risk, texts, history }) => async ({ name, description }) => {
       if (
         await putRisk({
           ...risk,
-          ...removeStartEndWhiteSpaceInSelectedFields({ name }, ["name"]),
+          ...removeStartEndWhiteSpaceInSelectedFields({ name }, ['name']),
           description,
         })
       ) {
-        history.push("/risks");
+        history.push('/risks');
       } else {
         throw new SubmissionError({
           description: texts.SAVE_FAILED,
@@ -142,7 +132,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "risks-detail",
+    form: 'risks-detail',
     enableReinitialize: true,
   })
 )(Detail);

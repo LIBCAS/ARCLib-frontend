@@ -1,20 +1,14 @@
-import React from "react";
-import { connect } from "react-redux";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Table from "../table/Table";
-import { setDialog } from "../../actions/appActions";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Table from '../table/Table';
+import { setDialog } from '../../actions/appActions';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
-const ValidationProfileTable = ({
-  history,
-  validationProfiles,
-  setDialog,
-  texts,
-  user,
-}) => {
+const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts, user }) => {
   const deleteEnabled = hasPermission(Permission.VALIDATION_PROFILE_RECORDS_WRITE);
   return (
     <Table
@@ -24,23 +18,23 @@ const ValidationProfileTable = ({
           { label: texts.NAME },
           { label: texts.CREATED },
           { label: texts.EDITED },
-          deleteEnabled ? { label: "" } : null,
+          deleteEnabled ? { label: '' } : null,
         ]),
         items: map(validationProfiles, (item) => ({
           onClick: () => history.push(`/validation-profiles/${item.id}`),
           items: compact([
-            { label: get(item, "externalId", "") },
-            { label: get(item, "name", "") },
-            { label: formatDateTime(get(item, "created")) },
-            { label: formatDateTime(get(item, "updated")) },
+            { label: get(item, 'externalId', '') },
+            { label: get(item, 'name', '') },
+            { label: formatDateTime(get(item, 'created')) },
+            { label: formatDateTime(get(item, 'updated')) },
             deleteEnabled
               ? {
-                  label: (
+                  label: get(item, 'editable') ? (
                     <Button
                       {...{
                         onClick: (e) => {
                           e.stopPropagation();
-                          setDialog("ValidationProfileDelete", {
+                          setDialog('ValidationProfileDelete', {
                             id: item.id,
                             name: item.name,
                           });
@@ -49,8 +43,10 @@ const ValidationProfileTable = ({
                     >
                       {texts.DELETE}
                     </Button>
+                  ) : (
+                    <div />
                   ),
-                  className: "text-right",
+                  className: 'text-right',
                 }
               : null,
           ]),

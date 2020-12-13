@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
-import { SelectField, Validation } from "../form";
-import { setDialog } from "../../actions/appActions";
-import { generateReport } from "../../actions/reportActions";
+import DialogContainer from './DialogContainer';
+import { SelectField, Validation } from '../form';
+import { setDialog } from '../../actions/appActions';
+import { generateReport } from '../../actions/reportActions';
 
-const options = ["CSV", "XLSX", "HTML", "PDF"];
+const options = ['CSV', 'XLSX', 'HTML', 'PDF'];
 
 const ReportGenerate = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.REPORT_GENERATE,
-      name: "ReportGenerate",
+      name: 'ReportGenerate',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       large: true,
@@ -28,7 +28,7 @@ const ReportGenerate = ({ handleSubmit, texts, language }) => (
           {
             component: SelectField,
             label: texts.FORMAT,
-            name: "format",
+            name: 'format',
             options: options.map((option) => ({
               label: option,
               value: option,
@@ -55,17 +55,13 @@ export default compose(
   withRouter,
   withProps({ initialValues: { format: options[0] } }),
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      generateReport,
-      texts,
-      data: { id, name },
-      reset,
-    }) => async ({ format }) => {
+    onSubmit: ({ closeDialog, generateReport, texts, data: { id, name }, reset }) => async ({
+      format,
+    }) => {
       const ok = await generateReport(id, name, format);
 
       if (ok) {
-        reset("ReportGenerateDialogForm");
+        reset('ReportGenerateDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({
@@ -75,7 +71,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ReportGenerateDialogForm",
+    form: 'ReportGenerateDialogForm',
     enableReinitialize: true,
   })
 )(ReportGenerate);

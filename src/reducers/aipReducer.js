@@ -1,10 +1,10 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   aip: null,
   aips: null,
   aipInfo: null,
-  filterGroups: null
+  filterGroups: null,
 };
 
 const reducer = (state = initialState, action) => {

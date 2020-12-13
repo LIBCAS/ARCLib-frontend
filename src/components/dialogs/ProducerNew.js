@@ -1,21 +1,21 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import { TextField, Validation } from "../form";
-import { saveProducer, getProducers } from "../../actions/producerActions";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import DialogContainer from './DialogContainer';
+import { TextField, Validation } from '../form';
+import { saveProducer, getProducers } from '../../actions/producerActions';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const ProducerNew = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.PRODUCER_NEW,
-      name: "ProducerNew",
+      name: 'ProducerNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -26,13 +26,13 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.TRANSFER_AREA_PATH,
-            name: "transferAreaPath",
+            name: 'transferAreaPath',
             validate: [Validation.required[language]],
           },
         ],
@@ -52,24 +52,15 @@ export default compose(
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      saveProducer,
-      getProducers,
-      texts,
-      reset,
-    }) => async (formData) => {
+    onSubmit: ({ closeDialog, saveProducer, getProducers, texts, reset }) => async (formData) => {
       const response = await saveProducer({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-          "name",
-          "transferAreaPath",
-        ]),
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name', 'transferAreaPath']),
       });
 
       if (response === 200) {
         getProducers();
-        reset("ProducerNewDialogForm");
+        reset('ProducerNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError(
@@ -83,7 +74,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ProducerNewDialogForm",
+    form: 'ProducerNewDialogForm',
     enableReinitialize: true,
   })
 )(ProducerNew);

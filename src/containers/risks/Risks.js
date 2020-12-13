@@ -1,15 +1,15 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/risks/Table";
-import { getRisks } from "../../actions/riskActions";
-import { setDialog } from "../../actions/appActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/risks/Table';
+import { getRisks } from '../../actions/riskActions';
+import { setDialog } from '../../actions/appActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const Risks = ({ history, risks, texts, setDialog, user }) => (
   <PageWrapper
@@ -21,8 +21,8 @@ const Risks = ({ history, risks, texts, setDialog, user }) => (
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
-          onClick: () => setDialog("RiskNew"),
+          className: 'margin-bottom-small',
+          onClick: () => setDialog('RiskNew'),
         }}
       >
         {texts.NEW}

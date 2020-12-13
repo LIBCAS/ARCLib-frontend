@@ -1,27 +1,15 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers, lifecycle, withProps } from "recompose";
-import { get, map, find } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers, lifecycle } from 'recompose';
+import { get, map, find } from 'lodash';
 
-import Button from "../Button";
-import {
-  TextField,
-  SelectField,
-  SyntaxHighlighterField,
-  Validation,
-  Checkbox,
-} from "../form";
-import { saveSipProfile } from "../../actions/sipProfileActions";
-import { getProducers } from "../../actions/producerActions";
-import {
-  hasPermission,
-  openUrlInNewTab,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { packageTypeOptions, Permission } from "../../enums";
-import InfoIcon from "../InfoIcon";
-import { GLOB_URL } from "../../constants";
+import Button from '../Button';
+import { TextField, SelectField, SyntaxHighlighterField, Validation, Checkbox } from '../form';
+import { saveSipProfile } from '../../actions/sipProfileActions';
+import { getProducers } from '../../actions/producerActions';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { packageTypeOptions } from '../../enums';
 
 const Detail = ({
   history,
@@ -30,8 +18,9 @@ const Detail = ({
   texts,
   language,
   producers,
+  producersEnabled,
+  editEnabled,
 }) => {
-  const editEnabled = hasPermission(Permission.SIP_PROFILE_RECORDS_WRITE);
   return (
     <div>
       <form {...{ onSubmit: handleSubmit }}>
@@ -40,83 +29,68 @@ const Detail = ({
             {
               component: TextField,
               label: texts.NAME,
-              name: "name",
+              name: 'name',
               validate: [Validation.required[language]],
             },
             {
               component: TextField,
               label: texts.EXTERNAL_ID,
-              name: "externalId",
+              name: 'externalId',
               disabled: true,
             },
-            {
-              component: SelectField,
-              label: texts.PRODUCER,
-              name: "producer",
-              validate: [Validation.required[language]],
-              options: map(producers, (producer) => ({
-                value: producer.id,
-                label: producer.name || "",
-              })),
-            },
+            producersEnabled && editEnabled
+              ? {
+                  component: SelectField,
+                  label: texts.PRODUCER,
+                  name: 'producer',
+                  validate: [Validation.required[language]],
+                  options: map(producers, (producer) => ({
+                    value: producer.id,
+                    label: producer.name || '',
+                  })),
+                }
+              : {
+                  component: TextField,
+                  label: texts.PRODUCER,
+                  name: 'producer.name',
+                  disabled: true,
+                },
             {
               component: SyntaxHighlighterField,
               label: texts.XSL_TRANSFORMATION,
-              name: "xsl",
+              name: 'xsl',
               validate: [Validation.required[language]],
-              fileName: get(sipProfile, "name"),
+              fileName: get(sipProfile, 'name'),
             },
             {
               component: TextField,
-              label: (
-                <span>
-                  {texts.PATH_TO_XML}
-                  <InfoIcon
-                    {...{
-                      glyph: "new-window",
-                      tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
-                      onClick: () => openUrlInNewTab(GLOB_URL),
-                    }}
-                  />
-                </span>
-              ),
-              name: "pathToSipId.pathToXmlGlobPattern",
+              label: <span>{texts.PATH_TO_XML}</span>,
+              name: 'pathToSipId.pathToXmlRegex',
               validate: [Validation.required[language]],
             },
             {
               component: TextField,
               label: texts.XPATH_TO_ID,
-              name: "pathToSipId.xpathToId",
+              name: 'pathToSipId.xpathToId',
               validate: [Validation.required[language]],
             },
             {
               component: TextField,
-              label: (
-                <span>
-                  {texts.SIP_METADATA_PATH}
-                  <InfoIcon
-                    {...{
-                      glyph: "new-window",
-                      tooltip: texts.OPENS_PAGE_WITH_GLOB_PATTERN_INFORMATION,
-                      onClick: () => openUrlInNewTab(GLOB_URL),
-                    }}
-                  />
-                </span>
-              ),
-              name: "sipMetadataPathGlobPattern",
+              label: <span>{texts.SIP_METADATA_PATH}</span>,
+              name: 'sipMetadataPathRegex',
               validate: [Validation.required[language]],
             },
             {
               component: SelectField,
               label: texts.SIP_PACKAGE_TYPE,
-              name: "packageType",
+              name: 'packageType',
               validate: [Validation.required[language]],
               options: packageTypeOptions,
             },
             {
               component: Checkbox,
               label: texts.EDITABLE,
-              name: "editable",
+              name: 'editable',
               disabled: true,
             },
           ],
@@ -125,24 +99,22 @@ const Detail = ({
               {...{
                 key: field.name,
                 id: `sip-profile-detail-${field.name}`,
-                disabled: !editEnabled || !get(sipProfile, "editable"),
+                disabled: !editEnabled || !get(sipProfile, 'editable'),
                 ...field,
               }}
             />
           )
         )}
-        <div {...{ className: "flex-row flex-right" }}>
-          <Button {...{ onClick: () => history.push("/sip-profiles") }}>
-            {editEnabled && get(sipProfile, "editable")
-              ? texts.STORNO
-              : texts.CLOSE}
+        <div {...{ className: 'flex-row flex-right' }}>
+          <Button {...{ onClick: () => history.push('/sip-profiles') }}>
+            {editEnabled && get(sipProfile, 'editable') ? texts.STORNO : texts.CLOSE}
           </Button>
-          {editEnabled && get(sipProfile, "editable") ? (
+          {editEnabled && get(sipProfile, 'editable') ? (
             <Button
               {...{
                 primary: true,
-                type: "submit",
-                className: "margin-left-small",
+                type: 'submit',
+                className: 'margin-left-small',
               }}
             >
               {texts.SAVE_AND_CLOSE}
@@ -166,9 +138,6 @@ export default compose(
       getProducers,
     }
   ),
-  withProps({
-    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
-  }),
   withHandlers({
     onSubmit: ({
       saveSipProfile,
@@ -181,23 +150,20 @@ export default compose(
       const response = await saveSipProfile({
         ...sipProfile,
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-          "name",
-          "pathToSipId.pathToXmlGlobPattern",
-          "pathToSipId.xpathToId",
-          "sipMetadataPathGlobPattern",
+          'name',
+          'pathToSipId.pathToXmlRegex',
+          'pathToSipId.xpathToId',
+          'sipMetadataPathRegex',
         ]),
         ...(producersEnabled
           ? {
-              producer: find(
-                producers,
-                (item) => item.id === formData.producer
-              ),
+              producer: find(producers, (item) => item.id === formData.producer),
             }
           : {}),
       });
 
       if (response === 200) {
-        history.push("/sip-profiles");
+        history.push('/sip-profiles');
       } else {
         throw new SubmissionError(
           response === 409
@@ -212,14 +178,13 @@ export default compose(
   lifecycle({
     componentWillMount() {
       const { getProducers, producersEnabled } = this.props;
-
       if (producersEnabled) {
         getProducers();
       }
     },
   }),
   reduxForm({
-    form: "sip-profile-detail",
+    form: 'sip-profile-detail',
     enableReinitialize: true,
   })
 )(Detail);

@@ -1,15 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import {
-  compose,
-  withState,
-  withHandlers,
-  defaultProps,
-  mapProps
-} from "recompose";
-import { Modal } from "react-bootstrap";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withState, withHandlers, defaultProps, mapProps } from 'recompose';
+import { Modal } from 'react-bootstrap';
 
-import Button from "./Button";
+import Button from './Button';
 
 const DialogButton = ({
   label,
@@ -34,21 +28,19 @@ const DialogButton = ({
       {...{
         show: open,
         onHide: onClose,
-        backdrop: "static",
-        animation: false
+        backdrop: 'static',
+        animation: false,
       }}
     >
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {<Content {...{ closeDialog: () => setOpen(false) }} />}
-      </Modal.Body>
+      <Modal.Body>{<Content {...{ closeDialog: () => setOpen(false) }} />}</Modal.Body>
       <Modal.Footer>
         {closeButton && (
           <Button
             {...{
-              onClick: onClose
+              onClick: onClose,
             }}
           >
             {closeButtonLabel || texts.STORNO}
@@ -58,8 +50,8 @@ const DialogButton = ({
           <Button
             {...{
               primary: true,
-              className: "margin-left-small",
-              onClick: () => onSubmit()
+              className: 'margin-left-small',
+              onClick: () => onSubmit(),
             }}
           >
             {submitButtonLabel || texts.SUBMIT}
@@ -76,10 +68,10 @@ export default compose(
     onClick: () => true,
     closeButton: true,
     submitButton: true,
-    content: () => <div />
+    content: () => <div />,
   }),
   connect(({ app: { texts } }) => ({ texts })),
-  withState("open", "setOpen", false),
+  withState('open', 'setOpen', false),
   withHandlers({
     onSubmit: ({ onClick, setOpen }) => async () => {
       if (await onClick()) {
@@ -88,7 +80,7 @@ export default compose(
     },
     onClose: ({ setOpen }) => () => {
       setOpen(false);
-    }
+    },
   }),
   mapProps(({ onClick, dispatch, ...rest }) => rest)
 )(DialogButton);

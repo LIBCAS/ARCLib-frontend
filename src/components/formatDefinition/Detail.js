@@ -1,29 +1,26 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field } from "redux-form";
-import { compose, withHandlers, withState } from "recompose";
-import { map, get, filter } from "lodash";
-import { Row, Col } from "antd";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import { compose, withHandlers, withState } from 'recompose';
+import { map, get, filter } from 'lodash';
+import { Row, Col } from 'antd';
 
-import Button from "../Button";
-import Tabs from "../Tabs";
-import ErrorBlock from "../ErrorBlock";
-import IdentifiersTable from "./IdentifiersTable";
-import RelatedFormatsTable from "./RelatedFormatsTable";
-import FormatOccurrencesTable from "./FormatOccurrencesTable";
-import DevelopersTable from "./DevelopersTable";
-import { TextField, UploadField, Checkbox, Validation } from "../form";
-import { showLoader } from "../../actions/appActions";
+import Button from '../Button';
+import Tabs from '../Tabs';
+import ErrorBlock from '../ErrorBlock';
+import IdentifiersTable from './IdentifiersTable';
+import RelatedFormatsTable from './RelatedFormatsTable';
+import FormatOccurrencesTable from './FormatOccurrencesTable';
+import DevelopersTable from './DevelopersTable';
+import { TextField, UploadField, Checkbox, Validation } from '../form';
+import { showLoader } from '../../actions/appActions';
 import {
   putFormatDefinition,
   getFormatDefinition,
   getFormatOccurrences,
-} from "../../actions/formatActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission } from "../../enums";
+} from '../../actions/formatActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { Permission } from '../../enums';
 
 const Detail = ({
   history,
@@ -44,12 +41,12 @@ const Detail = ({
     <div>
       <Tabs
         {...{
-          id: "format-definition-detail-tabs",
+          id: 'format-definition-detail-tabs',
           onChange: async (tab) => {
             setTabNumber(tab);
             if (tab === 3) {
               showLoader();
-              await getFormatOccurrences(get(formatDefinition, "id"));
+              await getFormatOccurrences(get(formatDefinition, 'id'));
               showLoader(false);
             }
           },
@@ -65,116 +62,107 @@ const Detail = ({
                           {
                             component: TextField,
                             label: texts.CREATED,
-                            name: "created",
+                            name: 'created',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.UPDATED,
-                            name: "updated",
+                            name: 'updated',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.RELEASE_DATE,
-                            name: "releaseDate",
+                            name: 'releaseDate',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.WITH_DRAWN_DATE,
-                            name: "withdrawnDate",
+                            name: 'withdrawnDate',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.FORMAT_VERSION,
-                            name: "formatVersion",
+                            name: 'formatVersion',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.INTERNAL_VERSION_NUMBER,
-                            name: "internalVersionNumber",
+                            name: 'internalVersionNumber',
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.FORMAT_DESCRIPTION,
-                            name: "formatDescription",
-                            type: "textarea",
+                            name: 'formatDescription',
+                            type: 'textarea',
                           },
                           {
                             component: TextField,
                             label: texts.FORMAT_NOTE,
-                            name: "formatNote",
-                            type: "textarea",
+                            name: 'formatNote',
+                            type: 'textarea',
                           },
                           {
                             component: TextField,
                             label: texts.ALIASES,
-                            name: "aliases",
+                            name: 'aliases',
                           },
                           {
                             component: TextField,
                             label: texts.FORMAT_FAMILIES,
-                            name: "formatFamilies",
+                            name: 'formatFamilies',
                           },
                           {
                             component: TextField,
                             label: texts.FORMAT_CLASSIFICATIONS,
-                            name: "formatClassifications",
+                            name: 'formatClassifications',
                           },
                           {
                             component: TextField,
                             label: texts.NATIONAL_FORMAT_GUARANTOR,
-                            name: "nationalFormatGuarantor",
+                            name: 'nationalFormatGuarantor',
                             disabled:
-                              get(
-                                formatDefinition,
-                                "internalInformationFilled"
-                              ) || !editEnabled,
+                              get(formatDefinition, 'internalInformationFilled') || !editEnabled,
                             lg: 12,
                           },
                           {
                             component: UploadField,
                             label: texts.PRESERVATION_PLAN_FILE,
-                            name: "preservationPlanFile",
+                            name: 'preservationPlanFile',
                             validate: [Validation.required[language]],
                             disabled:
-                              get(
-                                formatDefinition,
-                                "internalInformationFilled"
-                              ) || !editEnabled,
+                              get(formatDefinition, 'internalInformationFilled') || !editEnabled,
                             lg: 12,
                           },
                           {
                             component: TextField,
                             label: texts.PRESERVATION_PLAN_DESCRIPTION,
-                            name: "preservationPlanDescription",
-                            type: "textarea",
+                            name: 'preservationPlanDescription',
+                            type: 'textarea',
                             disabled:
-                              get(
-                                formatDefinition,
-                                "internalInformationFilled"
-                              ) || !editEnabled,
+                              get(formatDefinition, 'internalInformationFilled') || !editEnabled,
                           },
                           {
                             component: Checkbox,
                             label: texts.LOCAL_DEFINITION,
-                            name: "localDefinition",
+                            name: 'localDefinition',
                             lg: 8,
                           },
                           {
                             component: Checkbox,
                             label: texts.PREFERRED,
-                            name: "preferred",
+                            name: 'preferred',
                             lg: 8,
                           },
                           {
                             component: Checkbox,
                             label: texts.INTERNAL_INFORMATION_FILLED,
-                            name: "internalInformationFilled",
+                            name: 'internalInformationFilled',
                             lg: 8,
                           },
                         ]),
@@ -193,35 +181,28 @@ const Detail = ({
                       )}
                     </Row>
                     <ErrorBlock {...{ label: fail }} />
-                    <div {...{ className: "flex-row flex-right" }}>
+                    <div {...{ className: 'flex-row flex-right' }}>
                       <Button
                         {...{
                           onClick: () =>
-                            history.push(
-                              `/formats/${get(
-                                formatDefinition,
-                                "format.formatId"
-                              )}`
-                            ),
+                            history.push(`/formats/${get(formatDefinition, 'format.formatId')}`),
                         }}
                       >
-                        {!get(formatDefinition, "internalInformationFilled") &&
-                        editEnabled
+                        {!get(formatDefinition, 'internalInformationFilled') && editEnabled
                           ? texts.STORNO
                           : texts.CLOSE}
                       </Button>
-                      {!get(formatDefinition, "internalInformationFilled") &&
-                        editEnabled && (
-                          <Button
-                            {...{
-                              primary: true,
-                              type: "submit",
-                              className: "margin-left-small",
-                            }}
-                          >
-                            {texts.SAVE_INTERNAL_INFORMATION}
-                          </Button>
-                        )}
+                      {!get(formatDefinition, 'internalInformationFilled') && editEnabled && (
+                        <Button
+                          {...{
+                            primary: true,
+                            type: 'submit',
+                            className: 'margin-left-small',
+                          }}
+                        >
+                          {texts.SAVE_INTERNAL_INFORMATION}
+                        </Button>
+                      )}
                     </div>
                   </form>
                 </div>
@@ -234,7 +215,7 @@ const Detail = ({
                   <IdentifiersTable
                     {...{
                       texts,
-                      identifiers: get(formatDefinition, "identifiers"),
+                      identifiers: get(formatDefinition, 'identifiers'),
                     }}
                   />
                 </div>
@@ -248,7 +229,7 @@ const Detail = ({
                     {...{
                       texts,
                       history,
-                      relatedFormats: get(formatDefinition, "relatedFormats"),
+                      relatedFormats: get(formatDefinition, 'relatedFormats'),
                     }}
                   />
                 </div>
@@ -274,7 +255,7 @@ const Detail = ({
                   <DevelopersTable
                     {...{
                       texts,
-                      developers: get(formatDefinition, "developers"),
+                      developers: get(formatDefinition, 'developers'),
                     }}
                   />
                 </div>
@@ -284,13 +265,10 @@ const Detail = ({
         }}
       />
       {tabNumber !== 0 && (
-        <div {...{ className: "flex-row flex-right" }}>
+        <div {...{ className: 'flex-row flex-right' }}>
           <Button
             {...{
-              onClick: () =>
-                history.push(
-                  `/formats/${get(formatDefinition, "format.formatId")}`
-                ),
+              onClick: () => history.push(`/formats/${get(formatDefinition, 'format.formatId')}`),
             }}
           >
             {texts.CLOSE}
@@ -313,8 +291,8 @@ export default compose(
       showLoader,
     }
   ),
-  withState("fail", "setFail", null),
-  withState("tabNumber", "setTabNumber", 0),
+  withState('fail', 'setFail', null),
+  withState('tabNumber', 'setTabNumber', 0),
   withHandlers({
     onSubmit: ({
       putFormatDefinition,
@@ -330,24 +308,23 @@ export default compose(
       if (
         await putFormatDefinition({
           ...formatDefinition,
-          ...removeStartEndWhiteSpaceInSelectedFields(
-            { nationalFormatGuarantor },
-            ["nationalFormatGuarantor"]
-          ),
+          ...removeStartEndWhiteSpaceInSelectedFields({ nationalFormatGuarantor }, [
+            'nationalFormatGuarantor',
+          ]),
           preservationPlanDescription,
           preservationPlanFile,
           internalInformationFilled: true,
         })
       ) {
         setFail(null);
-        getFormatDefinition(get(formatDefinition, "id"));
+        getFormatDefinition(get(formatDefinition, 'id'));
       } else {
         setFail(texts.SAVE_FAILED);
       }
     },
   }),
   reduxForm({
-    form: "format-definition-detail",
+    form: 'format-definition-detail',
     enableReinitialize: true,
   })
 )(Detail);

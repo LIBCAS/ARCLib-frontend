@@ -1,8 +1,8 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   producerProfiles: null,
-  producerProfile: null
+  producerProfile: null,
 };
 
 const reducer = (state = initialState, action) => {

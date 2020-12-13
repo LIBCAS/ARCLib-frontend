@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import PrettyJSON from "./PrettyJSON";
-import PrettyXML from "./PrettyXML";
+import PrettyJSON from './PrettyJSON';
+import PrettyXML from './PrettyXML';
 
 const TextRow = ({ label, text, notEmpty, prettyJSON, prettyXML }) =>
-  !notEmpty || (text && text !== "") ? (
-    <div {...{ className: "text-row" }}>
+  !notEmpty || (text && text !== '') ? (
+    <div {...{ className: 'text-row' }}>
       <p>{label}: </p>
       {prettyJSON ? (
         <PrettyJSON {...{ json: text }} />

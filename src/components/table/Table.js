@@ -1,8 +1,8 @@
-import React from "react";
-import { compose, defaultProps } from "recompose";
-import classNames from "classnames";
-import { map } from "lodash";
-import { Table } from "react-bootstrap";
+import React from 'react';
+import { compose, defaultProps } from 'recompose';
+import classNames from 'classnames';
+import { map } from 'lodash';
+import { Table } from 'react-bootstrap';
 
 const TableContainer = ({
   thCells,
@@ -11,15 +11,15 @@ const TableContainer = ({
   withFilter,
   oddEvenRows,
   withHover,
-  style
+  style,
 }) => (
   <Table {...{ responsive: true, className, style }}>
     <thead>
       <tr
         {...{
           className: classNames({
-            "no-hover": !withHover
-          })
+            'no-hover': !withHover,
+          }),
         }}
       >
         {map(thCells, ({ label, ...props }, key) => (
@@ -35,14 +35,10 @@ const TableContainer = ({
             key,
             onClick: () => onClick && onClick(),
             className: classNames(className, {
-              "no-hover": !withHover,
-              odd: oddEvenRows
-                ? withFilter ? (key + 2) % 2 : !((key + 2) % 2)
-                : false,
-              even: oddEvenRows
-                ? withFilter ? !((key + 2) % 2) : (key + 2) % 2
-                : false
-            })
+              'no-hover': !withHover,
+              odd: oddEvenRows ? (withFilter ? (key + 2) % 2 : !((key + 2) % 2)) : false,
+              even: oddEvenRows ? (withFilter ? !((key + 2) % 2) : (key + 2) % 2) : false,
+            }),
           }}
         >
           {map(items, ({ label, ...props }, key) => (
@@ -54,6 +50,4 @@ const TableContainer = ({
   </Table>
 );
 
-export default compose(defaultProps({ oddEvenRows: true, withHover: true }))(
-  TableContainer
-);
+export default compose(defaultProps({ oddEvenRows: true, withHover: true }))(TableContainer);

@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import Notifications from "./Notifications";
-import Notification from "./Notification";
+import Notifications from './Notifications';
+import Notification from './Notification';
 
-const NotificationsContainer = props => {
+const NotificationsContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const NotificationsContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <Notification {...props} />
+          render: () => <Notification {...props} />,
         }}
       />
     );

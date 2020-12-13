@@ -1,12 +1,9 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams } from '../utils';
 
-export const getProducerProfiles = (withFilter = true) => async (
-  dispatch,
-  getState
-) => {
+export const getProducerProfiles = (withFilter = true) => async (dispatch, getState) => {
   dispatch({
     type: c.PRODUCER_PROFILE,
     payload: {
@@ -15,7 +12,7 @@ export const getProducerProfiles = (withFilter = true) => async (
   });
 
   try {
-    const response = await fetch("/api/producer_profile/list_dtos", {
+    const response = await fetch('/api/producer_profile/list_dtos', {
       params: withFilter ? createFilterPagerParams(getState) : { pageSize: 0 },
     });
 
@@ -83,7 +80,7 @@ export const deleteProducerProfile = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/producer_profile/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -101,9 +98,9 @@ export const newProducerProfile = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/producer_profile/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });
@@ -136,10 +133,10 @@ export const newProducerProfile = (body) => async (dispatch) => {
 export const saveProducerProfile = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(`/api/producer_profile/update/${body.id}`, {
-      method: "PUT",
+    const response = await fetch(`/api/producer_profile/${body.id}`, {
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });

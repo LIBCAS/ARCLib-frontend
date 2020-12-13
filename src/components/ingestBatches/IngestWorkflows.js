@@ -1,8 +1,8 @@
-import React from "react";
-import { map, get } from "lodash";
+import React from 'react';
+import { map, get } from 'lodash';
 
-import Table from "../table/Table";
-import { formatDateTime } from "../../utils";
+import Table from '../table/Table';
+import { formatDateTime } from '../../utils';
 
 const IngestWorkflows = ({ history, ingestWorkflows, texts }) => (
   <Table
@@ -12,24 +12,20 @@ const IngestWorkflows = ({ history, ingestWorkflows, texts }) => (
         { label: texts.UPDATED },
         { label: texts.EXTERNAL_ID },
         { label: texts.AUTHORIAL_ID },
-        { label: texts.PROCESSING_STATE }
+        { label: texts.PROCESSING_STATE },
       ],
-      items: map(ingestWorkflows, item => ({
+      items: map(ingestWorkflows, (item) => ({
         onClick: () => history.push(`/ingest-workflows/${item.externalId}`),
         items: [
           { label: formatDateTime(item.created) },
           { label: formatDateTime(item.updated) },
-          { label: get(item, "externalId", "") },
-          { label: get(item, "sipAuthorialId", "") },
+          { label: get(item, 'externalId', '') },
+          { label: get(item, 'sipAuthorialId', '') },
           {
-            label: get(
-              texts,
-              get(item, "processingState"),
-              get(item, "processingState")
-            )
-          }
-        ]
-      }))
+            label: get(texts, get(item, 'processingState'), get(item, 'processingState')),
+          },
+        ],
+      })),
     }}
   />
 );

@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getIssueDictionary = () => async dispatch => {
+export const getIssueDictionary = () => async (dispatch) => {
   dispatch({
     type: c.ISSUE_DICTIONARY,
     payload: {
-      issueDictionary: null
-    }
+      issueDictionary: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/ingestIssueDefinition");
+    const response = await fetch('/api/ingestIssueDefinition');
 
     if (response.status === 200) {
       const issueDictionary = await response.json();
@@ -19,8 +19,8 @@ export const getIssueDictionary = () => async dispatch => {
       dispatch({
         type: c.ISSUE_DICTIONARY,
         payload: {
-          issueDictionary
-        }
+          issueDictionary,
+        },
       });
 
       return issueDictionary;
@@ -35,14 +35,14 @@ export const getIssueDictionary = () => async dispatch => {
   }
 };
 
-export const getIssue = id => async dispatch => {
+export const getIssue = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.ISSUE_DICTIONARY,
     payload: {
-      issue: null
-    }
+      issue: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getIssue = id => async dispatch => {
       dispatch({
         type: c.ISSUE_DICTIONARY,
         payload: {
-          issue
-        }
+          issue,
+        },
       });
 
       dispatch(showLoader(false));
@@ -73,11 +73,11 @@ export const getIssue = id => async dispatch => {
   }
 };
 
-export const deleteIssue = id => async dispatch => {
+export const deleteIssue = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/ingestIssueDefinition/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -91,15 +91,15 @@ export const deleteIssue = id => async dispatch => {
   }
 };
 
-export const putIssue = body => async dispatch => {
+export const putIssue = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/ingestIssueDefinition/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -108,8 +108,8 @@ export const putIssue = body => async dispatch => {
       dispatch({
         type: c.ISSUE_DICTIONARY,
         payload: {
-          issue
-        }
+          issue,
+        },
       });
 
       dispatch(showLoader(false));

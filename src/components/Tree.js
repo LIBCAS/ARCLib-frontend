@@ -1,7 +1,7 @@
-import React from "react";
-import { isEmpty, map } from "lodash";
-import { Tree } from "antd";
-import "antd/dist/antd.css";
+import React from 'react';
+import { isEmpty, map } from 'lodash';
+import { Tree } from 'antd';
+import 'antd/dist/antd.css';
 
 const TreeNode = Tree.TreeNode;
 
@@ -11,7 +11,7 @@ const TreeContainer = ({ data, ...props }) => {
       <TreeNode
         {...{
           ...item,
-          key: `${index !== undefined ? `${index}-` : ""}${i}`,
+          key: `${index !== undefined ? `${index}-` : ''}${i}`,
         }}
       >
         {!isEmpty(items) ? loop(items, i) : undefined}

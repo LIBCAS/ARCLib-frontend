@@ -1,30 +1,26 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm } from "redux-form";
-import { compose, withHandlers, withState, lifecycle } from "recompose";
-import { isEmpty, get, find, map, compact, forEach, set } from "lodash";
-import classNames from "classnames";
-import { ControlLabel } from "react-bootstrap";
-import { Icon } from "antd";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm } from 'redux-form';
+import { compose, withHandlers, withState, lifecycle } from 'recompose';
+import { isEmpty, get, find, map, compact, forEach, set } from 'lodash';
+import classNames from 'classnames';
+import { ControlLabel } from 'react-bootstrap';
+import { Icon } from 'antd';
 
-import Button from "../Button";
-import TextField from "../TextField";
-import Sort from "../filter/Sort";
-import Order from "../filter/Order";
-import TextFilter from "../filter/TextFilter";
-import TextCONTAINSFilter from "../filter/TextCONTAINSFilter";
-import TextEQFilter from "../filter/TextEQFilter";
-import EnumFilter from "../filter/EnumFilter";
-import NumberFilter from "../filter/NumberFilter";
-import DateTimeFilter from "../filter/DateTimeFilter";
-import TextFieldWithButton from "../TextFieldWithButton";
-import { setFilter } from "../../actions/appActions";
-import {
-  getAipList,
-  saveAndgetAipList,
-  setAipList,
-} from "../../actions/aipActions";
-import { setQuery } from "../../actions/queryActions";
+import Button from '../Button';
+import TextField from '../TextField';
+import Sort from '../filter/Sort';
+import Order from '../filter/Order';
+import TextFilter from '../filter/TextFilter';
+import TextCONTAINSFilter from '../filter/TextCONTAINSFilter';
+import TextEQFilter from '../filter/TextEQFilter';
+import EnumFilter from '../filter/EnumFilter';
+import NumberFilter from '../filter/NumberFilter';
+import DateTimeFilter from '../filter/DateTimeFilter';
+import TextFieldWithButton from '../TextFieldWithButton';
+import { setFilter } from '../../actions/appActions';
+import { getAipList, saveAndgetAipList, setAipList } from '../../actions/aipActions';
+import { setQuery } from '../../actions/queryActions';
 import {
   orderTypes,
   filterTypes,
@@ -33,14 +29,9 @@ import {
   filterOperationsText,
   filterBoolOptions,
   Permission,
-} from "../../enums";
-import {
-  hasValue,
-  formatDateTime,
-  formatDate,
-  hasPermission,
-} from "../../utils";
-import * as storage from "../../utils/storage";
+} from '../../enums';
+import { hasValue, formatDateTime, formatDate, hasPermission } from '../../utils';
+import * as storage from '../../utils/storage';
 
 const Form = ({
   handleSubmit,
@@ -62,57 +53,57 @@ const Form = ({
   language,
 }) => (
   <form {...{ onSubmit: handleSubmit, className }}>
-    <div {...{ className: "form-row sort" }}>
+    <div {...{ className: 'form-row sort' }}>
       <ControlLabel>{texts.SORT}</ControlLabel>
       <div
         {...{
-          className: "flex-row flex-top margin-bottom-small",
+          className: 'flex-row flex-top margin-bottom-small',
         }}
       >
         <Sort
           {...{
             options: sortOptions,
-            className: "sort",
+            className: 'sort',
           }}
         />
-        <div {...{ className: "flex-row order" }}>
+        <div {...{ className: 'flex-row order' }}>
           <Order />
         </div>
       </div>
     </div>
-    <div {...{ className: "flex-col padding-top-small divider-top" }}>
+    <div {...{ className: 'flex-col padding-top-small divider-top' }}>
       {map(fields, ({ title, subtitle, filters, id }, key) =>
         title ? (
           <div
             {...{
               key,
-              className: classNames("title-container", {
-                "margin-bottom-none": get(collapsed, id),
+              className: classNames('title-container', {
+                'margin-bottom-none': get(collapsed, id),
               }),
               onClick: () => updateCollapsed({ [id]: !get(collapsed, id) }),
             }}
           >
             <h3
               {...{
-                className: "title",
+                className: 'title',
               }}
             >
               {title}
             </h3>
             <Icon
               {...{
-                type: !!get(collapsed, id) ? "down" : "up",
-                className: "title-icon",
+                type: !!get(collapsed, id) ? 'down' : 'up',
+                className: 'title-icon',
               }}
             />
           </div>
         ) : subtitle ? (
-          <div {...{ key, className: "subtitle-container" }}>
+          <div {...{ key, className: 'subtitle-container' }}>
             <h4
               {...{
                 key,
-                className: classNames("subtitle", {
-                  "margin-top-none": get(get(fields, `[${key - 1}]`), "title"),
+                className: classNames('subtitle', {
+                  'margin-top-none': get(get(fields, `[${key - 1}]`), 'title'),
                   hidden: !!get(collapsed, id),
                 }),
               }}
@@ -124,7 +115,7 @@ const Form = ({
           <div
             {...{
               key,
-              className: classNames("flex-row flex-top", {
+              className: classNames('flex-row flex-top', {
                 hidden: !!get(collapsed, id),
               }),
             }}
@@ -134,16 +125,16 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextFilter
                     {...{
                       index,
-                      className: "flex-row flex-top",
-                      selectClassName: "field",
-                      textClassName: "field",
+                      className: 'flex-row flex-top',
+                      selectClassName: 'field',
+                      textClassName: 'field',
                       handleUpdate: () => saveQuery(),
                     }}
                   />
@@ -152,24 +143,21 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextFilter
                     {...{
                       index,
-                      className: "flex-row flex-top",
-                      selectClassName: "field",
-                      textClassName: "field",
+                      className: 'flex-row flex-top',
+                      selectClassName: 'field',
+                      textClassName: 'field',
                       handleUpdate: () => saveQuery(),
-                      options: map(
-                        filterTypeOperations[filterTypes.TEXT_EQ_NEQ],
-                        (value) => ({
-                          value,
-                          label: filterOperationsText[language][value],
-                        })
-                      ),
+                      options: map(filterTypeOperations[filterTypes.TEXT_EQ_NEQ], (value) => ({
+                        value,
+                        label: filterOperationsText[language][value],
+                      })),
                     }}
                   />
                 </div>
@@ -177,15 +165,15 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextCONTAINSFilter
                     {...{
                       index,
-                      className: "flex-row flex-top",
-                      textClassName: "field-single",
+                      className: 'flex-row flex-top',
+                      textClassName: 'field-single',
                       handleUpdate: () => saveQuery(),
                     }}
                   />
@@ -194,14 +182,14 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextEQFilter
                     {...{
                       index,
-                      className: "flex-row flex-top",
+                      className: 'flex-row flex-top',
                       handleUpdate: () => saveQuery(),
                     }}
                   />
@@ -210,21 +198,19 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextFilter
                     {...{
                       index,
-                      className: "flex-row flex-top",
-                      selectClassName: "field",
-                      textClassName: "field",
+                      className: 'flex-row flex-top',
+                      selectClassName: 'field',
+                      textClassName: 'field',
                       handleUpdate: () => saveQuery(),
                       options: map(
-                        filterTypeOperations[
-                          filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
-                        ],
+                        filterTypeOperations[filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH],
                         (value) => ({
                           value,
                           label: filterOperationsText[language][value],
@@ -237,16 +223,16 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <EnumFilter
                     {...{
                       index,
-                      className: "flex-row flex-top full-field",
+                      className: 'flex-row flex-top full-field',
                       handleUpdate: () => saveQuery(),
-                      defaultValue: "",
+                      defaultValue: '',
                       ...field,
                     }}
                   />
@@ -255,16 +241,16 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <EnumFilter
                     {...{
                       index,
-                      className: "flex-row flex-top full-field",
+                      className: 'flex-row flex-top full-field',
                       handleUpdate: () => saveQuery(),
-                      defaultValue: "",
+                      defaultValue: '',
                       options: filterBoolOptions[language],
                       ...field,
                     }}
@@ -274,20 +260,20 @@ const Form = ({
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <div
                     {...{
-                      className: "flex-row flex-top",
+                      className: 'flex-row flex-top',
                     }}
                   >
                     <NumberFilter
                       {...{
                         index,
                         number: 0,
-                        className: "field width-full",
+                        className: 'field width-full',
                         placeholder: texts.GTE,
                         handleUpdate: () => saveQuery(),
                       }}
@@ -296,95 +282,92 @@ const Form = ({
                       {...{
                         index,
                         number: 1,
-                        className: "field width-full",
+                        className: 'field width-full',
                         placeholder: texts.LTE,
                         handleUpdate: () => saveQuery(),
                       }}
                     />
                   </div>
                 </div>
-              ) : field.type === filterTypes.DATE ||
-                field.type === filterTypes.DATETIME ? (
+              ) : field.type === filterTypes.DATE || field.type === filterTypes.DATETIME ? (
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <div
                     {...{
-                      className: "flex-row flex-top",
+                      className: 'flex-row flex-top',
                     }}
                   >
                     <DateTimeFilter
                       {...{
                         key: `index-search-datetimefilter-0-${didMount}`,
                         value: find(
-                          get(filter, "filter"),
+                          get(filter, 'filter'),
                           (f) => f.index === index && f.number === 0
                         )
                           ? field.type === filterTypes.DATE
                             ? formatDate(
                                 find(
-                                  get(filter, "filter"),
+                                  get(filter, 'filter'),
                                   (f) => f.index === index && f.number === 0
                                 ).value
                               )
                             : formatDateTime(
                                 find(
-                                  get(filter, "filter"),
+                                  get(filter, 'filter'),
                                   (f) => f.index === index && f.number === 0
                                 ).value
                               )
-                          : "",
+                          : '',
                         index,
                         number: 0,
                         placeholder: texts.FROM,
-                        className: "field width-full",
+                        className: 'field width-full',
                         handleUpdate: () => saveQuery(),
-                        timeFormat:
-                          field.type === filterTypes.DATE ? false : undefined,
+                        timeFormat: field.type === filterTypes.DATE ? false : undefined,
                       }}
                     />
                     <DateTimeFilter
                       {...{
                         key: `index-search-datetimefilter-1-${didMount}`,
                         value: find(
-                          get(filter, "filter"),
+                          get(filter, 'filter'),
                           (f) => f.index === index && f.number === 1
                         )
                           ? field.type === filterTypes.DATE
                             ? formatDate(
                                 find(
-                                  get(filter, "filter"),
+                                  get(filter, 'filter'),
                                   (f) => f.index === index && f.number === 1
                                 ).value
                               )
                             : formatDateTime(
                                 find(
-                                  get(filter, "filter"),
+                                  get(filter, 'filter'),
                                   (f) => f.index === index && f.number === 1
                                 ).value
                               )
-                          : "",
+                          : '',
                         index,
                         number: 1,
                         placeholder: texts.TO,
-                        className: "field width-full",
+                        className: 'field width-full',
                         alignRight: true,
                         handleUpdate: () => saveQuery(),
-                        timeFormat:
-                          field.type === filterTypes.DATE ? false : undefined,
+                        timeFormat: field.type === filterTypes.DATE ? false : undefined,
                       }}
                     />
                   </div>
                 </div>
-              ) : field.type === "TEXT_FIELD" ? (
+              ) : field.type === 'TEXT_FIELD' ? (
                 <div
                   {...{
                     key: `${key}-${i}`,
-                    className: "form-row margin-bottom-small",
+                    className: 'form-row margin-bottom-small',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
@@ -397,15 +380,12 @@ const Form = ({
                         saveQuery();
                       },
                       value: get(
-                        find(get(filter, "filter"), (f) => f.index === index),
-                        "value"
+                        find(get(filter, 'filter'), (f) => f.index === index),
+                        'value'
                       )
                         ? get(
-                            find(
-                              get(filter, "filter"),
-                              (f) => f.index === index
-                            ),
-                            "value"
+                            find(get(filter, 'filter'), (f) => f.index === index),
+                            'value'
                           )
                         : undefined,
                     }}
@@ -422,17 +402,17 @@ const Form = ({
     </div>
     <div
       {...{
-        className: "index-search-form-buttons",
+        className: 'index-search-form-buttons',
       }}
     >
       <Button
         {...{
           primary: true,
           onClick: () => {
-            storage.set("query", JSON.stringify({ query: {}, result: [] }));
+            storage.set('query', JSON.stringify({ query: {}, result: [] }));
             clearForm();
           },
-          className: "index-search-form-button not-primary",
+          className: 'index-search-form-button not-primary',
         }}
       >
         {texts.RESET}
@@ -443,7 +423,7 @@ const Form = ({
           onClick: () => {
             collapseAll();
           },
-          className: "index-search-form-button not-primary margin-left-small",
+          className: 'index-search-form-button not-primary margin-left-small',
         }}
       >
         {texts.COLLAPSE_ALL}
@@ -451,13 +431,12 @@ const Form = ({
       {hasPermission(Permission.AIP_QUERY_RECORDS_WRITE) && (
         <div
           {...{
-            className:
-              "index-search-form-button textfield-with-button margin-left-small",
+            className: 'index-search-form-button textfield-with-button margin-left-small',
           }}
         >
           <TextFieldWithButton
             {...{
-              id: "index-search-text-field-with-button",
+              id: 'index-search-text-field-with-button',
               placeholder: texts.QUERY_NAME,
               label: texts.SAVE,
               onClick: async () => {
@@ -476,8 +455,8 @@ const Form = ({
       <Button
         {...{
           primary: true,
-          type: "submit",
-          className: "index-search-form-button margin-left-small",
+          type: 'submit',
+          className: 'index-search-form-button margin-left-small',
         }}
       >
         {texts.SEND}
@@ -500,18 +479,15 @@ export default compose(
       saveAndgetAipList,
     }
   ),
-  withState("order", "setOrder", orderTypes.DESC),
-  withState("didMount", "onDidMount", false),
-  withState("queryName", "setQueryName", ""),
-  withState("collapsed", "setCollapsed", {}),
+  withState('order', 'setOrder', orderTypes.DESC),
+  withState('didMount', 'onDidMount', false),
+  withState('queryName', 'setQueryName', ''),
+  withState('collapsed', 'setCollapsed', {}),
   withHandlers({
     updateCollapsed: ({ collapsed, setCollapsed }) => (newCollapsed) =>
       setCollapsed({ ...collapsed, ...newCollapsed }),
     saveQuery: ({ filter, aips }) => () =>
-      storage.set(
-        "query",
-        JSON.stringify({ query: filter, result: { items: aips } })
-      ),
+      storage.set('query', JSON.stringify({ query: filter, result: { items: aips } })),
     clearForm: ({ setFilter, filters, setAipList }) => () => {
       setAipList([]);
       setFilter({
@@ -523,7 +499,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.CONTAINS,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -535,7 +511,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.EQ,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -547,7 +523,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.EQ,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -559,7 +535,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.EQ,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -571,7 +547,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.CONTAINS,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -583,7 +559,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.EQ,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -595,7 +571,7 @@ export default compose(
                     index,
                     field: field.field,
                     operation: filterOperationsTypes.CONTAINS,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -610,7 +586,7 @@ export default compose(
                     number: 0,
                     field: field.field,
                     operation: filterOperationsTypes.GTE,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -625,19 +601,19 @@ export default compose(
                     number: 1,
                     field: field.field,
                     operation: filterOperationsTypes.LTE,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
           ),
           ...compact(
             map(filters, (field, index) => {
-              return field.type === "TEXT_FIELD"
+              return field.type === 'TEXT_FIELD'
                 ? {
                     index,
                     field: field.field,
                     operation: field.operation,
-                    value: "",
+                    value: '',
                   }
                 : null;
             })
@@ -666,14 +642,14 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "index-search-form",
+    form: 'index-search-form',
     enableReinitialize: true,
   }),
   lifecycle({
     componentWillMount() {
       const { saveQuery, fields, updateCollapsed } = this.props;
 
-      window.addEventListener("beforeunload", saveQuery);
+      window.addEventListener('beforeunload', saveQuery);
 
       const collapsed = {};
 
@@ -698,27 +674,25 @@ export default compose(
         clearForm,
       } = this.props;
 
-      const savedQuery = !isEmpty(query)
-        ? query
-        : JSON.parse(storage.get("query")) || null;
+      const savedQuery = !isEmpty(query) ? query : JSON.parse(storage.get('query')) || null;
 
-      if (!isEmpty(get(savedQuery, "query"))) {
-        const directedFromMenu = storage.get("directedFromMenu") === "true";
+      if (!isEmpty(get(savedQuery, 'query'))) {
+        const directedFromMenu = storage.get('directedFromMenu') === 'true';
 
         if (!directedFromMenu) {
-          setAipList(get(savedQuery, "query.result.items", []));
+          setAipList(get(savedQuery, 'query.result.items', []));
         } else {
           setAipList([]);
         }
 
-        storage.set("directedFromMenu", false);
+        storage.set('directedFromMenu', false);
 
-        const savedQuerySort = get(savedQuery, "query.sort");
-        const savedQueryOrder = get(savedQuery, "query.order");
-        const savedQueryFilters = get(savedQuery, "query.filter");
+        const savedQuerySort = get(savedQuery, 'query.sort');
+        const savedQueryOrder = get(savedQuery, 'query.order');
+        const savedQueryFilters = get(savedQuery, 'query.filter');
 
         setFilter({
-          sort: hasValue(savedQuerySort) ? savedQuerySort : "updated",
+          sort: hasValue(savedQuerySort) ? savedQuerySort : 'updated',
           order: hasValue(savedQueryOrder) ? savedQueryOrder : orderTypes.ASC,
           filter: [
             ...compact(
@@ -729,13 +703,13 @@ export default compose(
                       field: field.field,
                       operation: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "operation",
+                        'operation',
                         filterOperationsTypes.CONTAINS
                       ),
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -749,13 +723,13 @@ export default compose(
                       field: field.field,
                       operation: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "operation",
+                        'operation',
                         filterOperationsTypes.EQ
                       ),
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -770,8 +744,8 @@ export default compose(
                       operation: filterOperationsTypes.CONTAINS,
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -786,8 +760,8 @@ export default compose(
                       operation: filterOperationsTypes.EQ,
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -795,20 +769,19 @@ export default compose(
             ),
             ...compact(
               map(filters, (field, index) => {
-                return field.type ===
-                  filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
+                return field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
                   ? {
                       index,
                       field: field.field,
                       operation: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "operation",
+                        'operation',
                         filterOperationsTypes.CONTAINS
                       ),
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -821,11 +794,17 @@ export default compose(
                       index,
                       field: field.field,
                       operation: filterOperationsTypes.EQ,
-                      value: get(
-                        find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
-                      ),
+                      value:
+                        get(
+                          find(savedQueryFilters, (f) => f.field === field.field),
+                          'operation'
+                        ) === filterOperationsTypes.EQ
+                          ? get(
+                              find(savedQueryFilters, (f) => f.field === field.field),
+                              'value',
+                              ''
+                            )
+                          : '',
                     }
                   : null;
               })
@@ -839,8 +818,8 @@ export default compose(
                       operation: filterOperationsTypes.EQ,
                       value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -860,11 +839,10 @@ export default compose(
                         find(
                           savedQueryFilters,
                           (f) =>
-                            f.field === field.field &&
-                            f.operation === filterOperationsTypes.GTE
+                            f.field === field.field && f.operation === filterOperationsTypes.GTE
                         ),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -884,11 +862,10 @@ export default compose(
                         find(
                           savedQueryFilters,
                           (f) =>
-                            f.field === field.field &&
-                            f.operation === filterOperationsTypes.LTE
+                            f.field === field.field && f.operation === filterOperationsTypes.LTE
                         ),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -896,7 +873,7 @@ export default compose(
             ),
             ...compact(
               map(filters, (field, index) => {
-                return field.type === "TEXT_FIELD"
+                return field.type === 'TEXT_FIELD'
                   ? {
                       index,
                       field: field.field,
@@ -904,12 +881,10 @@ export default compose(
                       value: get(
                         find(
                           savedQueryFilters,
-                          (f) =>
-                            f.field === field.field &&
-                            f.operation === field.operation
+                          (f) => f.field === field.field && f.operation === field.operation
                         ),
-                        "value",
-                        ""
+                        'value',
+                        ''
                       ),
                     }
                   : null;
@@ -934,11 +909,11 @@ export default compose(
     componentWillUnmount() {
       const { setFilter, saveQuery } = this.props;
 
-      window.removeEventListener("beforeunload", saveQuery);
+      window.removeEventListener('beforeunload', saveQuery);
 
       saveQuery();
 
-      setFilter({ sort: "", order: orderTypes.ASC, filter: [] });
+      setFilter({ sort: '', order: orderTypes.ASC, filter: [] });
     },
   })
 )(Form);

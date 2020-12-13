@@ -1,26 +1,27 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { compose, withState } from "recompose";
-import { map, findIndex, get, concat, isEmpty, forEach } from "lodash";
-import classNames from "classnames";
-import { Glyphicon } from "react-bootstrap";
-import { Layout, Menu, Dropdown, Icon } from "antd";
+import React from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { compose, withState } from 'recompose';
+import { map, findIndex, get, concat, isEmpty, forEach } from 'lodash';
+import classNames from 'classnames';
+import { Glyphicon } from 'react-bootstrap';
+import { Layout, Menu, Dropdown, Icon } from 'antd';
 
-import Button from "./Button";
-import { changeLanguage } from "../actions/appActions";
-import { signOut } from "../actions/userActions";
-import { hasValue } from "../utils";
-import { languagesLabels } from "../enums";
+import Button from './Button';
+import { changeLanguage } from '../actions/appActions';
+import { signOut } from '../actions/userActions';
+import { hasValue, openUrlInNewTab } from '../utils';
+import { languagesLabels } from '../enums';
+import { WIKI_URL } from "../constants";
 
 const { Header } = Layout;
 
 const ButtonLanguage = ({ language, changeLanguage, className }) => (
   <Button
     {...{
-      size: "large",
+      size: 'large',
       ghost: true,
-      className: `button-language${className ? ` ${className}` : ""}`,
+      className: `button-language${className ? ` ${className}` : ''}`,
       onClick: () => changeLanguage(),
     }}
   >
@@ -44,11 +45,11 @@ const AppHeader = ({
   setCollapsed,
   user,
 }) => {
-  const isIE = navigator.appVersion.toString().indexOf(".NET") > 0;
+  const isIE = navigator.appVersion.toString().indexOf('.NET') > 0;
 
   const dropdownMenuItems = [
-    { url: "/profile", label: texts.PROFILE },
-    { url: "/", label: texts.SIGN_OUT, onClick: () => signOut() },
+    { url: '/profile', label: texts.PROFILE },
+    { url: '/', label: texts.SIGN_OUT, onClick: () => signOut() },
   ];
 
   let allItems = [];
@@ -74,7 +75,7 @@ const AppHeader = ({
     {
       label: languagesLabels[language],
       onClick: () => changeLanguage(),
-      className: "item-language",
+      className: 'item-language',
     },
     dropdownMenuItems
   );
@@ -82,71 +83,77 @@ const AppHeader = ({
   return (
     <Header
       {...{
-        className: classNames("app-header", {
+        className: classNames('app-header', {
           center: authStyle,
           normal: !authStyle,
           ie: isIE,
-          "with-menu": showVerticalMenu,
+          'with-menu': showVerticalMenu,
         }),
       }}
     >
       {!authStyle ? (
-        <div {...{ className: "content" }}>
+        <div {...{ className: 'content' }}>
           <div
             {...{
-              className: classNames("top", {
-                "with-menu": showVerticalMenu,
-                "with-menu-button": collapsed || noRoleStyle,
+              className: classNames('top', {
+                'with-menu': showVerticalMenu,
+                'with-menu-button': collapsed || noRoleStyle,
               }),
             }}
           >
             {collapsed && (
               <Button
                 {...{
-                  size: "large",
+                  size: 'large',
                   ghost: true,
-                  className: "menu-button",
+                  className: 'menu-button',
                   onClick: () => setCollapsed(false),
                 }}
               >
-                <Glyphicon {...{ glyph: "menu-hamburger" }} />
+                <Glyphicon {...{ glyph: 'menu-hamburger' }} />
               </Button>
             )}
             <h2
               {...{
-                className: classNames("title", {
-                  "title-hidden": !collapsed && !noRoleStyle,
+                className: classNames('title', {
+                  'title-hidden': !collapsed && !noRoleStyle,
                 }),
               }}
             >
               ARCLib
             </h2>
             <div {...{ className: "right" }}>
+              <Button
+                {...{
+                  size: "large",
+                  ghost: true,
+                  className: "margin-right-small",
+                  onClick: () => openUrlInNewTab(WIKI_URL),
+                }}
+              >
+                Wiki Github
+              </Button>
               <ButtonLanguage
                 {...{
                   language,
                   changeLanguage,
-                  className: "margin-right-small",
+                  className: 'margin-right-small',
                 }}
               />
-              <div {...{ className: "dropdown dropdown-user" }}>
+              <div {...{ className: 'dropdown dropdown-user' }}>
                 <Dropdown
                   {...{
                     overlay: (
                       <Menu
                         {...{
-                          theme: "dark",
+                          theme: 'dark',
                           onClick: (e) => {
-                            if (
-                              get(dropdownMenuItems[Number(e.key)], "onClick")
-                            ) {
+                            if (get(dropdownMenuItems[Number(e.key)], 'onClick')) {
                               dropdownMenuItems[Number(e.key)].onClick();
                             }
 
-                            if (get(dropdownMenuItems[Number(e.key)], "url")) {
-                              history.push(
-                                dropdownMenuItems[Number(e.key)].url
-                              );
+                            if (get(dropdownMenuItems[Number(e.key)], 'url')) {
+                              history.push(dropdownMenuItems[Number(e.key)].url);
                             }
                           },
                         }}
@@ -163,64 +170,56 @@ const AppHeader = ({
                         ))}
                       </Menu>
                     ),
-                    placement: "bottomRight",
-                    trigger: ["click"],
+                    placement: 'bottomRight',
+                    trigger: ['click'],
                   }}
                 >
                   <Button
                     {...{
-                      size: "large",
+                      size: 'large',
                       ghost: true,
-                      className: "user-button",
+                      className: 'user-button',
                     }}
                   >
-                    <Icon {...{ type: "user" }} />
-                    {get(user, "username") ? ` ${get(user, "username")}` : ""}
+                    <Icon {...{ type: 'user' }} />
+                    {get(user, 'username') ? ` ${get(user, 'username')}` : ''}
                   </Button>
                 </Dropdown>
               </div>
               <Button
                 {...{
-                  size: "large",
+                  size: 'large',
                   ghost: true,
-                  className: "menu-all-button",
+                  className: 'menu-all-button',
                   onClick: () => setShowVerticalMenu(!showVerticalMenu),
                 }}
               >
-                <Glyphicon {...{ glyph: "menu-hamburger" }} />
+                <Glyphicon {...{ glyph: 'menu-hamburger' }} />
                 <span {...{ style: { marginLeft: 10 } }}>
-                  {get(user, "username") ? ` ${get(user, "username")}` : ""}
+                  {get(user, 'username') ? ` ${get(user, 'username')}` : ''}
                 </span>
               </Button>
             </div>
           </div>
-          <div {...{ className: "bottom" }}>
+          <div {...{ className: 'bottom' }}>
             {showVerticalMenu && (
               <Menu
                 {...{
-                  theme: "dark",
+                  theme: 'dark',
                   onClick: (e) => {
-                    if (get(allItems[Number(e.key)], "onClick")) {
+                    if (get(allItems[Number(e.key)], 'onClick')) {
                       allItems[Number(e.key)].onClick();
                     }
 
-                    if (get(allItems[Number(e.key)], "url")) {
+                    if (get(allItems[Number(e.key)], 'url')) {
                       history.push(allItems[Number(e.key)].url);
                     }
                   },
-                  className: "menu-all",
+                  className: 'menu-all',
                   selectedKeys: hasValue(
-                    findIndex(
-                      allItems,
-                      (menuItem) => match.url === menuItem.url
-                    )
+                    findIndex(allItems, (menuItem) => match.url === menuItem.url)
                   )
-                    ? [
-                        `${findIndex(
-                          allItems,
-                          (menuItem) => match.url === menuItem.url
-                        )}`,
-                      ]
+                    ? [`${findIndex(allItems, (menuItem) => match.url === menuItem.url)}`]
                     : undefined,
                 }}
               >
@@ -239,16 +238,16 @@ const AppHeader = ({
           </div>
         </div>
       ) : (
-        <div {...{ className: "content" }}>
-          <h2 {...{ className: "title" }}>ARCLib</h2>
-          <ButtonLanguage
-            {...{
-              language,
-              changeLanguage,
-            }}
-          />
-        </div>
-      )}
+          <div {...{ className: 'content' }}>
+            <h2 {...{ className: 'title' }}>ARCLib</h2>
+            <ButtonLanguage
+              {...{
+                language,
+                changeLanguage,
+              }}
+            />
+          </div>
+        )}
     </Header>
   );
 };
@@ -259,5 +258,5 @@ export default compose(
     signOut,
     changeLanguage,
   }),
-  withState("showVerticalMenu", "setShowVerticalMenu", false)
+  withState('showVerticalMenu', 'setShowVerticalMenu', false)
 )(AppHeader);

@@ -1,7 +1,7 @@
-import React from "react";
-import { map, get } from "lodash";
+import React from 'react';
+import { map, get } from 'lodash';
 
-import Table from "../table/Table";
+import Table from '../table/Table';
 
 const DevelopersTable = ({ developers, texts }) => (
   <Table
@@ -11,17 +11,17 @@ const DevelopersTable = ({ developers, texts }) => (
         { label: texts.DEVELOPER_NAME },
         { label: texts.DEVELOPER_COUMPOUND_NAME },
         { label: texts.ORGANISATION_NAME },
-        { label: texts.INTERNAL_VERSION_NUMBER }
+        { label: texts.INTERNAL_VERSION_NUMBER },
       ],
-      items: map(developers, item => ({
+      items: map(developers, (item) => ({
         items: [
-          { label: get(item, "developerId", "") },
-          { label: get(item, "developerName", "") },
-          { label: get(item, "developerCompoundName", "") },
-          { label: get(item, "organisationName", "") },
-          { label: get(item, "internalVersionNumber", "") }
-        ]
-      }))
+          { label: get(item, 'developerId', '') },
+          { label: get(item, 'developerName', '') },
+          { label: get(item, 'developerCompoundName', '') },
+          { label: get(item, 'organisationName', '') },
+          { label: get(item, 'internalVersionNumber', '') },
+        ],
+      })),
     }}
   />
 );

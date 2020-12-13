@@ -1,18 +1,18 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
-import { withRouter } from "react-router-dom";
-import { reduxForm, Field } from "redux-form";
-import { get, isEmpty, map } from "lodash";
-import md5 from "md5";
-import { message } from "antd";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { reduxForm, Field } from 'redux-form';
+import { get, isEmpty, map } from 'lodash';
+import md5 from 'md5';
+import { message } from 'antd';
 
-import Button from "../Button";
-import { TextField, Validation } from "../form";
-import SyntaxHighlighter from "../SyntaxHighlighter";
-import ErrorBlock from "../ErrorBlock";
-import { setDialog, showLoader } from "../../actions/appActions";
-import { hasValue } from "../../utils";
+import Button from '../Button';
+import { TextField, Validation } from '../form';
+import SyntaxHighlighter from '../SyntaxHighlighter';
+import ErrorBlock from '../ErrorBlock';
+import { setDialog, showLoader } from '../../actions/appActions';
+import { hasValue } from '../../utils';
 
 const Editor = ({
   aip,
@@ -32,12 +32,12 @@ const Editor = ({
   <form {...{ onSubmit: handleSubmit }}>
     <Field
       {...{
-        id: "aip-editor-reason",
-        className: "margin-bottom-small",
+        id: 'aip-editor-reason',
+        className: 'margin-bottom-small',
         component: TextField,
-        name: "reason",
+        name: 'reason',
         label: texts.REASON,
-        type: "textarea",
+        type: 'textarea',
         validate: [Validation.required[language]],
       }}
     />
@@ -45,7 +45,7 @@ const Editor = ({
       {...{
         key: `syntax-highlighter-${xmlContentState}`,
         lineNumbers: true,
-        mode: "xml",
+        mode: 'xml',
         label: texts.XML,
         value: xmlContent,
         onChange: (value) => {
@@ -57,13 +57,13 @@ const Editor = ({
     <ErrorBlock {...{ label: fail }} />
     <div
       {...{
-        className: "flex-row flex-right margin-bottom-small",
+        className: 'flex-row flex-right margin-bottom-small',
       }}
     >
       <Button
         {...{
           onClick: () =>
-            setDialog("DropFilesDialog", {
+            setDialog('DropFilesDialog', {
               title: texts.UPLOAD_XML,
               label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
               multiple: false,
@@ -78,7 +78,7 @@ const Editor = ({
                   reader.onloadend = () => {
                     const xml = reader.result;
 
-                    setXmlContent(hasValue(xml) ? xml : "");
+                    setXmlContent(hasValue(xml) ? xml : '');
                     setFail(!hasValue(xml) ? texts.REQUIRED : null);
                     setXmlContentState(!xmlContentState);
                     message.success(texts.FILE_SUCCESSFULLY_UPLOADED, 5);
@@ -86,7 +86,7 @@ const Editor = ({
                 }
               },
             }),
-          className: "margin-top-small",
+          className: 'margin-top-small',
         }}
       >
         {texts.UPLOAD_XML}
@@ -94,16 +94,15 @@ const Editor = ({
       <Button
         {...{
           onClick: downloadXmlContent,
-          className: "margin-top-small margin-left-small",
+          className: 'margin-top-small margin-left-small',
         }}
       >
         {texts.DOWNLOAD_XML}
       </Button>
       <Button
         {...{
-          onClick: () =>
-            history.push(`/aip/${get(aip, "ingestWorkflow.externalId")}`),
-          className: "margin-top-small margin-left-small",
+          onClick: () => history.push(`/aip/${get(aip, 'ingestWorkflow.externalId')}`),
+          className: 'margin-top-small margin-left-small',
         }}
       >
         {texts.CANCEL}
@@ -111,8 +110,8 @@ const Editor = ({
       <Button
         {...{
           primary: true,
-          type: "submit",
-          className: "margin-top-small margin-left-small",
+          type: 'submit',
+          className: 'margin-top-small margin-left-small',
         }}
       >
         {texts.SUBMIT}
@@ -124,7 +123,7 @@ const Editor = ({
 export default compose(
   withRouter,
   connect(null, { setDialog, showLoader }),
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   withHandlers({
     onSubmit: ({
       aip,
@@ -136,16 +135,16 @@ export default compose(
       history,
       downloadXmlContent,
     }) => async ({ reason }) => {
-      if (!xmlContent || xmlContent === "") {
+      if (!xmlContent || xmlContent === '') {
         setFail(texts.REQUIRED);
       } else {
         const { ok, status, message } = await updateAip(
-          get(aip, "ingestWorkflow.sip.id"),
-          get(aip, "ingestWorkflow.externalId"),
-          Number(get(aip, "ingestWorkflow.xmlVersionNumber")) + 1,
+          get(aip, 'ingestWorkflow.sip.id'),
+          get(aip, 'ingestWorkflow.externalId'),
+          Number(get(aip, 'ingestWorkflow.xmlVersionNumber')) + 1,
           reason,
           xmlContent,
-          "MD5",
+          'MD5',
           md5(xmlContent)
         );
 
@@ -162,42 +161,40 @@ export default compose(
             ? message
             : texts.SAVE_FAILED
         );
-        setDialog("Info", {
+        setDialog('Info', {
           content: (
             <div>
-              <h3 {...{ className: ok ? "color-green" : "invalid" }}>
-                <strong>
-                  {ok ? texts.SAVE_SUCCESSFULL : texts.SAVE_FAILED}
-                </strong>
+              <h3 {...{ className: ok ? 'color-green' : 'invalid' }}>
+                <strong>{ok ? texts.SAVE_SUCCESSFULL : texts.SAVE_FAILED}</strong>
               </h3>
               {!ok && (
                 <div
                   {...{
-                    className: "invalid",
-                    style: { overflowX: "auto", maxWidth: "100%" },
+                    className: 'invalid',
+                    style: { overflowX: 'auto', maxWidth: '100%' },
                   }}
                 >
                   {status === 503
                     ? texts.ARCHIVAL_STORAGE_IS_READ_ONLY_AT_THE_MOMENT
                     : !isEmpty(message)
-                    ? map(message.split("\n"), (part, i) => (
+                    ? map(message.split('\n'), (part, i) => (
                         <span {...{ key: i }}>
                           {i > 0 && <br />}
                           {part}
                         </span>
                       ))
-                    : ""}
+                    : ''}
                 </div>
               )}
             </div>
           ),
         });
 
-        history.push(`/aip/${get(aip, "ingestWorkflow.externalId")}`);
+        history.push(`/aip/${get(aip, 'ingestWorkflow.externalId')}`);
       }
     },
   }),
   reduxForm({
-    form: "aip-editor",
+    form: 'aip-editor',
   })
 )(Editor);

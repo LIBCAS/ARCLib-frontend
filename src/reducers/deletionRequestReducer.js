@@ -1,7 +1,7 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
-  deletionRequests: null
+  deletionRequests: null,
 };
 
 const reducer = (state = initialState, action) => {

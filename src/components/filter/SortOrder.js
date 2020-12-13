@@ -1,28 +1,23 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose } from "recompose";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
-import Sort from "./Sort";
-import Order from "./Order";
-import { setFilter } from "../../actions/appActions";
+import Sort from './Sort';
+import Order from './Order';
+import { setFilter } from '../../actions/appActions';
 
-const SortOrder = ({
-  sortOptions,
-  className,
-  handleUpdate,
-  fullWidth = true,
-}) => (
+const SortOrder = ({ sortOptions, className, handleUpdate, fullWidth = true }) => (
   <div
     {...{
-      className: `${
-        fullWidth ? "flex-row" : "flex-row-normal"
-      } flex-centered sort-order${className ? ` ${className}` : ""}`,
+      className: `${fullWidth ? 'flex-row' : 'flex-row-normal'} flex-centered sort-order${
+        className ? ` ${className}` : ''
+      }`,
     }}
   >
     {sortOptions && (
       <Sort
         {...{
-          className: "field",
+          className: 'field',
           handleUpdate,
           options: sortOptions,
         }}
@@ -32,6 +27,4 @@ const SortOrder = ({
   </div>
 );
 
-export default compose(
-  connect(({ app: { filter } }) => ({ filter }), { setFilter })
-)(SortOrder);
+export default compose(connect(({ app: { filter } }) => ({ filter }), { setFilter }))(SortOrder);

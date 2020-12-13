@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import { TextField, Validation, SelectField, Checkbox } from "../form";
-import { putTool, getTools } from "../../actions/toolActions";
-import { toolFunctionsOptions, formatRelationTypeOptions } from "../../enums";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import DialogContainer from './DialogContainer';
+import { TextField, Validation, SelectField, Checkbox } from '../form';
+import { putTool, getTools } from '../../actions/toolActions';
+import { toolFunctionsOptions, formatRelationTypeOptions } from '../../enums';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const ToolNew = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.TOOL_NEW,
-      name: "ToolNew",
+      name: 'ToolNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -27,46 +27,46 @@ const ToolNew = ({ handleSubmit, texts, language }) => (
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.TOOL_FUNCTION,
-            name: "toolFunction",
+            name: 'toolFunction',
             options: toolFunctionsOptions,
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.FORMAT_RELATION_TYPE,
-            name: "formatRelationType",
+            name: 'formatRelationType',
             options: formatRelationTypeOptions,
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.VERSION,
-            name: "version",
-            type: "textarea",
+            name: 'version',
+            type: 'textarea',
             rows: 2,
           },
           {
             component: TextField,
             label: texts.DOCUMENTATION,
-            name: "documentation",
-            type: "textarea",
+            name: 'documentation',
+            type: 'textarea',
           },
           {
             component: TextField,
             label: texts.DESCRIPTION,
-            name: "description",
-            type: "textarea",
+            name: 'description',
+            type: 'textarea',
           },
           {
             component: Checkbox,
             label: texts.INTERNAL,
-            name: "internal",
+            name: 'internal',
           },
         ],
         (field, key) => (
@@ -86,8 +86,8 @@ export default compose(
   withRouter,
   withProps({
     initialValues: {
-      toolFunction: get(toolFunctionsOptions, "[0].value"),
-      formatRelationType: get(formatRelationTypeOptions, "[0].value"),
+      toolFunction: get(toolFunctionsOptions, '[0].value'),
+      formatRelationType: get(formatRelationTypeOptions, '[0].value'),
     },
   }),
   withHandlers({
@@ -97,13 +97,13 @@ export default compose(
     }) => {
       const response = await putTool({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name']),
         internal: internal === true,
       });
 
       if (response) {
         getTools();
-        reset("ToolNewDialogForm");
+        reset('ToolNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({ internal: texts.TOOL_NEW_FAILED });
@@ -111,7 +111,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ToolNewDialogForm",
+    form: 'ToolNewDialogForm',
     enableReinitialize: true,
   })
 )(ToolNew);

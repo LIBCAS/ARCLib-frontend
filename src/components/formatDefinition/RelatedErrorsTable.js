@@ -1,7 +1,7 @@
-import React from "react";
-import { map, get, filter } from "lodash";
+import React from 'react';
+import { map, get, filter } from 'lodash';
 
-import Table from "../table/Table";
+import Table from '../table/Table';
 
 const RelatedErrorsTable = ({ relatedErrors, texts }) => (
   <Table
@@ -12,18 +12,21 @@ const RelatedErrorsTable = ({ relatedErrors, texts }) => (
         { label: texts.NUMBER },
         { label: texts.DESCRIPTION },
         { label: texts.SOLUTION },
-        { label: texts.RECONFIGURABLE }
+        { label: texts.RECONFIGURABLE },
       ],
-      items: map(filter(relatedErrors, ({ deleted }) => !deleted), item => ({
-        items: [
-          { label: get(item, "code", "") },
-          { label: get(item, "name", "") },
-          { label: get(item, "number", "") },
-          { label: get(item, "description", "") },
-          { label: get(item, "solution", "") },
-          { label: get(item, "reconfigurable") ? texts.YES : texts.NO }
-        ]
-      }))
+      items: map(
+        filter(relatedErrors, ({ deleted }) => !deleted),
+        (item) => ({
+          items: [
+            { label: get(item, 'code', '') },
+            { label: get(item, 'name', '') },
+            { label: get(item, 'number', '') },
+            { label: get(item, 'description', '') },
+            { label: get(item, 'solution', '') },
+            { label: get(item, 'reconfigurable') ? texts.YES : texts.NO },
+          ],
+        })
+      ),
     }}
   />
 );

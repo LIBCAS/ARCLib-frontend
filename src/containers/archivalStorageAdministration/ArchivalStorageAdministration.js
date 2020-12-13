@@ -1,18 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/archivalStorageAdministration/Detail";
-import { getArchivalStorageConfig } from "../../actions/storageActions";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/archivalStorageAdministration/Detail';
+import { getArchivalStorageConfig } from '../../actions/storageActions';
 
-const ArchivalStorageAdministration = ({
-  history,
-  archivalStorage,
-  texts,
-  ...props
-}) => (
+const ArchivalStorageAdministration = ({ history, archivalStorage, texts, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [

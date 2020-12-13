@@ -1,19 +1,19 @@
-import React from "react";
-import { map, find, filter, isEmpty, set, get, compact } from "lodash";
-import { connect } from "react-redux";
-import { compose, withState, withHandlers, lifecycle } from "recompose";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { Checkbox } from "react-bootstrap";
+import React from 'react';
+import { map, find, filter, isEmpty, set, get, compact } from 'lodash';
+import { connect } from 'react-redux';
+import { compose, withState, withHandlers, lifecycle } from 'recompose';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { Checkbox } from 'react-bootstrap';
 
-import Button from "../Button";
-import { TextField, SelectField, Validation } from "../form";
-import Table from "../table/Table";
-import { setDialog } from "../../actions/appActions";
-import { solveIncidents, cancelIncidents } from "../../actions/incidentActions";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import { TextField, SelectField, Validation } from '../form';
+import Table from '../table/Table';
+import { setDialog } from '../../actions/appActions';
+import { solveIncidents, cancelIncidents } from '../../actions/incidentActions';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
-const operations = { SOLVE: "SOLVE", CANCEL: "CANCEL" };
+const operations = { SOLVE: 'SOLVE', CANCEL: 'CANCEL' };
 
 const Incidents = ({
   selected,
@@ -28,18 +28,18 @@ const Incidents = ({
 }) => {
   const editEnabled = hasPermission(Permission.INCIDENT_RECORDS_WRITE);
   return (
-    <div {...{ className: "flex-col" }}>
+    <div {...{ className: 'flex-col' }}>
       <Table
         {...{
           thCells: compact([
-            editEnabled && { label: "" },
+            editEnabled && { label: '' },
             { label: texts.CREATED },
             { label: texts.INGEST_WORKFLOW_ID },
             { label: texts.BPM_TASK_ID },
             { label: texts.RESPONSIBLE_PERSON },
           ]),
           items: map(incidents, (item) => ({
-            onClick: () => setDialog("IncidentDetail", { incident: item }),
+            onClick: () => setDialog('IncidentDetail', { incident: item }),
             items: compact([
               editEnabled && {
                 label: (
@@ -59,23 +59,23 @@ const Incidents = ({
                     }}
                   />
                 ),
-                className: "td-checkbox",
+                className: 'td-checkbox',
               },
               { label: formatDateTime(item.created) },
-              { label: get(item, "externalId", "") },
-              { label: get(item, "activityId", "") },
-              { label: get(item, "responsiblePerson.username", "") },
+              { label: get(item, 'externalId', '') },
+              { label: get(item, 'activityId', '') },
+              { label: get(item, 'responsiblePerson.username', '') },
             ]),
           })),
         }}
       />
       {!isEmpty(selected) && editEnabled && (
-        <form {...{ onSubmit: handleSubmit, className: "margin-top-small" }}>
+        <form {...{ onSubmit: handleSubmit, className: 'margin-top-small' }}>
           {map(
             [
               {
                 component: SelectField,
-                name: "operation",
+                name: 'operation',
                 label: texts.OPERATION,
                 defaultValue: operations.SOLVE,
                 validate: [Validation.required[language]],
@@ -87,31 +87,26 @@ const Incidents = ({
               },
               {
                 component: TextField,
-                name: "text",
-                label:
-                  operation === operations.SOLVE
-                    ? texts.WORKFLOW_CONFIGURATION
-                    : texts.REASON,
+                name: 'text',
+                label: operation === operations.SOLVE ? texts.WORKFLOW_CONFIGURATION : texts.REASON,
                 validate:
                   operation === operations.SOLVE
                     ? [Validation.required[language], Validation.json[language]]
                     : [Validation.required[language]],
-                type: "textarea",
+                type: 'textarea',
               },
             ],
             (field, key) => (
               <Field {...{ key, id: `incidents-table-${key}`, ...field }} />
             )
           )}
-          <div {...{ className: "flex-row flex-right margin-bottom-small" }}>
-            <Button {...{ onClick: () => setSelected([]) }}>
-              {texts.STORNO}
-            </Button>
+          <div {...{ className: 'flex-row flex-right margin-bottom-small' }}>
+            <Button {...{ onClick: () => setSelected([]) }}>{texts.STORNO}</Button>
             <Button
               {...{
                 primary: true,
-                type: "submit",
-                className: "margin-left-small",
+                type: 'submit',
+                className: 'margin-left-small',
               }}
             >
               {texts.SUBMIT}
@@ -123,12 +118,13 @@ const Incidents = ({
   );
 };
 export default compose(
-  connect(
-    () => ({ initialValues: { operation: operations.SOLVE, text: "" } }),
-    { solveIncidents, cancelIncidents, setDialog }
-  ),
-  withState("selected", "setSelected", []),
-  withState("operation", "setOperation", operations.SOLVE),
+  connect(() => ({ initialValues: { operation: operations.SOLVE, text: '' } }), {
+    solveIncidents,
+    cancelIncidents,
+    setDialog,
+  }),
+  withState('selected', 'setSelected', []),
+  withState('operation', 'setOperation', operations.SOLVE),
   lifecycle({
     componentDidMount() {
       const { getIncidents, batch } = this.props;
@@ -148,7 +144,7 @@ export default compose(
     }) => async ({ operation, text }) => {
       const body = { ids: selected };
 
-      set(body, operation === operations.SOLVE ? "config" : "reason", text);
+      set(body, operation === operations.SOLVE ? 'config' : 'reason', text);
 
       if (operation === operations.SOLVE) {
         if (await solveIncidents(body)) {
@@ -172,6 +168,6 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "incidents-table",
+    form: 'incidents-table',
   })
 )(Incidents);

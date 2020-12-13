@@ -1,15 +1,15 @@
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const saveExportRoutine = body => async dispatch => {
+export const saveExportRoutine = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/export_routine/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     dispatch(showLoader(false));
@@ -23,11 +23,11 @@ export const saveExportRoutine = body => async dispatch => {
   }
 };
 
-export const deleteExportRoutine = id => async dispatch => {
+export const deleteExportRoutine = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/export_routine/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));

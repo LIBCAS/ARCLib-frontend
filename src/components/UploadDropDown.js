@@ -1,17 +1,17 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, defaultProps, withProps, mapProps } from "recompose";
-import { map } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, defaultProps, withProps, mapProps } from 'recompose';
+import { map } from 'lodash';
 
-import DialogDropDown from "./DialogDropDown";
-import DropFiles from "./DropFiles";
-import { showLoader } from "../actions/appActions";
-import { postFile } from "../actions/fileActions";
+import DialogDropDown from './DialogDropDown';
+import DropFiles from './DropFiles';
+import { showLoader } from '../actions/appActions';
+import { postFile } from '../actions/fileActions';
 
 const UploadDropDown = ({ ...props }) => (
   <DialogDropDown
     {...{
-      ...props
+      ...props,
     }}
   />
 );
@@ -20,7 +20,7 @@ export default compose(
   defaultProps({ items: [] }),
   connect(({ app: { texts } }) => ({ texts }), {
     showLoader,
-    postFile
+    postFile,
   }),
   withProps(({ items, texts, showLoader, postFile }) => ({
     submitButton: false,
@@ -34,7 +34,7 @@ export default compose(
         <DropFiles
           {...{
             label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-            onDrop: async files => {
+            onDrop: async (files) => {
               const file = files[0];
 
               if (file) {
@@ -47,11 +47,11 @@ export default compose(
               }
 
               closeDialog();
-            }
+            },
           }}
         />
-      )
-    }))
+      ),
+    })),
   })),
   mapProps(({ showLoader, postFile, ...rest }) => rest)
 )(UploadDropDown);

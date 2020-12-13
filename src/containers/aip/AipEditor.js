@@ -1,11 +1,11 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle, withState, withHandlers } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle, withState, withHandlers } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import Editor from "../../components/aip/Editor";
+import PageWrapper from '../../components/PageWrapper';
+import Editor from '../../components/aip/Editor';
 import {
   clearAip,
   getAip,
@@ -14,22 +14,22 @@ import {
   cancelUpdate,
   getKeepAliveTimeout,
   keepAliveUpdate,
-  getXml
-} from "../../actions/aipActions";
-import { setDialog, showLoader } from "../../actions/appActions";
-import { downloadFile, formatDateTime } from "../../utils";
+  getXml,
+} from '../../actions/aipActions';
+import { setDialog, showLoader } from '../../actions/appActions';
+import { downloadFile, formatDateTime } from '../../utils';
 
 const AipEditor = ({ aip, texts, history, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [
-        { label: texts.AIP_SEARCH, url: "/aip-search" },
+        { label: texts.AIP_SEARCH, url: '/aip-search' },
         {
-          label: get(aip, "ingestWorkflow.externalId", texts.AIP),
-          url: `/aip/${get(aip, "ingestWorkflow.externalId")}`
+          label: get(aip, 'ingestWorkflow.externalId', texts.AIP),
+          url: `/aip/${get(aip, 'ingestWorkflow.externalId')}`,
         },
-        { label: texts.EDITATION }
-      ]
+        { label: texts.EDITATION },
+      ],
     }}
   >
     {aip && <Editor {...{ aip, texts, history, ...props }} />}
@@ -38,10 +38,10 @@ const AipEditor = ({ aip, texts, history, ...props }) => (
 
 export default compose(
   withRouter,
-  withState("keepAliveTimeout", "setKeepAliveTimeout", null),
-  withState("failedRegister", "setFailedRegister", false),
-  withState("xmlContent", "setXmlContent", ""),
-  withState("xmlContentState", "setXmlContentState", true),
+  withState('keepAliveTimeout', 'setKeepAliveTimeout', null),
+  withState('failedRegister', 'setFailedRegister', false),
+  withState('xmlContent', 'setXmlContent', ''),
+  withState('xmlContentState', 'setXmlContentState', true),
   connect(({ aip: { aip } }) => ({ aip }), {
     clearAip,
     getAip,
@@ -52,15 +52,11 @@ export default compose(
     getKeepAliveTimeout,
     keepAliveUpdate,
     showLoader,
-    getXml
+    getXml,
   }),
   withHandlers({
     downloadXmlContent: ({ xmlContent, aip }) => () =>
-      downloadFile(
-        xmlContent,
-        `${get(aip, "ingestWorkflow.externalId", "aip")}.xml`,
-        "text/xml"
-      )
+      downloadFile(xmlContent, `${get(aip, 'ingestWorkflow.externalId', 'aip')}.xml`, 'text/xml'),
   }),
   lifecycle({
     async componentWillMount() {
@@ -81,18 +77,16 @@ export default compose(
         xmlContentState,
         setXmlContentState,
         getXml,
-        downloadXmlContent
+        downloadXmlContent,
       } = this.props;
 
-      const keepAlive = async timeout => {
+      const keepAlive = async (timeout) => {
         const response = await keepAliveUpdate(id);
         if (!response) {
           downloadXmlContent();
-          history.push(`/aip/${get(aip, "ingestWorkflow.externalId")}`);
+          history.push(`/aip/${get(aip, 'ingestWorkflow.externalId')}`);
         } else {
-          setKeepAliveTimeout(
-            setTimeout(() => keepAlive(timeout), Math.floor(timeout * 1000))
-          );
+          setKeepAliveTimeout(setTimeout(() => keepAlive(timeout), Math.floor(timeout * 1000)));
         }
       };
 
@@ -100,7 +94,7 @@ export default compose(
 
       clearAip();
       const aip = await getAip(match.params.id, false);
-      const id = get(aip, "ingestWorkflow.sip.authorialPackage.id");
+      const id = get(aip, 'ingestWorkflow.sip.authorialPackage.id');
 
       if (id) {
         const timeout = await getKeepAliveTimeout();
@@ -111,16 +105,12 @@ export default compose(
           keepAlive(timeout);
 
           const xmlContent = await getXml(
-            get(aip, "ingestWorkflow.sip.id"),
-            get(aip, "ingestWorkflow.xmlVersionNumber"),
-            get(aip, "indexedFields.debug_mode[0]")
+            get(aip, 'ingestWorkflow.sip.id'),
+            get(aip, 'ingestWorkflow.xmlVersionNumber'),
+            get(aip, 'indexedFields.debug_mode[0]')
           );
 
-          setXmlContent(
-            get(xmlContent, "[0]") === "\ufeff"
-              ? xmlContent.substr(1)
-              : xmlContent
-          );
+          setXmlContent(get(xmlContent, '[0]') === '\ufeff' ? xmlContent.substr(1) : xmlContent);
           setXmlContentState(!xmlContentState);
 
           showLoader(false);
@@ -128,54 +118,47 @@ export default compose(
         }
 
         setFailedRegister(true);
-        setDialog("Info", {
+        setDialog('Info', {
           title: (
-            <h3 {...{ className: "invalid margin-none" }}>
+            <h3 {...{ className: 'invalid margin-none' }}>
               <strong>{texts.AIP_REGISTER_UPDATE_FAILED}</strong>
             </h3>
           ),
           content: (
             <div>
-              {get(content, "lockedByUser") && (
+              {get(content, 'lockedByUser') && (
                 <div>
                   <span {...{ style: { marginRight: 10, fontSize: 16 } }}>
                     <strong>{texts.LOCKED_BY_USER}:</strong>
                   </span>
-                  <span {...{ style: { fontSize: 16 } }}>
-                    {get(content, "lockedByUser", "")}
-                  </span>
+                  <span {...{ style: { fontSize: 16 } }}>{get(content, 'lockedByUser', '')}</span>
                 </div>
               )}
-              {get(content, "latestLockedInstant") && (
+              {get(content, 'latestLockedInstant') && (
                 <div>
                   <span {...{ style: { marginRight: 10, fontSize: 16 } }}>
                     <strong>{texts.LOCKED_AT}:</strong>
                   </span>
                   <span {...{ style: { fontSize: 16 } }}>
-                    {formatDateTime(get(content, "latestLockedInstant"))}
+                    {formatDateTime(get(content, 'latestLockedInstant'))}
                   </span>
                 </div>
               )}
             </div>
-          )
+          ),
         });
       }
 
       showLoader(false);
-      history.push(`/aip/${get(aip, "ingestWorkflow.externalId")}`);
+      history.push(`/aip/${get(aip, 'ingestWorkflow.externalId')}`);
     },
     componentWillUnmount() {
-      const {
-        keepAliveTimeout,
-        cancelUpdate,
-        aip,
-        failedRegister
-      } = this.props;
+      const { keepAliveTimeout, cancelUpdate, aip, failedRegister } = this.props;
 
       if (!failedRegister) {
-        cancelUpdate(get(aip, "ingestWorkflow.sip.authorialPackage.id"));
+        cancelUpdate(get(aip, 'ingestWorkflow.sip.authorialPackage.id'));
       }
       clearTimeout(keepAliveTimeout);
-    }
+    },
   })
 )(AipEditor);

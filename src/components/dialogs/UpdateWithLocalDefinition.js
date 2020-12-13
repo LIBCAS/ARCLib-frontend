@@ -1,16 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState, withProps } from "recompose";
-import { reduxForm, Field, formValueSelector, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get, filter } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState, withProps } from 'recompose';
+import { reduxForm, Field, formValueSelector, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get, filter } from 'lodash';
 
-import Tabs from "../Tabs";
-import Button from "../Button";
-import Table from "../table/Table";
-import ConfirmButton from "../ConfirmButton";
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
+import Tabs from '../Tabs';
+import Button from '../Button';
+import Table from '../table/Table';
+import ConfirmButton from '../ConfirmButton';
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
 import {
   TextField,
   UploadField,
@@ -18,15 +18,15 @@ import {
   TagsSelectField,
   Checkbox,
   DateTimeField,
-} from "../form";
+} from '../form';
 import {
   updateWithLocalDefinition,
   getFormatDefinitionByFormatId,
-} from "../../actions/formatActions";
-import { setDialog, showLoader } from "../../actions/appActions";
-import { getIssueDictionary } from "../../actions/issueDictionaryActions";
-import { formatClassifications } from "../../enums";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+} from '../../actions/formatActions';
+import { setDialog, showLoader } from '../../actions/appActions';
+import { getIssueDictionary } from '../../actions/issueDictionaryActions';
+import { formatClassifications } from '../../enums';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const UpdateWithLocalDefinition = ({
   handleSubmit,
@@ -41,7 +41,7 @@ const UpdateWithLocalDefinition = ({
   <DialogContainer
     {...{
       title: texts.UPDATE_WITH_LOCAL_DEFINITION,
-      name: "UpdateWithLocalDefinition",
+      name: 'UpdateWithLocalDefinition',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       large: true,
@@ -51,10 +51,9 @@ const UpdateWithLocalDefinition = ({
     <form {...{ onSubmit: handleSubmit }}>
       <Tabs
         {...{
-          id: "update-with-local-definition-tabs",
-          defaultActiveKey: get(data, "tab", 0),
-          onChange: (tab) =>
-            setDialog("UpdateWithLocalDefinition", { ...data, tab }),
+          id: 'update-with-local-definition-tabs',
+          defaultActiveKey: get(data, 'tab', 0),
+          onChange: (tab) => setDialog('UpdateWithLocalDefinition', { ...data, tab }),
           items: [
             {
               title: texts.FORMAT_DEFINITION,
@@ -62,8 +61,8 @@ const UpdateWithLocalDefinition = ({
                 <div>
                   {map(
                     [
-                      { name: "releaseDate", label: texts.RELEASE_DATE },
-                      { name: "withdrawnDate", label: texts.WITH_DRAWN_DATE },
+                      { name: 'releaseDate', label: texts.RELEASE_DATE },
+                      { name: 'withdrawnDate', label: texts.WITH_DRAWN_DATE },
                     ],
                     ({ name, label }, index) => (
                       <Field
@@ -83,34 +82,34 @@ const UpdateWithLocalDefinition = ({
                       {
                         component: TextField,
                         label: texts.FORMAT_VERSION,
-                        name: "formatVersion",
+                        name: 'formatVersion',
                       },
                       {
                         component: TextField,
                         label: texts.FORMAT_DESCRIPTION,
-                        name: "formatDescription",
-                        type: "textarea",
+                        name: 'formatDescription',
+                        type: 'textarea',
                       },
                       {
                         component: TextField,
                         label: texts.FORMAT_NOTE,
-                        name: "formatNote",
-                        type: "textarea",
+                        name: 'formatNote',
+                        type: 'textarea',
                       },
                       {
                         component: TagsField,
                         label: texts.ALIASES,
-                        name: "aliases",
+                        name: 'aliases',
                       },
                       {
                         component: TagsField,
                         label: texts.FORMAT_FAMILIES,
-                        name: "formatFamilies",
+                        name: 'formatFamilies',
                       },
                       {
                         component: TagsSelectField,
                         label: texts.FORMAT_CLASSIFICATIONS,
-                        name: "formatClassifications",
+                        name: 'formatClassifications',
                         options: map(formatClassifications, (value, label) => ({
                           value,
                           label,
@@ -119,23 +118,23 @@ const UpdateWithLocalDefinition = ({
                       {
                         component: TextField,
                         label: texts.NATIONAL_FORMAT_GUARANTOR,
-                        name: "nationalFormatGuarantor",
+                        name: 'nationalFormatGuarantor',
                       },
                       {
                         component: TextField,
                         label: texts.PRESERVATION_PLAN_DESCRIPTION,
-                        name: "preservationPlanDescription",
-                        type: "textarea",
+                        name: 'preservationPlanDescription',
+                        type: 'textarea',
                       },
                       {
                         component: UploadField,
                         label: texts.PRESERVATION_PLAN_FILE,
-                        name: "preservationPlanFile",
+                        name: 'preservationPlanFile',
                       },
                       {
                         component: Checkbox,
                         label: texts.PREFERRED,
-                        name: "preferred",
+                        name: 'preferred',
                       },
                     ],
                     (field, key) => (
@@ -158,15 +157,12 @@ const UpdateWithLocalDefinition = ({
                   <Button
                     {...{
                       primary: true,
-                      className: "margin-bottom-small",
+                      className: 'margin-bottom-small',
                       onClick: () => {
-                        setDialog("UpdateWithLocalDefinitionIdentifierNew", {
+                        setDialog('UpdateWithLocalDefinitionIdentifierNew', {
                           ...data,
                           addIdentifier: (identifier) =>
-                            change("identifiers", [
-                              ...get(formValues, "identifiers"),
-                              identifier,
-                            ]),
+                            change('identifiers', [...get(formValues, 'identifiers'), identifier]),
                         });
                       },
                     }}
@@ -178,12 +174,12 @@ const UpdateWithLocalDefinition = ({
                       thCells: [
                         { label: texts.IDENTIFIER },
                         { label: texts.IDENTIFIER_TYPE },
-                        { label: "" },
+                        { label: '' },
                       ],
-                      items: map(get(formValues, "identifiers"), (item) => ({
+                      items: map(get(formValues, 'identifiers'), (item) => ({
                         items: [
-                          { label: get(item, "identifier", "") },
-                          { label: get(item, "identifierType", "") },
+                          { label: get(item, 'identifier', '') },
+                          { label: get(item, 'identifierType', '') },
                           {
                             label: (
                               <ConfirmButton
@@ -193,29 +189,26 @@ const UpdateWithLocalDefinition = ({
                                   text: (
                                     <p>
                                       {texts.IDENTIFIER_DELETE_TEXT}
-                                      {get(item, "identifier") ? (
-                                        <strong>
-                                          {" "}
-                                          {get(item, "identifier")}
-                                        </strong>
+                                      {get(item, 'identifier') ? (
+                                        <strong> {get(item, 'identifier')}</strong>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                       ?
                                     </p>
                                   ),
                                   onClick: () =>
                                     change(
-                                      "identifiers",
+                                      'identifiers',
                                       filter(
-                                        get(formValues, "identifiers"),
+                                        get(formValues, 'identifiers'),
                                         ({ id }) => id !== item.id
                                       )
                                     ),
                                 }}
                               />
                             ),
-                            className: "text-right",
+                            className: 'text-right',
                           },
                         ],
                       })),
@@ -317,21 +310,21 @@ const UpdateWithLocalDefinition = ({
   </DialogContainer>
 );
 
-const selector = formValueSelector("UpdateWithLocalDefinitionDialogForm");
+const selector = formValueSelector('UpdateWithLocalDefinitionDialogForm');
 
 export default compose(
   withProps(({ data }) => ({
-    initialValues: get(data, "initialFormatDefinition")
-      ? { ...get(data, "initialFormatDefinition"), preferred: false }
-      : { format: get(data, "format"), identifiers: [], relatedErrors: [] },
+    initialValues: get(data, 'initialFormatDefinition')
+      ? { ...get(data, 'initialFormatDefinition'), preferred: false }
+      : { format: get(data, 'format'), identifiers: [], relatedErrors: [] },
   })),
   connect(
     (state) => ({
       formValues: {
-        releaseDate: selector(state, "releaseDate"),
-        withdrawnDate: selector(state, "withdrawnDate"),
-        identifiers: selector(state, "identifiers"),
-        relatedErrors: selector(state, "relatedErrors"),
+        releaseDate: selector(state, 'releaseDate'),
+        withdrawnDate: selector(state, 'withdrawnDate'),
+        identifiers: selector(state, 'identifiers'),
+        relatedErrors: selector(state, 'relatedErrors'),
       },
     }),
     {
@@ -344,7 +337,7 @@ export default compose(
     }
   ),
   withRouter,
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   withHandlers({
     onSubmit: ({
       closeDialog,
@@ -358,8 +351,8 @@ export default compose(
       if (
         await updateWithLocalDefinition({
           ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-            "formatVersion",
-            "nationalFormatGuarantor",
+            'formatVersion',
+            'nationalFormatGuarantor',
           ]),
           internalInformationFilled: !!(
             formData.nationalFormatGuarantor ||
@@ -371,8 +364,8 @@ export default compose(
         })
       ) {
         setFail(null);
-        getFormatDefinitionByFormatId(get(data, "format.formatId"));
-        reset("UpdateWithLocalDefinitionDialogForm");
+        getFormatDefinitionByFormatId(get(data, 'format.formatId'));
+        reset('UpdateWithLocalDefinitionDialogForm');
         closeDialog();
       } else {
         setFail(texts.SAVE_FAILED);
@@ -380,7 +373,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "UpdateWithLocalDefinitionDialogForm",
+    form: 'UpdateWithLocalDefinitionDialogForm',
     enableReinitialize: true,
   })
 )(UpdateWithLocalDefinition);

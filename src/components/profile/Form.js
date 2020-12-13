@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field } from "redux-form";
-import { compose, withHandlers, withProps } from "recompose";
-import { get, map } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import { compose, withHandlers, withProps } from 'recompose';
+import { get, map } from 'lodash';
 
-import Button from "../Button";
-import { TextField, Validation } from "../form";
-import { setDialog } from "../../actions/appActions";
-import { updateUser } from "../../actions/userActions";
+import Button from '../Button';
+import { TextField, Validation } from '../form';
+import { setDialog } from '../../actions/appActions';
+import { updateUser } from '../../actions/userActions';
 
 const Form = ({ handleSubmit, texts, language, user }) => (
   <form {...{ onSubmit: handleSubmit }}>
@@ -16,7 +16,7 @@ const Form = ({ handleSubmit, texts, language, user }) => (
         {
           component: TextField,
           label: texts.EMAIL,
-          name: "email",
+          name: 'email',
           validate: [Validation.email[language]],
         },
       ],
@@ -33,12 +33,12 @@ const Form = ({ handleSubmit, texts, language, user }) => (
         );
       }
     )}
-    <div {...{ className: "flex-row flex-right" }}>
+    <div {...{ className: 'flex-row flex-right' }}>
       <Button
         {...{
           primary: true,
-          type: "submit",
-          className: "margin-left-small",
+          type: 'submit',
+          className: 'margin-left-small',
         }}
       >
         {texts.SUBMIT}
@@ -49,15 +49,15 @@ const Form = ({ handleSubmit, texts, language, user }) => (
 
 export default compose(
   connect(null, { updateUser, setDialog }),
-  withProps(({ user }) => ({ initialValues: { email: get(user, "email") } })),
+  withProps(({ user }) => ({ initialValues: { email: get(user, 'email') } })),
   withHandlers({
     onSubmit: ({ updateUser, setDialog, texts }) => async (formData) => {
       const ok = await updateUser(formData);
 
       if (ok) {
-        setDialog("Info", {
+        setDialog('Info', {
           content: (
-            <h4 {...{ className: "color-green" }}>
+            <h4 {...{ className: 'color-green' }}>
               <strong>{texts.PROFILE_UPDATED}</strong>
             </h4>
           ),
@@ -67,7 +67,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "profile-form",
+    form: 'profile-form',
     enableReinitialize: true,
   })
 )(Form);

@@ -1,12 +1,12 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get, find, filter, isEmpty } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get, find, filter, isEmpty } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
-import { Validation, SelectField } from "../form";
+import DialogContainer from './DialogContainer';
+import { Validation, SelectField } from '../form';
 
 const UpdateWithLocalDefinitionRelatedErrorNew = ({
   handleSubmit,
@@ -14,15 +14,15 @@ const UpdateWithLocalDefinitionRelatedErrorNew = ({
   language,
   setDialog,
   data,
-  issueDictionary
+  issueDictionary,
 }) => (
   <DialogContainer
     {...{
       title: texts.RELATED_ERROR_NEW,
-      name: "UpdateWithLocalDefinitionRelatedErrorNew",
+      name: 'UpdateWithLocalDefinitionRelatedErrorNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setDialog("UpdateWithLocalDefinition", { ...data })
+      onClose: () => setDialog('UpdateWithLocalDefinition', { ...data }),
     }}
   >
     <form {...{ onSubmit: handleSubmit }}>
@@ -32,20 +32,20 @@ const UpdateWithLocalDefinitionRelatedErrorNew = ({
             {
               component: SelectField,
               label: texts.RELATED_ERROR,
-              name: "relatedError",
+              name: 'relatedError',
               options: map(issueDictionary, ({ id, name }) => ({
                 value: id,
-                label: name
+                label: name,
               })),
-              validate: [Validation.required[language]]
-            }
+              validate: [Validation.required[language]],
+            },
           ],
           (field, key) => (
             <Field
               {...{
                 key,
                 id: `update-with-local-definition-identifier-new-${key}`,
-                ...field
+                ...field,
               }}
             />
           )
@@ -61,38 +61,34 @@ export default compose(
   withRouter,
   connect(
     ({ issueDictionary: { issueDictionary } }) => ({
-      issueDictionary
+      issueDictionary,
     }),
     { reset }
   ),
   withProps(({ data, issueDictionary }) => {
     const errors = filter(
       issueDictionary,
-      ({ id }) => !find(get(data, "relatedErrors"), err => err.id === id)
+      ({ id }) => !find(get(data, 'relatedErrors'), (err) => err.id === id)
     );
 
     return {
       issueDictionary: errors,
       initialValues: {
-        relatedError: get(errors, "[0].id")
-      }
+        relatedError: get(errors, '[0].id'),
+      },
     };
   }),
   withHandlers({
-    onSubmit: ({ setDialog, data, issueDictionary, reset }) => async ({
-      relatedError
-    }) => {
-      data.addRelatedError(
-        find(issueDictionary, ({ id }) => id === relatedError)
-      );
+    onSubmit: ({ setDialog, data, issueDictionary, reset }) => async ({ relatedError }) => {
+      data.addRelatedError(find(issueDictionary, ({ id }) => id === relatedError));
 
-      reset("UpdateWithLocalDefinitionRelatedErrorNewDialogForm");
+      reset('UpdateWithLocalDefinitionRelatedErrorNewDialogForm');
 
-      setDialog("UpdateWithLocalDefinition", { ...data });
-    }
+      setDialog('UpdateWithLocalDefinition', { ...data });
+    },
   }),
   reduxForm({
-    form: "UpdateWithLocalDefinitionRelatedErrorNewDialogForm",
-    enableReinitialize: true
+    form: 'UpdateWithLocalDefinitionRelatedErrorNewDialogForm',
+    enableReinitialize: true,
   })
 )(UpdateWithLocalDefinitionRelatedErrorNew);

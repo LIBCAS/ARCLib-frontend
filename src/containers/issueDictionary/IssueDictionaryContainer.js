@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import IssueDictionary from "./IssueDictionary";
-import Issue from "./Issue";
+import IssueDictionary from './IssueDictionary';
+import Issue from './Issue';
 
-const IssueDictionaryContainer = props => {
+const IssueDictionaryContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const IssueDictionaryContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <Issue {...props} />
+          render: () => <Issue {...props} />,
         }}
       />
     );

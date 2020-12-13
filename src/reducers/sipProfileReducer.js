@@ -1,8 +1,8 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   sipProfiles: null,
-  sipProfile: null
+  sipProfile: null,
 };
 
 const reducer = (state = initialState, action) => {

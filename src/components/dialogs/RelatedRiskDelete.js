@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { filter, get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { filter, get } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
-import { getFormat, putFormat } from "../../actions/formatActions";
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
+import { getFormat, putFormat } from '../../actions/formatActions';
 
 const RelatedRiskDelete = ({ handleSubmit, data, fail, setFail, texts }) => (
   <DialogContainer
     {...{
       title: texts.RISK_DELETE,
-      name: "RelatedRiskDelete",
+      name: 'RelatedRiskDelete',
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setFail(null)
+      onClose: () => setFail(null),
     }}
   >
     <p>{texts.RISK_DELETE_TEXT}?</p>
@@ -25,10 +25,10 @@ const RelatedRiskDelete = ({ handleSubmit, data, fail, setFail, texts }) => (
 );
 
 export default compose(
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   connect(null, {
     getFormat,
-    putFormat
+    putFormat,
   }),
   withRouter,
   withHandlers({
@@ -38,23 +38,23 @@ export default compose(
       putFormat,
       data: { id, format },
       setFail,
-      texts
+      texts,
     }) => async () => {
       if (
         await putFormat({
           ...format,
-          relatedRisks: filter(format.relatedRisks, r => r.id !== id)
+          relatedRisks: filter(format.relatedRisks, (r) => r.id !== id),
         })
       ) {
-        getFormat(get(format, "formatId"));
+        getFormat(get(format, 'formatId'));
         setFail(null);
         closeDialog();
       } else {
         setFail(texts.DELETE_FAILED);
       }
-    }
+    },
   }),
   reduxForm({
-    form: "RelatedRiskDeleteDialogForm"
+    form: 'RelatedRiskDeleteDialogForm',
   })
 )(RelatedRiskDelete);

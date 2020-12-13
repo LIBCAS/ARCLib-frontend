@@ -1,26 +1,23 @@
-import { get } from "lodash";
+import { get } from 'lodash';
 
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams } from '../utils';
 
-export const getBatches = (clearBeforeGet = true, enableUrl) => async (
-  dispatch,
-  getState
-) => {
+export const getBatches = (clearBeforeGet = true, enableUrl) => async (dispatch, getState) => {
   if (clearBeforeGet) {
     dispatch({
       type: c.BATCH,
       payload: {
-        batches: null
-      }
+        batches: null,
+      },
     });
   }
 
   try {
-    const response = await fetch("/api/batch/list_dtos", {
-      params: createFilterPagerParams(getState)
+    const response = await fetch('/api/batch/list_dtos', {
+      params: createFilterPagerParams(getState),
     });
 
     if (enableUrl && enableUrl !== window.location.pathname) {
@@ -33,8 +30,8 @@ export const getBatches = (clearBeforeGet = true, enableUrl) => async (
       dispatch({
         type: c.BATCH,
         payload: {
-          batches
-        }
+          batches,
+        },
       });
 
       return batches;
@@ -49,18 +46,15 @@ export const getBatches = (clearBeforeGet = true, enableUrl) => async (
   }
 };
 
-export const getBatch = (
-  id,
-  clearBeforeGet = true,
-  withLoader = true,
-  enableUrl
-) => async dispatch => {
+export const getBatch = (id, clearBeforeGet = true, withLoader = true, enableUrl) => async (
+  dispatch
+) => {
   if (clearBeforeGet) {
     dispatch({
       type: c.BATCH,
       payload: {
-        batch: null
-      }
+        batch: null,
+      },
     });
   }
 
@@ -81,8 +75,8 @@ export const getBatch = (
       dispatch({
         type: c.BATCH,
         payload: {
-          batch
-        }
+          batch,
+        },
       });
 
       if (withLoader) {
@@ -106,22 +100,17 @@ export const getBatch = (
   }
 };
 
-export const processOne = ({ sipContent, ...params }) => async (
-  dispatch,
-  getState
-) => {
-  dispatch(
-    showLoader(true, get(getState(), "app.texts.BATCH_PROCESS_ONE_LOADER_TEXT"))
-  );
+export const processOne = ({ sipContent, ...params }) => async (dispatch, getState) => {
+  dispatch(showLoader(true, get(getState(), 'app.texts.BATCH_PROCESS_ONE_LOADER_TEXT')));
   try {
     const formData = new FormData();
 
-    formData.append("sipContent", sipContent);
+    formData.append('sipContent', sipContent);
 
-    const response = await fetch("/api/batch/process_one", {
+    const response = await fetch('/api/batch/process_one', {
       params,
-      method: "POST",
-      body: formData
+      method: 'POST',
+      body: formData,
     });
 
     dispatch(showLoader(false));
@@ -135,11 +124,11 @@ export const processOne = ({ sipContent, ...params }) => async (
   }
 };
 
-export const cancelBatch = id => async dispatch => {
+export const cancelBatch = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/batch/${id}/cancel`, {
-      method: "POST"
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
@@ -153,15 +142,15 @@ export const cancelBatch = id => async dispatch => {
   }
 };
 
-export const resumeBatch = id => async dispatch => {
+export const resumeBatch = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/batch/${id}/resume`, {
-      method: "POST"
+      method: 'POST',
     });
 
     dispatch(showLoader(false));
-    return (await response.text()) === "true";
+    return (await response.text()) === 'true';
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
@@ -169,11 +158,11 @@ export const resumeBatch = id => async dispatch => {
   }
 };
 
-export const suspendBatch = id => async dispatch => {
+export const suspendBatch = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/batch/${id}/suspend`, {
-      method: "POST"
+      method: 'POST',
     });
 
     dispatch(showLoader(false));

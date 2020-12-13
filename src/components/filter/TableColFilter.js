@@ -1,26 +1,39 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { isEmpty } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { isEmpty } from 'lodash';
 
-import TextFilter from "./TextFilter";
-import TextEQFilter from "./TextEQFilter";
-import NumberFilter from "./NumberFilter";
-import EnumFilter from "./EnumFilter";
-import DateTimeFilter from "./DateTimeFilter";
-import { setFilter } from "../../actions/appActions";
-import { filterTypes, filterBoolOptions, filterOptionAll, filterOperationsTypes } from "../../enums";
+import TextFilter from './TextFilter';
+import TextEQFilter from './TextEQFilter';
+import NumberFilter from './NumberFilter';
+import EnumFilter from './EnumFilter';
+import DateTimeFilter from './DateTimeFilter';
+import { setFilter } from '../../actions/appActions';
+import {
+  filterTypes,
+  filterBoolOptions,
+  filterOptionAll,
+  filterOperationsTypes,
+} from '../../enums';
 
-const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, language, textClassName }) => (
-  <div {...{ className: "table-col-filter" }}>
+const TableColFilter = ({
+  type,
+  valueOptions,
+  handleUpdate,
+  index,
+  texts,
+  language,
+  textClassName,
+}) => (
+  <div {...{ className: 'table-col-filter' }}>
     {type === filterTypes.TEXT ? (
       <TextFilter
         {...{
           index,
           handleUpdate,
-          className: "flex-col",
+          className: 'flex-col',
           textClassName: `text-field full ${textClassName}`,
-          selectClassName: "select-field full"
+          selectClassName: 'select-field full',
         }}
       />
     ) : type === filterTypes.TEXT_EQ ? (
@@ -28,19 +41,19 @@ const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, langua
         {...{
           index,
           handleUpdate,
-          className: "flex-col",
-          textClassName: `text-field full ${textClassName}`
+          className: 'flex-col',
+          textClassName: `text-field full ${textClassName}`,
         }}
       />
     ) : type === filterTypes.NUMBER ? (
-      <div {...{ className: "flex-col" }}>
+      <div {...{ className: 'flex-col' }}>
         <NumberFilter
           {...{
             index,
             number: 1,
             placeholder: texts.GTE,
             handleUpdate,
-            className: "number-field full"
+            className: 'number-field full',
           }}
         />
         <NumberFilter
@@ -49,7 +62,7 @@ const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, langua
             number: 2,
             placeholder: texts.LTE,
             handleUpdate,
-            className: "number-field full"
+            className: 'number-field full',
           }}
         />
       </div>
@@ -57,25 +70,25 @@ const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, langua
       <EnumFilter
         {...{
           index,
-          className: "select-field full",
+          className: 'select-field full',
           handleUpdate,
           options:
             type === filterTypes.ENUM
               ? [filterOptionAll[language], ...valueOptions]
               : [filterOptionAll[language], ...filterBoolOptions[language]],
-          defaultValue: ""
+          defaultValue: '',
         }}
       />
     ) : type === filterTypes.DATETIME ? (
-      <div {...{ className: "flex-col" }}>
+      <div {...{ className: 'flex-col' }}>
         <DateTimeFilter
           {...{
             index,
             number: 1,
             placeholder: texts.FROM,
             handleUpdate,
-            className: "datetimepicker-field full",
-            debounced: true
+            className: 'datetimepicker-field full',
+            debounced: true,
           }}
         />
         <DateTimeFilter
@@ -84,9 +97,9 @@ const TableColFilter = ({ type, valueOptions, handleUpdate, index, texts, langua
             number: 2,
             placeholder: texts.TO,
             handleUpdate,
-            className: "datetimepicker-field full",
+            className: 'datetimepicker-field full',
             alignRight: true,
-            debounced: true
+            debounced: true,
           }}
         />
       </div>
@@ -112,26 +125,29 @@ export default compose(
                   number: 1,
                   field,
                   operation: filterOperationsTypes.GTE,
-                  value: ""
+                  value: '',
                 },
                 {
                   index,
                   number: 2,
                   field,
                   operation: filterOperationsTypes.LTE,
-                  value: ""
-                }
+                  value: '',
+                },
               ]
             : [
                 ...filter.filter,
                 {
                   index,
                   field,
-                  operation: type === filterTypes.TEXT ? filterOperationsTypes.CONTAINS : filterOperationsTypes.EQ,
-                  value: ""
-                }
-              ]
+                  operation:
+                    type === filterTypes.TEXT
+                      ? filterOperationsTypes.CONTAINS
+                      : filterOperationsTypes.EQ,
+                  value: '',
+                },
+              ],
       });
-    }
+    },
   })
 )(TableColFilter);

@@ -1,18 +1,15 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { map } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers } from 'recompose';
+import { map } from 'lodash';
 
-import Button from "../Button";
-import Tooltip from "../Tooltip";
-import { TextField, Checkbox, SelectField, Validation } from "../form";
-import { putIssue } from "../../actions/issueDictionaryActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { issueDictionaryCodeOptions, Permission } from "../../enums";
+import Button from '../Button';
+import Tooltip from '../Tooltip';
+import { TextField, Checkbox, SelectField, Validation } from '../form';
+import { putIssue } from '../../actions/issueDictionaryActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { issueDictionaryCodeOptions, Permission } from '../../enums';
 
 const Detail = ({ history, texts, handleSubmit, language }) => {
   const editEnabled = hasPermission(Permission.ISSUE_DEFINITIONS_WRITE);
@@ -23,34 +20,34 @@ const Detail = ({ history, texts, handleSubmit, language }) => {
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.NUMBER,
-            name: "number",
-            type: "number",
+            name: 'number',
+            type: 'number',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.CODE,
-            name: "code",
+            name: 'code',
             options: issueDictionaryCodeOptions,
             disabled: true,
           },
           {
             component: TextField,
             label: texts.DESCRIPTION,
-            name: "description",
-            type: "textarea",
+            name: 'description',
+            type: 'textarea',
           },
           {
             component: TextField,
             label: texts.SOLUTION,
-            name: "solution",
-            type: "textarea",
+            name: 'solution',
+            type: 'textarea',
           },
           {
             component: Checkbox,
@@ -63,7 +60,7 @@ const Detail = ({ history, texts, handleSubmit, language }) => {
                 }}
               />
             ),
-            name: "reconfigurable",
+            name: 'reconfigurable',
             disabled: true,
           },
         ],
@@ -78,16 +75,16 @@ const Detail = ({ history, texts, handleSubmit, language }) => {
           />
         )
       )}
-      <div {...{ className: "flex-row flex-right" }}>
-        <Button {...{ onClick: () => history.push("/issue-dictionary") }}>
+      <div {...{ className: 'flex-row flex-right' }}>
+        <Button {...{ onClick: () => history.push('/issue-dictionary') }}>
           {editEnabled ? texts.STORNO : texts.CLOSE}
         </Button>
         {editEnabled && (
           <Button
             {...{
               primary: true,
-              type: "submit",
-              className: "margin-left-small",
+              type: 'submit',
+              className: 'margin-left-small',
             }}
           >
             {texts.SAVE_AND_CLOSE}
@@ -101,18 +98,15 @@ const Detail = ({ history, texts, handleSubmit, language }) => {
 export default compose(
   connect(null, { putIssue }),
   withHandlers({
-    onSubmit: ({ putIssue, issue, texts, history }) => async ({
-      reconfigurable,
-      ...formData
-    }) => {
+    onSubmit: ({ putIssue, issue, texts, history }) => async ({ reconfigurable, ...formData }) => {
       if (
         await putIssue({
           ...issue,
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name']),
           reconfigurable: reconfigurable === true,
         })
       ) {
-        history.push("/issue-dictionary");
+        history.push('/issue-dictionary');
       } else {
         throw new SubmissionError({
           reconfigurable: texts.SAVE_FAILED,
@@ -121,7 +115,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "issue-dictionary-detail",
+    form: 'issue-dictionary-detail',
     enableReinitialize: true,
   })
 )(Detail);

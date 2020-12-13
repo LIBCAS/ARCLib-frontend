@@ -1,19 +1,12 @@
-import React from "react";
-import { connect } from "react-redux";
-import { map } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
-import Loader from "../components/Loader";
-import dialogs, { InfoOverlayDialog } from "../components/dialogs";
-import { setDialog, closeDialog } from "../actions/appActions";
+import Loader from '../components/Loader';
+import dialogs, { InfoOverlayDialog } from '../components/dialogs';
+import { setDialog, closeDialog } from '../actions/appActions';
 
-const Dialogs = ({
-  loader,
-  language,
-  texts,
-  infoOverlayDialog,
-  loaderText,
-  ...rest
-}) => (
+const Dialogs = ({ loader, language, texts, infoOverlayDialog, loaderText, ...rest }) => (
   <div>
     {loader && <Loader {...{ text: loaderText }} />}
     <div {...{ key: `dialogs-${language}` }}>
@@ -27,15 +20,19 @@ const Dialogs = ({
 
 export default connect(
   ({
-    app: { dialog: { data }, infoOverlayDialog, loader: { show, text } }
+    app: {
+      dialog: { data },
+      infoOverlayDialog,
+      loader: { show, text },
+    },
   }) => ({
     data,
     infoOverlayDialog,
     loader: show,
-    loaderText: text
+    loaderText: text,
   }),
   {
     setDialog,
-    closeDialog
+    closeDialog,
   }
 )(Dialogs);

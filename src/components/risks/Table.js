@@ -1,10 +1,10 @@
-import React from "react";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Table from "../table/Table";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Table from '../table/Table';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const RisksTable = ({ history, risks, texts, setDialog }) => {
   const deleteEnabled = hasPermission(Permission.RISK_RECORDS_WRITE);
@@ -16,15 +16,15 @@ const RisksTable = ({ history, risks, texts, setDialog }) => {
           { label: texts.UPDATED },
           { label: texts.NAME },
           { label: texts.DESCRIPTION },
-          deleteEnabled ? { label: "" } : null,
+          deleteEnabled ? { label: '' } : null,
         ]),
         items: map(risks, (item) => ({
           onClick: () => history.push(`/risks/${item.id}`),
           items: compact([
-            { label: formatDateTime(get(item, "created")) },
-            { label: formatDateTime(get(item, "updated")) },
-            { label: get(item, "name", "") },
-            { label: get(item, "description", "") },
+            { label: formatDateTime(get(item, 'created')) },
+            { label: formatDateTime(get(item, 'updated')) },
+            { label: get(item, 'name', '') },
+            { label: get(item, 'description', '') },
             deleteEnabled
               ? {
                   label: (
@@ -32,7 +32,7 @@ const RisksTable = ({ history, risks, texts, setDialog }) => {
                       {...{
                         onClick: (e) => {
                           e.stopPropagation();
-                          setDialog("RiskDelete", {
+                          setDialog('RiskDelete', {
                             id: item.id,
                           });
                         },
@@ -41,7 +41,7 @@ const RisksTable = ({ history, risks, texts, setDialog }) => {
                       {texts.DELETE}
                     </Button>
                   ),
-                  className: "text-right",
+                  className: 'text-right',
                 }
               : null,
           ]),

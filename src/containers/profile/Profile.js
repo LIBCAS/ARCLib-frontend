@@ -1,9 +1,9 @@
-import React from "react";
-import { compose } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import PageWrapper from "../../components/PageWrapper";
-import Form from "../../components/profile/Form";
+import PageWrapper from '../../components/PageWrapper';
+import Form from '../../components/profile/Form';
 
 const Profile = (props) => (
   <PageWrapper

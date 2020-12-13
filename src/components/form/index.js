@@ -1,12 +1,12 @@
-import DateTimeField from "./DateTimeField";
-import Checkbox from "./Checkbox";
-import SelectField from "./SelectField";
-import SyntaxHighlighterField from "./SyntaxHighlighterField";
-import TagsField from "./TagsField";
-import TagsSelectField from "./TagsSelectField";
-import TextField from "./TextField";
-import UploadField from "./UploadField";
-import * as Validation from "./Validation";
+import DateTimeField from './DateTimeField';
+import Checkbox from './Checkbox';
+import SelectField from './SelectField';
+import SyntaxHighlighterField from './SyntaxHighlighterField';
+import TagsField from './TagsField';
+import TagsSelectField from './TagsSelectField';
+import TextField from './TextField';
+import UploadField from './UploadField';
+import * as Validation from './Validation';
 
 export {
   DateTimeField,

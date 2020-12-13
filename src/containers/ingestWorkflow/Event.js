@@ -1,10 +1,10 @@
-import React from "react";
-import { compose } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get, find } from "lodash";
+import React from 'react';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get, find } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import EventDetail from "../../components/ingestWorkflow/EventDetail";
+import PageWrapper from '../../components/PageWrapper';
+import EventDetail from '../../components/ingestWorkflow/EventDetail';
 
 const Event = ({ workflow, texts, match, ...props }) => (
   <PageWrapper
@@ -12,16 +12,16 @@ const Event = ({ workflow, texts, match, ...props }) => (
       breadcrumb: [
         {
           label: `${texts.INGEST_WORKFLOW}${
-            get(workflow, "ingestWorkflow.externalId")
-              ? ` ${get(workflow, "ingestWorkflow.externalId")}`
-              : ""
+            get(workflow, 'ingestWorkflow.externalId')
+              ? ` ${get(workflow, 'ingestWorkflow.externalId')}`
+              : ''
           }`,
-          url: `/ingest-workflows/${get(workflow, "ingestWorkflow.externalId")}`
+          url: `/ingest-workflows/${get(workflow, 'ingestWorkflow.externalId')}`,
         },
         {
-          label: texts.EVENT
-        }
-      ]
+          label: texts.EVENT,
+        },
+      ],
     }}
   >
     {workflow && (
@@ -29,15 +29,12 @@ const Event = ({ workflow, texts, match, ...props }) => (
         {...{
           workflow,
           texts,
-          event: find(
-            get(workflow, "events"),
-            event => get(event, "id") === match.params.id
-          ),
+          event: find(get(workflow, 'events'), (event) => get(event, 'id') === match.params.id),
           initialValues: find(
-            get(workflow, "events"),
-            event => get(event, "id") === match.params.id
+            get(workflow, 'events'),
+            (event) => get(event, 'id') === match.params.id
           ),
-          ...props
+          ...props,
         }}
       />
     )}

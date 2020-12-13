@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import { SelectField, Validation, DateTimeField } from "../form";
-import { getSavedQueries } from "../../actions/queryActions";
-import { saveExportRoutine } from "../../actions/exportRoutineActions";
-import { exportTypeOptions } from "../../enums";
+import DialogContainer from './DialogContainer';
+import { SelectField, Validation, DateTimeField } from '../form';
+import { getSavedQueries } from '../../actions/queryActions';
+import { saveExportRoutine } from '../../actions/exportRoutineActions';
+import { exportTypeOptions } from '../../enums';
 
 const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.EXPORT_SEARCH_RESULTS,
-      name: "SearchQueryExportResults",
+      name: 'SearchQueryExportResults',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -25,8 +25,8 @@ const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
       <Field
         {...{
           component: DateTimeField,
-          id: "search-query-export-results-exportTime",
-          name: "exportTime",
+          id: 'search-query-export-results-exportTime',
+          name: 'exportTime',
           label: texts.EXPORT_TIME,
           validate: [
             Validation.required[language],
@@ -40,15 +40,13 @@ const SearchQueryExportResults = ({ handleSubmit, texts, language }) => (
           {
             component: SelectField,
             label: texts.EXPORT_TYPE,
-            name: "type",
+            name: 'type',
             validate: [Validation.required[language]],
             options: exportTypeOptions[language],
           },
         ],
         (field, key) => (
-          <Field
-            {...{ key, id: `search-query-export-results-${key}`, ...field }}
-          />
+          <Field {...{ key, id: `search-query-export-results-${key}`, ...field }} />
         )
       )}
     </form>
@@ -68,14 +66,9 @@ export default compose(
     },
   })),
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      saveExportRoutine,
-      texts,
-      data,
-      getSavedQueries,
-      reset,
-    }) => async (formData) => {
+    onSubmit: ({ closeDialog, saveExportRoutine, texts, data, getSavedQueries, reset }) => async (
+      formData
+    ) => {
       if (
         await saveExportRoutine({
           id: uuidv1(),
@@ -83,7 +76,7 @@ export default compose(
           ...formData,
         })
       ) {
-        reset("SearchQueryExportResultsDialogForm");
+        reset('SearchQueryExportResultsDialogForm');
         closeDialog();
 
         await getSavedQueries();
@@ -95,7 +88,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "SearchQueryExportResultsDialogForm",
+    form: 'SearchQueryExportResultsDialogForm',
     enableReinitialize: true,
   })
 )(SearchQueryExportResults);

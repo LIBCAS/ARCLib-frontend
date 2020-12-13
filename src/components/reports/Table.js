@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Tooltip from "../Tooltip";
-import Table from "../table/Table";
-import { setDialog } from "../../actions/appActions";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Tooltip from '../Tooltip';
+import Table from '../table/Table';
+import { setDialog } from '../../actions/appActions';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const ReportsTable = ({ history, reports, setDialog, texts }) => {
   const deleteEnabled = hasPermission(Permission.REPORT_TEMPLATE_RECORDS_WRITE);
@@ -28,13 +28,13 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
           },
           { label: texts.CREATED },
           { label: texts.UPDATED },
-          deleteEnabled && { label: "" },
+          deleteEnabled && { label: '' },
         ]),
         items: map(reports, (item, i) => ({
           onClick: () => history.push(`/reports/${item.id}`),
           items: compact([
-            { label: get(item, "name", "") },
-            { label: get(item, "arclibXmlDs") ? "Ano" : "Ne" },
+            { label: get(item, 'name', '') },
+            { label: get(item, 'arclibXmlDs') ? 'Ano' : 'Ne' },
             { label: formatDateTime(item.created) },
             { label: formatDateTime(item.updated) },
             deleteEnabled && {
@@ -43,7 +43,7 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
                   {...{
                     onClick: (e) => {
                       e.stopPropagation();
-                      setDialog("ReportDelete", {
+                      setDialog('ReportDelete', {
                         id: item.id,
                         name: item.name,
                       });
@@ -53,7 +53,7 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
                   {texts.DELETE}
                 </Button>
               ),
-              className: "text-right",
+              className: 'text-right',
             },
           ]),
         })),

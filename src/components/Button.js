@@ -1,13 +1,13 @@
-import React from "react";
-import { Button } from "antd";
+import React from 'react';
+import { Button } from 'antd';
 
 const ButtonComponent = ({ children, primary, type, className, ...props }) => (
   <Button
     {...{
-      type: primary ? "primary" : "default",
+      type: primary ? 'primary' : 'default',
       htmlType: type,
       className: `button ${className}`,
-      ...props
+      ...props,
     }}
   >
     {children}

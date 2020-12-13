@@ -1,17 +1,12 @@
-import React from "react";
-import { map, get, filter, compact } from "lodash";
+import React from 'react';
+import { map, get, filter, compact } from 'lodash';
 
-import Button from "../Button";
-import Table from "../table/Table";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Table from '../table/Table';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
-const RelatedRisksTable = ({
-  texts,
-  setDialog,
-  formatDefinitionId,
-  format,
-}) => {
+const RelatedRisksTable = ({ texts, setDialog, formatDefinitionId, format }) => {
   const deleteEnabled = hasPermission(Permission.RISK_RECORDS_WRITE);
   return (
     <Table
@@ -20,22 +15,22 @@ const RelatedRisksTable = ({
           { label: texts.CREATED },
           { label: texts.UPDATED },
           { label: texts.DESCRIPTION },
-          deleteEnabled && { label: "" },
+          deleteEnabled && { label: '' },
         ]),
         items: map(
-          filter(get(format, "relatedRisks"), ({ deleted }) => !deleted),
+          filter(get(format, 'relatedRisks'), ({ deleted }) => !deleted),
           (item) => ({
             items: compact([
-              { label: formatDateTime(get(item, "created")) },
-              { label: formatDateTime(get(item, "updated")) },
-              { label: get(item, "description", "") },
+              { label: formatDateTime(get(item, 'created')) },
+              { label: formatDateTime(get(item, 'updated')) },
+              { label: get(item, 'description', '') },
               deleteEnabled && {
                 label: (
                   <Button
                     {...{
                       onClick: (e) => {
                         e.stopPropagation();
-                        setDialog("RelatedRiskDelete", {
+                        setDialog('RelatedRiskDelete', {
                           id: item.id,
                           formatDefinitionId,
                           format,
@@ -46,7 +41,7 @@ const RelatedRisksTable = ({
                     {texts.DELETE}
                   </Button>
                 ),
-                className: "text-right",
+                className: 'text-right',
               },
             ]),
           })

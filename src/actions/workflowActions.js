@@ -1,13 +1,10 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getWorkflow = (
-  id,
-  clearBeforeGet = true,
-  withLoader = true,
-  enableUrl
-) => async dispatch => {
+export const getWorkflow = (id, clearBeforeGet = true, withLoader = true, enableUrl) => async (
+  dispatch
+) => {
   if (withLoader) {
     dispatch(showLoader());
   }
@@ -16,8 +13,8 @@ export const getWorkflow = (
     dispatch({
       type: c.WORKFLOW,
       payload: {
-        workflow: null
-      }
+        workflow: null,
+      },
     });
   }
 
@@ -34,8 +31,8 @@ export const getWorkflow = (
       dispatch({
         type: c.WORKFLOW,
         payload: {
-          workflow
-        }
+          workflow,
+        },
       });
 
       if (withLoader) {

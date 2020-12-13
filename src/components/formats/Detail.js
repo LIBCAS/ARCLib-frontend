@@ -1,24 +1,24 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { get, map, find, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers } from 'recompose';
+import { get, map, find, compact } from 'lodash';
 
-import Button from "../Button";
-import Tabs from "../Tabs";
-import Table from "../formatDefinition/FormatDefinitionTable";
-import RelatedRisksTable from "./RelatedRisksTable";
-import { TextField, SelectField } from "../form";
-import { setDialog, showLoader } from "../../actions/appActions";
-import { getRisks } from "../../actions/riskActions";
+import Button from '../Button';
+import Tabs from '../Tabs';
+import Table from '../formatDefinition/FormatDefinitionTable';
+import RelatedRisksTable from './RelatedRisksTable';
+import { TextField, SelectField } from '../form';
+import { setDialog, showLoader } from '../../actions/appActions';
+import { getRisks } from '../../actions/riskActions';
 import {
   getFormatDefinitionByFormatId,
   updateFormatFromExternal,
   getFormat,
   putFormat,
-} from "../../actions/formatActions";
-import { formatThreatLevelOptions, Permission } from "../../enums";
-import { hasPermission } from "../../utils";
+} from '../../actions/formatActions';
+import { formatThreatLevelOptions, Permission } from '../../enums';
+import { hasPermission } from '../../utils';
 
 const Detail = ({
   history,
@@ -38,28 +38,26 @@ const Detail = ({
   return (
     <div>
       {editEnabled && (
-        <div {...{ className: "flex-row flex-centered" }}>
+        <div {...{ className: 'flex-row flex-centered' }}>
           {map(
             [
               {
                 label: texts.UPDATE_FORMAT_USING_PRONOM_NOW,
-                className: "margin-bottom-small",
+                className: 'margin-bottom-small',
                 onClick: async () => {
                   showLoader();
                   const ok =
                     (await updateFormatFromExternal(format.formatId)) &&
                     (await getFormat(format.formatId));
                   showLoader(false);
-                  setDialog("Info", {
+                  setDialog('Info', {
                     content: (
                       <h3
                         {...{
-                          className: ok ? "color-green" : "invalid",
+                          className: ok ? 'color-green' : 'invalid',
                         }}
                       >
-                        <strong>
-                          {ok ? texts.UPDATE_SUCCESSFULL : texts.UPDATE_FAILED}
-                        </strong>
+                        <strong>{ok ? texts.UPDATE_SUCCESSFULL : texts.UPDATE_FAILED}</strong>
                       </h3>
                     ),
                     autoClose: true,
@@ -68,19 +66,16 @@ const Detail = ({
               },
               {
                 label: texts.UPDATE_WITH_LOCAL_DEFINITION,
-                className: "margin-bottom-small margin-left-small",
+                className: 'margin-bottom-small margin-left-small',
                 onClick: async () => {
                   showLoader();
                   const formatDefinitions = await getFormatDefinitionByFormatId(
-                    get(format, "formatId")
+                    get(format, 'formatId')
                   );
                   showLoader(false);
-                  setDialog("UpdateWithLocalDefinition", {
+                  setDialog('UpdateWithLocalDefinition', {
                     format,
-                    initialFormatDefinition: find(
-                      get(formatDefinitions, "items"),
-                      "preferred"
-                    ),
+                    initialFormatDefinition: find(get(formatDefinitions, 'items'), 'preferred'),
                   });
                 },
               },
@@ -100,10 +95,10 @@ const Detail = ({
       )}
       <Tabs
         {...{
-          id: "formats-detail-tabs",
+          id: 'formats-detail-tabs',
           onChange: (tab) => {
             if (tab === 1) {
-              getFormatDefinitionByFormatId(get(format, "formatId"));
+              getFormatDefinitionByFormatId(get(format, 'formatId'));
             }
           },
           items: compact([
@@ -117,25 +112,25 @@ const Detail = ({
                         {
                           component: TextField,
                           label: texts.PUID,
-                          name: "puid",
+                          name: 'puid',
                           disabled: true,
                         },
                         {
                           component: TextField,
                           label: texts.FORMAT_ID,
-                          name: "formatId",
+                          name: 'formatId',
                           disabled: true,
                         },
                         {
                           component: TextField,
                           label: texts.FORMAT_NAME,
-                          name: "formatName",
+                          name: 'formatName',
                           disabled: true,
                         },
                         {
                           component: SelectField,
                           label: texts.THREAT_LEVEL,
-                          name: "threatLevel",
+                          name: 'threatLevel',
                           disabled: !editEnabled,
                           options: formatThreatLevelOptions,
                         },
@@ -150,16 +145,16 @@ const Detail = ({
                         />
                       )
                     )}
-                    <div {...{ className: "flex-row flex-right" }}>
-                      <Button {...{ onClick: () => history.push("/formats") }}>
+                    <div {...{ className: 'flex-row flex-right' }}>
+                      <Button {...{ onClick: () => history.push('/formats') }}>
                         {editEnabled ? texts.STORNO : texts.CLOSE}
                       </Button>
                       {editEnabled && (
                         <Button
                           {...{
                             primary: true,
-                            type: "submit",
-                            className: "margin-left-small",
+                            type: 'submit',
+                            className: 'margin-left-small',
                           }}
                         >
                           {texts.SAVE_AND_CLOSE}
@@ -179,13 +174,11 @@ const Detail = ({
                       history,
                       texts,
                       user,
-                      formatDefinitions: get(formatDefinitions, "items"),
+                      formatDefinitions: get(formatDefinitions, 'items'),
                     }}
                   />
-                  <div {...{ className: "flex-row flex-right" }}>
-                    <Button {...{ onClick: () => history.push("/formats") }}>
-                      {texts.CLOSE}
-                    </Button>
+                  <div {...{ className: 'flex-row flex-right' }}>
+                    <Button {...{ onClick: () => history.push('/formats') }}>{texts.CLOSE}</Button>
                   </div>
                 </div>
               ),
@@ -197,10 +190,10 @@ const Detail = ({
                   <Button
                     {...{
                       primary: true,
-                      className: "margin-bottom-small",
+                      className: 'margin-bottom-small',
                       onClick: () => {
                         getRisks();
-                        setDialog("RelatedRiskNew", {
+                        setDialog('RelatedRiskNew', {
                           format,
                         });
                       },
@@ -241,16 +234,14 @@ export default compose(
     }
   ),
   withHandlers({
-    onSubmit: ({ putFormat, format, texts, history }) => async ({
-      threatLevel,
-    }) => {
+    onSubmit: ({ putFormat, format, texts, history }) => async ({ threatLevel }) => {
       if (
         await putFormat({
           ...format,
           threatLevel,
         })
       ) {
-        history.push("/formats");
+        history.push('/formats');
       } else {
         throw new SubmissionError({
           threatLevel: texts.SAVE_FAILED,
@@ -259,7 +250,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "formats-detail",
+    form: 'formats-detail',
     enableReinitialize: true,
   })
 )(Detail);

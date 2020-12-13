@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, defaultProps } from "recompose";
-import { noop } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, defaultProps } from 'recompose';
+import { noop } from 'lodash';
 
-import DialogButton from "./DialogButton";
-import DropFiles from "./DropFiles";
+import DialogButton from './DialogButton';
+import DropFiles from './DropFiles';
 
 const UploadTextButton = ({ texts, onChange, title, label, className }) => (
   <DialogButton
@@ -28,7 +28,7 @@ const UploadTextButton = ({ texts, onChange, title, label, className }) => (
 
                 reader.onloadend = () => {
                   const xml = reader.result;
-                  onChange(xml || "");
+                  onChange(xml || '');
                 };
               }
 

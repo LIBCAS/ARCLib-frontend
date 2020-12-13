@@ -1,27 +1,24 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, SubmissionError } from "redux-form";
-import { compose, withHandlers } from "recompose";
-import { map, get } from "lodash";
-import { Row, Col } from "antd";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
+import { compose, withHandlers } from 'recompose';
+import { map, get } from 'lodash';
+import { Row, Col } from 'antd';
 
-import Button from "../Button";
-import Tabs from "../Tabs";
-import IssuesTable from "./IssuesTable";
-import { TextField, Checkbox, SelectField } from "../form";
-import { putTool } from "../../actions/toolActions";
-import { setDialog } from "../../actions/appActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission, toolFunctionsOptions } from "../../enums";
+import Button from '../Button';
+import Tabs from '../Tabs';
+import IssuesTable from './IssuesTable';
+import { TextField, Checkbox, SelectField } from '../form';
+import { putTool } from '../../actions/toolActions';
+import { setDialog } from '../../actions/appActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { Permission, toolFunctionsOptions } from '../../enums';
 
 const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
   <div>
     <Tabs
       {...{
-        id: "tools-detail-tabs",
+        id: 'tools-detail-tabs',
         items: [
           {
             title: texts.TOOL,
@@ -34,13 +31,13 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                         {
                           component: TextField,
                           label: texts.NAME,
-                          name: "name",
+                          name: 'name',
                           disabled: true,
                         },
                         {
                           component: SelectField,
                           label: texts.TOOL_FUNCTION,
-                          name: "toolFunction",
+                          name: 'toolFunction',
                           options: toolFunctionsOptions,
                           lg: 12,
                           disabled: true,
@@ -48,32 +45,32 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                         {
                           component: TextField,
                           label: texts.LICENSE_INFORMATION,
-                          name: "licenseInformation",
+                          name: 'licenseInformation',
                           lg: 12,
                         },
                         {
                           component: TextField,
                           label: texts.VERSION,
-                          name: "version",
-                          type: "textarea",
+                          name: 'version',
+                          type: 'textarea',
                           disabled: true,
                         },
                         {
                           component: TextField,
                           label: texts.DOCUMENTATION,
-                          name: "documentation",
-                          type: "textarea",
+                          name: 'documentation',
+                          type: 'textarea',
                         },
                         {
                           component: TextField,
                           label: texts.DESCRIPTION,
-                          name: "description",
-                          type: "textarea",
+                          name: 'description',
+                          type: 'textarea',
                         },
                         {
                           component: Checkbox,
                           label: texts.INTERNAL,
-                          name: "internal",
+                          name: 'internal',
                           disabled: true,
                         },
                       ],
@@ -83,9 +80,7 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                             {...{
                               key,
                               id: `tools-detail-${field.name}`,
-                              disabled:
-                                !hasPermission(Permission.TOOL_RECORDS_WRITE) ||
-                                disabled,
+                              disabled: !hasPermission(Permission.TOOL_RECORDS_WRITE) || disabled,
                               ...field,
                             }}
                           />
@@ -93,15 +88,13 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                       )
                     )}
                   </Row>
-                  <div {...{ className: "flex-row flex-right" }}>
-                    <Button {...{ onClick: () => history.push("/tools") }}>
-                      {texts.STORNO}
-                    </Button>
+                  <div {...{ className: 'flex-row flex-right' }}>
+                    <Button {...{ onClick: () => history.push('/tools') }}>{texts.STORNO}</Button>
                     <Button
                       {...{
                         primary: true,
-                        type: "submit",
-                        className: "margin-left-small",
+                        type: 'submit',
+                        className: 'margin-left-small',
                       }}
                     >
                       {texts.SAVE_AND_CLOSE}
@@ -131,15 +124,15 @@ const Detail = ({ history, texts, handleSubmit, user, setDialog, tool }) => (
                   {...{
                     history,
                     texts,
-                    issues: get(tool, "possibleIssues"),
+                    issues: get(tool, 'possibleIssues'),
                     tool,
                     setDialog,
                   }}
                 />
-                <div {...{ className: "flex-row flex-right" }}>
+                <div {...{ className: 'flex-row flex-right' }}>
                   <Button
                     {...{
-                      onClick: () => history.push("/tools"),
+                      onClick: () => history.push('/tools'),
                     }}
                   >
                     {texts.CLOSE}
@@ -162,21 +155,15 @@ export default compose(
     { putTool, setDialog }
   ),
   withHandlers({
-    onSubmit: ({ putTool, tool, texts, history }) => async ({
-      internal,
-      ...formData
-    }) => {
+    onSubmit: ({ putTool, tool, texts, history }) => async ({ internal, ...formData }) => {
       if (
         await putTool({
           ...tool,
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-            "name",
-            "licenseInformation",
-          ]),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name', 'licenseInformation']),
           internal: internal === true,
         })
       ) {
-        history.push("/tools");
+        history.push('/tools');
       } else {
         throw new SubmissionError({
           internal: texts.SAVE_FAILED,
@@ -185,7 +172,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "tools-detail",
+    form: 'tools-detail',
     enableReinitialize: true,
   })
 )(Detail);

@@ -1,9 +1,9 @@
-import React from "react";
-import { connect } from "react-redux";
-import { Modal } from "react-bootstrap";
+import React from 'react';
+import { connect } from 'react-redux';
+import { Modal } from 'react-bootstrap';
 
-import Button from "../Button";
-import { closeDialog } from "../../actions/appActions";
+import Button from '../Button';
+import { closeDialog } from '../../actions/appActions';
 
 const DialogContainer = ({
   dialog,
@@ -28,10 +28,10 @@ const DialogContainer = ({
           onClose();
         }
       },
-      bsSize: large && "large",
-      backdrop: "static",
+      bsSize: large && 'large',
+      backdrop: 'static',
       animation: false,
-      ...rest
+      ...rest,
     }}
   >
     <Modal.Header closeButton>
@@ -47,7 +47,7 @@ const DialogContainer = ({
               if (onClose) {
                 onClose();
               }
-            }
+            },
           }}
         >
           {texts.STORNO}
@@ -56,8 +56,8 @@ const DialogContainer = ({
       <Button
         {...{
           primary: true,
-          className: "margin-left-small",
-          onClick: () => handleSubmit()
+          className: 'margin-left-small',
+          onClick: () => handleSubmit(),
         }}
       >
         {submitLabel}
@@ -67,5 +67,5 @@ const DialogContainer = ({
 );
 
 export default connect(({ app: { dialog, texts } }) => ({ dialog, texts }), {
-  closeDialog
+  closeDialog,
 })(DialogContainer);

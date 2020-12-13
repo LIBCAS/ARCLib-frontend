@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter, Route } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter, Route } from 'react-router-dom';
+import { get } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/formats/Detail";
-import FormatDefinition from "./FormatDefinition";
-import { getFormat } from "../../actions/formatActions";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/formats/Detail';
+import FormatDefinition from './FormatDefinition';
+import { getFormat } from '../../actions/formatActions';
 
 const Format = ({ history, format, getFormat, texts, ...props }) => {
   const { match, location } = props;
@@ -17,8 +17,8 @@ const Format = ({ history, format, getFormat, texts, ...props }) => {
       <PageWrapper
         {...{
           breadcrumb: [
-            { label: texts.FORMATS, url: "/formats" },
-            { label: get(format, "formatName", texts.FORMAT) },
+            { label: texts.FORMATS, url: '/formats' },
+            { label: get(format, 'formatName', texts.FORMAT) },
           ],
         }}
       >

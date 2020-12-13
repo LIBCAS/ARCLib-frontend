@@ -1,22 +1,22 @@
-import React from "react";
-import { compose, withHandlers, lifecycle } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { compose, withHandlers, lifecycle } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
+import DialogContainer from './DialogContainer';
 
 const Info = ({ handleSubmit, data, texts }) => (
   <DialogContainer
     {...{
-      title: get(data, "title", ""),
-      name: "Info",
+      title: get(data, 'title', ''),
+      name: 'Info',
       handleSubmit,
       submitLabel: texts.OK,
-      noCloseButton: true
+      noCloseButton: true,
     }}
   >
-    {get(data, "content", <p>{get(data, "text", "")}</p>)}
+    {get(data, 'content', <p>{get(data, 'text', '')}</p>)}
   </DialogContainer>
 );
 
@@ -25,18 +25,18 @@ export default compose(
   withHandlers({
     onSubmit: ({ closeDialog }) => async () => {
       closeDialog();
-    }
+    },
   }),
   lifecycle({
     componentWillReceiveProps(nextProps) {
-      if (get(nextProps, "data.autoClose")) {
+      if (get(nextProps, 'data.autoClose')) {
         setTimeout(() => {
           nextProps.onSubmit();
         }, 5000);
       }
-    }
+    },
   }),
   reduxForm({
-    form: "infoDialogForm"
+    form: 'infoDialogForm',
   })
 )(Info);

@@ -1,11 +1,11 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   risks: null,
   risk: null,
   risksInfo: null,
   riskInfo: null,
-  relatedFormats: null
+  relatedFormats: null,
 };
 
 const reducer = (state = initialState, action) => {

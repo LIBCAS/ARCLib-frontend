@@ -1,20 +1,14 @@
-import React from "react";
-import { connect } from "react-redux";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Table from "../table/Table";
-import { setDialog } from "../../actions/appActions";
-import { formatDateTime, hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../Button';
+import Table from '../table/Table';
+import { setDialog } from '../../actions/appActions';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
-const WorkflowDefinitionTable = ({
-  history,
-  workflowDefinitions,
-  setDialog,
-  texts,
-  user,
-}) => {
+const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, texts, user }) => {
   const deleteEnabled = hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE);
   return (
     <Table
@@ -23,22 +17,22 @@ const WorkflowDefinitionTable = ({
           { label: texts.NAME },
           { label: texts.CREATED },
           { label: texts.EDITED },
-          deleteEnabled ? { label: "" } : null,
+          deleteEnabled ? { label: '' } : null,
         ]),
         items: map(workflowDefinitions, (item) => ({
           onClick: () => history.push(`/workflow-definitions/${item.id}`),
           items: compact([
-            { label: get(item, "name", "") },
-            { label: formatDateTime(get(item, "created")) },
-            { label: formatDateTime(get(item, "updated")) },
+            { label: get(item, 'name', '') },
+            { label: formatDateTime(get(item, 'created')) },
+            { label: formatDateTime(get(item, 'updated')) },
             deleteEnabled
               ? {
-                  label: (
+                  label: get(item, 'editable') ? (
                     <Button
                       {...{
                         onClick: (e) => {
                           e.stopPropagation();
-                          setDialog("WorkflowDefinitionDelete", {
+                          setDialog('WorkflowDefinitionDelete', {
                             id: item.id,
                             name: item.name,
                           });
@@ -47,8 +41,10 @@ const WorkflowDefinitionTable = ({
                     >
                       {texts.DELETE}
                     </Button>
+                  ) : (
+                    <div />
                   ),
-                  className: "text-right",
+                  className: 'text-right',
                 }
               : null,
           ]),

@@ -1,16 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/validationProfiles/Table";
-import { setDialog } from "../../actions/appActions";
-import { getValidationProfiles } from "../../actions/validationProfileActions";
-import { getProducers } from "../../actions/producerActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/validationProfiles/Table';
+import { setDialog } from '../../actions/appActions';
+import { getValidationProfiles } from '../../actions/validationProfileActions';
+import { getProducers } from '../../actions/producerActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const ValidationProfiles = ({
   history,
@@ -25,13 +25,13 @@ const ValidationProfiles = ({
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
+          className: 'margin-bottom-small',
           onClick: () => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
               getProducers(false);
             }
 
-            setDialog("ValidationProfileNew");
+            setDialog('ValidationProfileNew');
           },
         }}
       >
@@ -44,14 +44,11 @@ const ValidationProfiles = ({
 
 export default compose(
   withRouter,
-  connect(
-    ({ validationProfile: { validationProfiles } }) => ({ validationProfiles }),
-    {
-      setDialog,
-      getValidationProfiles,
-      getProducers,
-    }
-  ),
+  connect(({ validationProfile: { validationProfiles } }) => ({ validationProfiles }), {
+    setDialog,
+    getValidationProfiles,
+    getProducers,
+  }),
   lifecycle({
     componentWillMount() {
       const { getValidationProfiles } = this.props;

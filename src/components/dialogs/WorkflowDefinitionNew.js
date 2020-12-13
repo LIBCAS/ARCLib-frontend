@@ -1,25 +1,25 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get, find } from "lodash";
-import uuidv1 from "uuid/v1";
-import { FormGroup, ControlLabel } from "react-bootstrap";
-import { message } from "antd";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get, find } from 'lodash';
+import uuidv1 from 'uuid/v1';
+import { FormGroup, ControlLabel } from 'react-bootstrap';
+import { message } from 'antd';
 
-import TextField from "../TextField";
-import Button from "../Button";
-import ErrorBlock from "../ErrorBlock";
-import DialogContainer from "./DialogContainer";
-import { TextField as FormTextField, SelectField, Validation } from "../form";
+import TextField from '../TextField';
+import Button from '../Button';
+import ErrorBlock from '../ErrorBlock';
+import DialogContainer from './DialogContainer';
+import { TextField as FormTextField, SelectField, Validation } from '../form';
 import {
   saveWorkflowDefinition,
   getWorkflowDefinitions,
-} from "../../actions/workflowDefinitionActions";
-import { setDialog } from "../../actions/appActions";
-import { hasPermission, hasValue } from "../../utils";
-import { Permission } from "../../enums";
+} from '../../actions/workflowDefinitionActions';
+import { setDialog } from '../../actions/appActions';
+import { hasPermission, hasValue } from '../../utils';
+import { Permission } from '../../enums';
 
 const WorkflowDefinitionNew = ({
   producersEnabled,
@@ -41,7 +41,7 @@ const WorkflowDefinitionNew = ({
   <DialogContainer
     {...{
       title: texts.WORKFLOW_DEFINITION_NEW,
-      name: "WorkflowDefinitionNew",
+      name: 'WorkflowDefinitionNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       large: true,
@@ -53,13 +53,13 @@ const WorkflowDefinitionNew = ({
           {
             component: FormTextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.PRODUCER,
-            name: "producer",
+            name: 'producer',
             validate: [Validation.required[language]],
             options: producersEnabled
               ? map(producers, (producer) => ({
@@ -68,8 +68,8 @@ const WorkflowDefinitionNew = ({
                 }))
               : [
                   {
-                    label: get(user, "producer.name"),
-                    value: get(user, "producer.id"),
+                    label: get(user, 'producer.name'),
+                    value: get(user, 'producer.id'),
                   },
                 ],
             disabled: !producersEnabled,
@@ -85,30 +85,24 @@ const WorkflowDefinitionNew = ({
             syntaxHighlighter: true,
           },
         ],
-        (
-          { text, syntaxHighlighter, value, onChange, fileName, ...field },
-          key
-        ) =>
-          text ? (
-            <p {...{ key }}>{text}</p>
-          ) : syntaxHighlighter ? (
+        ({ syntaxHighlighter, value, onChange, fileName, ...field }, key) =>
+          syntaxHighlighter ? (
             <div {...{ key }}>
               <div
                 {...{
-                  className:
-                    "flex-row-nowrap responsive-mobile flex-right flex-bottom",
+                  className: 'flex-row-nowrap responsive-mobile flex-right flex-bottom',
                 }}
               >
                 <FormGroup
                   {...{
-                    controlId: "workflow-definition-new-bpmn-name",
-                    className: "margin-none width-full",
+                    controlId: 'workflow-definition-new-bpmn-name',
+                    className: 'margin-none width-full',
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
                   <TextField
                     {...{
-                      id: "workflow-definition-new-bpmn-name-textfield",
+                      id: 'workflow-definition-new-bpmn-name-textfield',
                       disabled: true,
                       value: fileName,
                     }}
@@ -117,7 +111,7 @@ const WorkflowDefinitionNew = ({
                 <Button
                   {...{
                     onClick: () =>
-                      setDialog("DropFilesDialog", {
+                      setDialog('DropFilesDialog', {
                         title: texts.UPLOAD_XML,
                         label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                         multiple: false,
@@ -132,24 +126,17 @@ const WorkflowDefinitionNew = ({
                             reader.onloadend = () => {
                               const xml = reader.result;
 
-                              setXmlContent(hasValue(xml) ? xml : "");
-                              setFileName(
-                                hasValue(xml) ? get(file, "name") : ""
-                              );
-                              setXmlContentFail(
-                                !hasValue(xml) ? texts.REQUIRED : null
-                              );
+                              setXmlContent(hasValue(xml) ? xml : '');
+                              setFileName(hasValue(xml) ? get(file, 'name') : '');
+                              setXmlContentFail(!hasValue(xml) ? texts.REQUIRED : null);
                               setXmlContentState(!xmlContentState);
-                              message.success(
-                                texts.FILE_SUCCESSFULLY_UPLOADED,
-                                5
-                              );
+                              message.success(texts.FILE_SUCCESSFULLY_UPLOADED, 5);
                             };
                           }
                         },
-                        afterClose: () => setDialog("WorkflowDefinitionNew"),
+                        afterClose: () => setDialog('WorkflowDefinitionNew'),
                       }),
-                    className: "margin-top-small margin-left-small",
+                    className: 'margin-top-small margin-left-small',
                     style: { minWidth: 110 },
                   }}
                 >
@@ -159,9 +146,7 @@ const WorkflowDefinitionNew = ({
               <ErrorBlock {...{ label: xmlContentFail }} />
             </div>
           ) : (
-            <Field
-              {...{ key, id: `validation-profile-${field.name}`, ...field }}
-            />
+            <Field {...{ key, id: `validation-profile-${field.name}`, ...field }} />
           )
       )}
     </form>
@@ -172,9 +157,6 @@ export default compose(
   connect(
     ({ producer: { producers } }) => ({
       producers,
-      initialValues: {
-        producer: get(producers, "[0].id"),
-      },
     }),
     {
       saveWorkflowDefinition,
@@ -183,27 +165,21 @@ export default compose(
       reset,
     }
   ),
-  withProps({
-    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
-  }),
-  withProps(
-    ({
+  withProps(({ user, producers }) => {
+    const producersEnabled = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
+
+    return {
       producersEnabled,
-      user,
-      producers,
-    }) => ({
       initialValues: {
-        producer: producersEnabled
-          ? get(producers, "[0].id")
-          : get(user, "producer.name")
+        producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.id'),
       },
-    })
-  ),
+    };
+  }),
   withRouter,
-  withState("xmlContent", "setXmlContent", ""),
-  withState("fileName", "setFileName", ""),
-  withState("xmlContentState", "setXmlContentState", true),
-  withState("xmlContentFail", "setXmlContentFail", ""),
+  withState('xmlContent', 'setXmlContent', ''),
+  withState('fileName', 'setFileName', ''),
+  withState('xmlContentState', 'setXmlContentState', true),
+  withState('xmlContentFail', 'setXmlContentFail', ''),
   withHandlers({
     onSubmit: ({
       producersEnabled,
@@ -225,12 +201,13 @@ export default compose(
             ...formData,
             bpmnDefinition: xmlContent,
             producer: producersEnabled
-            ? find(producers, (item) => item.id === producer)
-            : get(user, "producer"),
+              ? find(producers, (item) => item.id === producer)
+              : get(user, 'producer'),
+            editable: true,
           })
         ) {
           getWorkflowDefinitions();
-          reset("WorkflowDefinitionNewDialogForm");
+          reset('WorkflowDefinitionNewDialogForm');
           closeDialog();
         } else {
           throw new SubmissionError({
@@ -243,7 +220,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "WorkflowDefinitionNewDialogForm",
+    form: 'WorkflowDefinitionNewDialogForm',
     enableReinitialize: true,
   })
 )(WorkflowDefinitionNew);

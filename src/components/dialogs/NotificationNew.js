@@ -1,29 +1,23 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import InfoIcon from "../InfoIcon";
-import { TextField, Validation } from "../form";
-import {
-  putNotification,
-  getNotifications,
-} from "../../actions/notificationActions";
-import {
-  openUrlInNewTab,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { CRON_URL } from "../../constants";
+import DialogContainer from './DialogContainer';
+import InfoIcon from '../InfoIcon';
+import { TextField, Validation } from '../form';
+import { putNotification, getNotifications } from '../../actions/notificationActions';
+import { openUrlInNewTab, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { CRON_URL } from '../../constants';
 
 const NotificationNew = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.NOTIFICATION_NEW,
-      name: "NotificationNew",
+      name: 'NotificationNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -38,24 +32,21 @@ const NotificationNew = ({ handleSubmit, texts, language }) => (
                 {texts.CRON_EXPRESSION}
                 <InfoIcon
                   {...{
-                    glyph: "new-window",
+                    glyph: 'new-window',
                     tooltip: texts.OPENS_PAGE_WITH_CRON_EXPRESSION_INFORMATION,
                     onClick: () => openUrlInNewTab(CRON_URL),
                   }}
                 />
               </span>
             ),
-            name: "cron",
-            validate: [
-              Validation.required[language],
-              Validation.cron[language],
-            ],
+            name: 'cron',
+            validate: [Validation.required[language], Validation.cron[language]],
           },
           {
             component: TextField,
             label: texts.MESSAGE,
-            name: "message",
-            type: "textarea",
+            name: 'message',
+            type: 'textarea',
             validate: [Validation.required[language]],
           },
         ],
@@ -75,21 +66,17 @@ export default compose(
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      putNotification,
-      getNotifications,
-      texts,
-      reset,
-    }) => async (formData) => {
+    onSubmit: ({ closeDialog, putNotification, getNotifications, texts, reset }) => async (
+      formData
+    ) => {
       const response = await putNotification({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["cron"]),
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['cron']),
       });
 
       if (response) {
         getNotifications();
-        reset("NotificationNewDialogForm");
+        reset('NotificationNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({
@@ -99,7 +86,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "NotificationNewDialogForm",
+    form: 'NotificationNewDialogForm',
     enableReinitialize: true,
   })
 )(NotificationNew);

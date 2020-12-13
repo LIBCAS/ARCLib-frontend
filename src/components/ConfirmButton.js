@@ -1,16 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import {
-  compose,
-  withState,
-  withHandlers,
-  defaultProps,
-  mapProps,
-} from "recompose";
-import { Modal } from "react-bootstrap";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withState, withHandlers, defaultProps, mapProps } from 'recompose';
+import { Modal } from 'react-bootstrap';
 
-import Button from "./Button";
-import ErrorBlock from "./ErrorBlock";
+import Button from './Button';
+import ErrorBlock from './ErrorBlock';
 
 const ConfirmButton = ({
   label,
@@ -31,7 +25,7 @@ const ConfirmButton = ({
       {...{
         show: open,
         onHide: onClose,
-        backdrop: "static",
+        backdrop: 'static',
         animation: false,
       }}
     >
@@ -53,7 +47,7 @@ const ConfirmButton = ({
         <Button
           {...{
             primary: true,
-            className: "margin-left-small",
+            className: 'margin-left-small',
             onClick: () => onSubmit(),
           }}
         >
@@ -70,8 +64,8 @@ const ConfirmButton = ({
 export default compose(
   defaultProps({ onClick: () => true }),
   connect(({ app: { texts } }) => ({ texts })),
-  withState("open", "setOpen", false),
-  withState("fail", "setFail", null),
+  withState('open', 'setOpen', false),
+  withState('fail', 'setFail', null),
   withHandlers({
     onSubmit: ({ onClick, setFail, failText, setOpen }) => async () => {
       if (await onClick()) {

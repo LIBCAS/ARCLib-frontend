@@ -1,6 +1,6 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
 export const getRoles = () => async (dispatch) => {
   dispatch({
@@ -11,7 +11,7 @@ export const getRoles = () => async (dispatch) => {
   });
 
   try {
-    const response = await fetch("/api/role/find-all", { method: "POST" });
+    const response = await fetch('/api/role/find-all', { method: 'POST' });
 
     let roles = null;
     if (response.status === 200) {
@@ -73,7 +73,7 @@ export const deleteRole = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/role/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -90,10 +90,10 @@ export const deleteRole = (id) => async (dispatch) => {
 export const createRole = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch("/api/role", {
-      method: "POST",
+    const response = await fetch('/api/role', {
+      method: 'POST',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });
@@ -126,10 +126,10 @@ export const createRole = (body) => async (dispatch) => {
 export const saveRole = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch("/api/role", {
-      method: "PUT",
+    const response = await fetch('/api/role', {
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });

@@ -1,11 +1,11 @@
-import React from "react";
-import { compose } from "recompose";
-import { Route, withRouter } from "react-router-dom";
+import React from 'react';
+import { compose } from 'recompose';
+import { Route, withRouter } from 'react-router-dom';
 
-import IngestBatch from "./IngestBatch";
-import IngestBatches from "./IngestBatches";
+import IngestBatch from './IngestBatch';
+import IngestBatches from './IngestBatches';
 
-const IngestBatchesContainer = props => {
+const IngestBatchesContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -15,7 +15,7 @@ const IngestBatchesContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: routeProps => <IngestBatch {...{ ...props, ...routeProps }} />
+          render: (routeProps) => <IngestBatch {...{ ...props, ...routeProps }} />,
         }}
       />
     );

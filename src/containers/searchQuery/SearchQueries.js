@@ -1,18 +1,18 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
 
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/searchQueries/Table";
-import { getSavedQueries } from "../../actions/queryActions";
-import { closeDialog } from "../../actions/appActions";
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/searchQueries/Table';
+import { getSavedQueries } from '../../actions/queryActions';
+import { closeDialog } from '../../actions/appActions';
 
 const SearchQueries = ({ texts, ...props }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.SEARCH_QUERIES }] }}>
     <Table
       {...{
         ...props,
-        texts
+        texts,
       }}
     />
   </PageWrapper>
@@ -21,7 +21,7 @@ const SearchQueries = ({ texts, ...props }) => (
 export default compose(
   connect(
     ({ query: { queries } }) => ({
-      queries
+      queries,
     }),
     { getSavedQueries, closeDialog }
   ),
@@ -35,6 +35,6 @@ export default compose(
       const { closeDialog } = this.props;
 
       closeDialog();
-    }
+    },
   })
 )(SearchQueries);

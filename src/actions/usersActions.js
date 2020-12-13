@@ -1,7 +1,7 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams } from '../utils';
 
 export const getUsers = (params) => async (dispatch, getState) => {
   const useDispatch = !params;
@@ -16,7 +16,7 @@ export const getUsers = (params) => async (dispatch, getState) => {
   }
 
   try {
-    const response = await fetch("/api/user", {
+    const response = await fetch('/api/user', {
       params: params || createFilterPagerParams(getState),
     });
 
@@ -45,7 +45,7 @@ export const getUsers = (params) => async (dispatch, getState) => {
 
 export const getUsersByParams = (params) => async (dispatch) => {
   try {
-    const response = await fetch("/api/user/list_names", {
+    const response = await fetch('/api/user/list_names', {
       params,
     });
 
@@ -97,7 +97,7 @@ export const deleteUser = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -115,9 +115,9 @@ export const saveUser = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });
@@ -151,9 +151,9 @@ export const saveUserRoles = (userId, body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/user/${userId}/roles`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });

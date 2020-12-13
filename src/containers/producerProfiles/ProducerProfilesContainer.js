@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import ProducerProfiles from "./ProducerProfiles";
-import ProducerProfile from "./ProducerProfile";
+import ProducerProfiles from './ProducerProfiles';
+import ProducerProfile from './ProducerProfile';
 
-const ProducerProfilesContainer = props => {
+const ProducerProfilesContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const ProducerProfilesContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <ProducerProfile {...props} />
+          render: () => <ProducerProfile {...props} />,
         }}
       />
     );

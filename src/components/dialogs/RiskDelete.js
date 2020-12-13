@@ -1,21 +1,21 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
 
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
-import { deleteRisk, getRisks } from "../../actions/riskActions";
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
+import { deleteRisk, getRisks } from '../../actions/riskActions';
 
 const RiskDelete = ({ handleSubmit, data, fail, setFail, texts }) => (
   <DialogContainer
     {...{
       title: texts.RISK_DELETE,
-      name: "RiskDelete",
+      name: 'RiskDelete',
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setFail(null)
+      onClose: () => setFail(null),
     }}
   >
     <p>{texts.RISK_DELETE_TEXT}?</p>
@@ -24,21 +24,14 @@ const RiskDelete = ({ handleSubmit, data, fail, setFail, texts }) => (
 );
 
 export default compose(
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   connect(null, {
     deleteRisk,
-    getRisks
+    getRisks,
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      deleteRisk,
-      getRisks,
-      data: { id },
-      setFail,
-      texts
-    }) => async () => {
+    onSubmit: ({ closeDialog, deleteRisk, getRisks, data: { id }, setFail, texts }) => async () => {
       if (await deleteRisk(id)) {
         getRisks();
         setFail(null);
@@ -46,9 +39,9 @@ export default compose(
       } else {
         setFail(texts.DELETE_FAILED);
       }
-    }
+    },
   }),
   reduxForm({
-    form: "RiskDeleteDialogForm"
+    form: 'RiskDeleteDialogForm',
   })
 )(RiskDelete);

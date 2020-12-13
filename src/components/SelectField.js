@@ -1,6 +1,6 @@
-import React from "react";
-import { compose, withState, withHandlers, lifecycle } from "recompose";
-import { Select } from "antd";
+import React from 'react';
+import { compose, withState, withHandlers, lifecycle } from 'recompose';
+import { Select } from 'antd';
 
 const { Option } = Select;
 
@@ -22,7 +22,7 @@ const SelectField = ({
     <Select
       {...{
         ...props,
-        mode: isMultiple ? "multiple" : undefined,
+        mode: isMultiple ? 'multiple' : undefined,
         value: selectValue,
         allowClear: isMultiple,
         onChange: handleChange,
@@ -37,10 +37,9 @@ const SelectField = ({
 
 export default compose(
   withHandlers({
-    mapValue: ({ isMultiple, value }) => () =>
-      isMultiple ? (value ? value : []) : value,
+    mapValue: ({ isMultiple, value }) => () => (isMultiple ? (value ? value : []) : value),
   }),
-  withState("selectValue", "setSelectValue", ({ mapValue }) => mapValue()),
+  withState('selectValue', 'setSelectValue', ({ mapValue }) => mapValue()),
   lifecycle({
     componentWillReceiveProps({ value, selectValue }) {
       const { value: oldValue, setSelectValue } = this.props;

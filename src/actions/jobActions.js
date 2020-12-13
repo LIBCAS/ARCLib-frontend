@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { openErrorDialogIfRequestFailed } from "../actions/appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { openErrorDialogIfRequestFailed } from '../actions/appActions';
 
-export const getJobs = () => async dispatch => {
+export const getJobs = () => async (dispatch) => {
   dispatch({
     type: c.JOB,
     payload: {
-      jobs: null
-    }
+      jobs: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/jobs");
+    const response = await fetch('/api/jobs');
 
     if (response.status === 200) {
       const jobs = await response.json();
@@ -19,8 +19,8 @@ export const getJobs = () => async dispatch => {
       dispatch({
         type: c.JOB,
         payload: {
-          jobs
-        }
+          jobs,
+        },
       });
 
       return jobs;

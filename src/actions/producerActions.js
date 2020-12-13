@@ -1,22 +1,19 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams } from '../utils';
 
-export const getProducers = (withFilter = true) => async (
-  dispatch,
-  getState
-) => {
+export const getProducers = (withFilter = true) => async (dispatch, getState) => {
   dispatch({
     type: c.PRODUCER,
     payload: {
-      producers: null
-    }
+      producers: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/producer", {
-      params: withFilter ? createFilterPagerParams(getState) : undefined
+    const response = await fetch('/api/producer', {
+      params: withFilter ? createFilterPagerParams(getState) : undefined,
     });
 
     if (response.status === 200) {
@@ -25,8 +22,8 @@ export const getProducers = (withFilter = true) => async (
       dispatch({
         type: c.PRODUCER,
         payload: {
-          producers
-        }
+          producers,
+        },
       });
 
       return producers;
@@ -41,14 +38,14 @@ export const getProducers = (withFilter = true) => async (
   }
 };
 
-export const getProducer = id => async dispatch => {
+export const getProducer = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.PRODUCER,
     payload: {
-      producer: null
-    }
+      producer: null,
+    },
   });
 
   try {
@@ -60,8 +57,8 @@ export const getProducer = id => async dispatch => {
       dispatch({
         type: c.PRODUCER,
         payload: {
-          producer
-        }
+          producer,
+        },
       });
 
       dispatch(showLoader(false));
@@ -79,11 +76,11 @@ export const getProducer = id => async dispatch => {
   }
 };
 
-export const deleteProducer = id => async dispatch => {
+export const deleteProducer = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/producer/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -97,15 +94,15 @@ export const deleteProducer = id => async dispatch => {
   }
 };
 
-export const saveProducer = body => async dispatch => {
+export const saveProducer = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/producer/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -114,8 +111,8 @@ export const saveProducer = body => async dispatch => {
       dispatch({
         type: c.PRODUCER,
         payload: {
-          producer
-        }
+          producer,
+        },
       });
     }
 

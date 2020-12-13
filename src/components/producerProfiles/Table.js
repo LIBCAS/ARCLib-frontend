@@ -1,23 +1,15 @@
-import React from "react";
-import { connect } from "react-redux";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { map, get, compact } from 'lodash';
 
-import Button from "../Button";
-import Table from "../table/TableWithFilter";
-import { setDialog } from "../../actions/appActions";
-import { filterTypes, Permission } from "../../enums";
-import { formatDateTime, hasPermission } from "../../utils";
+import Button from '../Button';
+import Table from '../table/TableWithFilter';
+import { setDialog } from '../../actions/appActions';
+import { filterTypes, Permission } from '../../enums';
+import { formatDateTime, hasPermission } from '../../utils';
 
-const ProducerProfilesTable = ({
-  history,
-  producerProfiles,
-  setDialog,
-  handleUpdate,
-  texts,
-}) => {
-  const deleteEnabled = hasPermission(
-    Permission.PRODUCER_PROFILE_RECORDS_WRITE
-  );
+const ProducerProfilesTable = ({ history, producerProfiles, setDialog, handleUpdate, texts }) => {
+  const deleteEnabled = hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE);
   return (
     <Table
       {...{
@@ -30,26 +22,26 @@ const ProducerProfilesTable = ({
           { label: texts.SIP_PROFILE },
           { label: texts.VALIDATION_PROFILE },
           { label: texts.WORKFLOW_DEFINITION },
-          deleteEnabled && { label: "" },
+          deleteEnabled && { label: '' },
         ]),
         items: map(producerProfiles, (item, i) => ({
           onClick: () => history.push(`/producer-profiles/${item.id}`),
           items: compact([
-            { label: get(item, "externalId", "") },
-            { label: get(item, "name", "") },
+            { label: get(item, 'externalId', '') },
+            { label: get(item, 'name', '') },
             { label: formatDateTime(item.created) },
             { label: formatDateTime(item.updated) },
-            { label: get(item, "producer.name", "") },
-            { label: get(item, "sipProfileName", "") },
-            { label: get(item, "validationProfileName", "") },
-            { label: get(item, "workflowDefinitionName", "") },
+            { label: get(item, 'producer.name', '') },
+            { label: get(item, 'sipProfileName', '') },
+            { label: get(item, 'validationProfileName', '') },
+            { label: get(item, 'workflowDefinitionName', '') },
             deleteEnabled && {
               label: (
                 <Button
                   {...{
                     onClick: (e) => {
                       e.stopPropagation();
-                      setDialog("ProducerProfileDelete", {
+                      setDialog('ProducerProfileDelete', {
                         id: item.id,
                         name: item.name,
                       });
@@ -59,49 +51,49 @@ const ProducerProfilesTable = ({
                   {texts.DELETE}
                 </Button>
               ),
-              className: "text-right",
+              className: 'text-right',
             },
           ]),
         })),
         filterItems: [
           {
             type: filterTypes.TEXT,
-            field: "externalId",
+            field: 'externalId',
             handleUpdate,
           },
           {
             type: filterTypes.TEXT,
-            field: "name",
+            field: 'name',
             handleUpdate,
           },
           {
             type: filterTypes.DATETIME,
-            field: "created",
+            field: 'created',
             handleUpdate,
           },
           {
             type: filterTypes.DATETIME,
-            field: "updated",
+            field: 'updated',
             handleUpdate,
           },
           {
             type: filterTypes.TEXT,
-            field: "producerName",
+            field: 'producerName',
             handleUpdate,
           },
           {
             type: filterTypes.TEXT,
-            field: "sipProfileName",
+            field: 'sipProfileName',
             handleUpdate,
           },
           {
             type: filterTypes.TEXT,
-            field: "validationProfileName",
+            field: 'validationProfileName',
             handleUpdate,
           },
           {
             type: filterTypes.TEXT,
-            field: "workflowDefinitionName",
+            field: 'workflowDefinitionName',
             handleUpdate,
           },
           null,

@@ -1,23 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/notifications/Detail";
-import { getNotification } from "../../actions/notificationActions";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/notifications/Detail';
+import { getNotification } from '../../actions/notificationActions';
 
 const Notification = ({ history, notification, texts, ...props }) => (
   <PageWrapper
     {...{
       breadcrumb: [
         {
-          label:
-            texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
-          url: "/notifications"
+          label: texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
+          url: '/notifications',
         },
-        { label: texts.NOTIFICATION }
-      ]
+        { label: texts.NOTIFICATION },
+      ],
     }}
   >
     {notification && (
@@ -27,7 +26,7 @@ const Notification = ({ history, notification, texts, ...props }) => (
           texts,
           notification,
           initialValues: notification,
-          ...props
+          ...props,
         }}
       />
     )}
@@ -38,7 +37,7 @@ export default compose(
   withRouter,
   connect(
     ({ notification: { notification } }) => ({
-      notification
+      notification,
     }),
     { getNotification }
   ),
@@ -47,6 +46,6 @@ export default compose(
       const { match, getNotification } = this.props;
 
       getNotification(match.params.id);
-    }
+    },
   })
 )(Notification);

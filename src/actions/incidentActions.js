@@ -1,13 +1,12 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { openErrorDialogIfRequestFailed } from "../actions/appActions";
-import { createSortOrderParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { openErrorDialogIfRequestFailed } from '../actions/appActions';
+import { createSortOrderParams } from '../utils';
 
-export const getIncidents = (
-  batchId,
-  clearBeforeGet = true,
-  enableUrl
-) => async (dispatch, getState) => {
+export const getIncidents = (batchId, clearBeforeGet = true, enableUrl) => async (
+  dispatch,
+  getState
+) => {
   if (clearBeforeGet) {
     dispatch({
       type: c.INCIDENT,
@@ -50,10 +49,10 @@ export const getIncidents = (
 
 export const solveIncidents = (body) => async (dispatch) => {
   try {
-    const response = await fetch("/api/incident/solve", {
-      method: "POST",
+    const response = await fetch('/api/incident/solve', {
+      method: 'POST',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });
@@ -69,10 +68,10 @@ export const solveIncidents = (body) => async (dispatch) => {
 
 export const cancelIncidents = (body) => async (dispatch) => {
   try {
-    const response = await fetch("/api/incident/cancel", {
-      method: "POST",
+    const response = await fetch('/api/incident/cancel', {
+      method: 'POST',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });

@@ -1,11 +1,7 @@
-import React from "react";
-import { HelpBlock } from "react-bootstrap";
+import React from 'react';
+import { HelpBlock } from 'react-bootstrap';
 
 const ErrorBlock = ({ label, ...props }) =>
-  label ? (
-    <HelpBlock {...{ className: "invalid", ...props }}>{label}</HelpBlock>
-  ) : (
-    <div />
-  );
+  label ? <HelpBlock {...{ className: 'invalid', ...props }}>{label}</HelpBlock> : <div />;
 
 export default ErrorBlock;

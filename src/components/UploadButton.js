@@ -1,22 +1,14 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, defaultProps } from "recompose";
-import { noop } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, defaultProps } from 'recompose';
+import { noop } from 'lodash';
 
-import DialogButton from "./DialogButton";
-import DropFiles from "./DropFiles";
-import { showLoader } from "../actions/appActions";
-import { postFile } from "../actions/fileActions";
+import DialogButton from './DialogButton';
+import DropFiles from './DropFiles';
+import { showLoader } from '../actions/appActions';
+import { postFile } from '../actions/fileActions';
 
-const UploadButton = ({
-  texts,
-  onChange,
-  showLoader,
-  postFile,
-  title,
-  label,
-  className
-}) => (
+const UploadButton = ({ texts, onChange, showLoader, postFile, title, label, className }) => (
   <DialogButton
     {...{
       title: title || texts.UPLOAD_FILE,
@@ -28,7 +20,7 @@ const UploadButton = ({
         <DropFiles
           {...{
             label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-            onDrop: async files => {
+            onDrop: async (files) => {
               const file = files[0];
 
               if (file) {
@@ -41,10 +33,10 @@ const UploadButton = ({
               }
 
               closeDialog();
-            }
+            },
           }}
         />
-      )
+      ),
     }}
   />
 );
@@ -53,6 +45,6 @@ export default compose(
   defaultProps({ onChange: noop }),
   connect(({ app: { texts } }) => ({ texts }), {
     showLoader,
-    postFile
+    postFile,
   })
 )(UploadButton);

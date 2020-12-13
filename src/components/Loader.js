@@ -1,17 +1,17 @@
-import React from "react";
-import Loader from "react-loader-spinner";
+import React from 'react';
+import RLoader from 'react-loader-spinner';
 
-const LoaderComponent = ({ text }) => (
-  <div {...{ className: "loader" }}>
+const Loader = ({ text }) => (
+  <div {...{ className: 'loader' }}>
     <div>
-      <Loader {...{ type: "TailSpin", className: "loader-component" }} />
+      <RLoader {...{ type: 'Oval', color: '#337ab7' }} />
       {text && (
         <div
           style={{
-            wordBreak: "break-word",
-            maxWidth: "80%",
+            wordBreak: 'break-word',
+            maxWidth: '80%',
             fontSize: 24,
-            marginTop: 12
+            marginTop: 12,
           }}
         >
           {text}
@@ -21,4 +21,4 @@ const LoaderComponent = ({ text }) => (
   </div>
 );
 
-export default LoaderComponent;
+export default Loader;

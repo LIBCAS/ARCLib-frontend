@@ -1,16 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/workflowDefinitions/Table";
-import { setDialog } from "../../actions/appActions";
-import { getWorkflowDefinitions } from "../../actions/workflowDefinitionActions";
-import { getProducers } from "../../actions/producerActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/workflowDefinitions/Table';
+import { setDialog } from '../../actions/appActions';
+import { getWorkflowDefinitions } from '../../actions/workflowDefinitionActions';
+import { getProducers } from '../../actions/producerActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const WorkflowDefinitions = ({
   history,
@@ -25,13 +25,13 @@ const WorkflowDefinitions = ({
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
+          className: 'margin-bottom-small',
           onClick: () => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
               getProducers(false);
             }
 
-            setDialog("WorkflowDefinitionNew");
+            setDialog('WorkflowDefinitionNew');
           },
         }}
       >

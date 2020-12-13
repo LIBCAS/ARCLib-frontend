@@ -1,8 +1,8 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   workflowDefinitions: null,
-  workflowDefinition: null
+  workflowDefinition: null,
 };
 
 const reducer = (state = initialState, action) => {

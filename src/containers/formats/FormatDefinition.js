@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/formatDefinition/Detail";
-import { getFormatDefinition } from "../../actions/formatActions";
-import { formatDateTime } from "../../utils";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/formatDefinition/Detail';
+import { getFormatDefinition } from '../../actions/formatActions';
+import { formatDateTime } from '../../utils';
 
 const FormatDefinition = ({
   history,
@@ -20,19 +20,19 @@ const FormatDefinition = ({
   <PageWrapper
     {...{
       breadcrumb: [
-        { label: texts.FORMATS, url: "/formats" },
+        { label: texts.FORMATS, url: '/formats' },
         {
-          label: get(format, "formatName", texts.FORMAT),
-          url: `/formats/${format.formatId}`
+          label: get(format, 'formatName', texts.FORMAT),
+          url: `/formats/${format.formatId}`,
         },
         {
           label: `${texts.FORMAT_DEFINITION}${
-            get(formatDefinition, "formatVersion")
-              ? ` - ${get(formatDefinition, "formatVersion")}`
-              : ""
-          }`
-        }
-      ]
+            get(formatDefinition, 'formatVersion')
+              ? ` - ${get(formatDefinition, 'formatVersion')}`
+              : ''
+          }`,
+        },
+      ],
     }}
   >
     {formatDefinition && (
@@ -43,21 +43,15 @@ const FormatDefinition = ({
           formatDefinition,
           initialValues: {
             ...formatDefinition,
-            created: formatDateTime(get(formatDefinition, "created")),
-            updated: formatDateTime(get(formatDefinition, "updated")),
-            releaseDate: formatDateTime(get(formatDefinition, "releaseDate")),
-            withdrawnDate: formatDateTime(get(formatDefinition, "withdrawnDate")),
-            aliases: get(formatDefinition, "aliases", []).join(", "),
-            formatFamilies: get(formatDefinition, "formatFamilies", []).join(
-              ", "
-            ),
-            formatClassifications: get(
-              formatDefinition,
-              "formatClassifications",
-              []
-            ).join(", ")
+            created: formatDateTime(get(formatDefinition, 'created')),
+            updated: formatDateTime(get(formatDefinition, 'updated')),
+            releaseDate: formatDateTime(get(formatDefinition, 'releaseDate')),
+            withdrawnDate: formatDateTime(get(formatDefinition, 'withdrawnDate')),
+            aliases: get(formatDefinition, 'aliases', []).join(', '),
+            formatFamilies: get(formatDefinition, 'formatFamilies', []).join(', '),
+            formatClassifications: get(formatDefinition, 'formatClassifications', []).join(', '),
           },
-          ...props
+          ...props,
         }}
       />
     )}
@@ -69,7 +63,7 @@ export default compose(
   connect(
     ({ format: { format, formatDefinition } }) => ({
       format,
-      formatDefinition
+      formatDefinition,
     }),
     { getFormatDefinition }
   ),
@@ -78,6 +72,6 @@ export default compose(
       const { match, getFormatDefinition } = this.props;
 
       getFormatDefinition(match.params.id);
-    }
+    },
   })
 )(FormatDefinition);

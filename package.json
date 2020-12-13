@@ -58,6 +58,7 @@
     "build": "yarn build-css && cross-env REACT_APP_PROD_VERSION=false react-scripts build",
     "build-prod": "yarn build-css && cross-env REACT_APP_PROD_VERSION=true react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "pretty": "npx prettier --write \"./src/**/*.js\""
   }
 }

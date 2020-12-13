@@ -1,22 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
 
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
-import { getSavedQueries } from "../../actions/queryActions";
-import { deleteExportRoutine } from "../../actions/exportRoutineActions";
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
+import { getSavedQueries } from '../../actions/queryActions';
+import { deleteExportRoutine } from '../../actions/exportRoutineActions';
 
 const ExportRoutineDelete = ({ handleSubmit, fail, setFail, texts }) => (
   <DialogContainer
     {...{
       title: texts.EXPORT_ROUTINE_DELETE,
-      name: "ExportRoutineDelete",
+      name: 'ExportRoutineDelete',
       handleSubmit,
       submitLabel: texts.SUBMIT,
-      onClose: () => setFail(null)
+      onClose: () => setFail(null),
     }}
   >
     <p>{texts.EXPORT_ROUTINE_DELETE_TEXT}</p>
@@ -25,10 +25,10 @@ const ExportRoutineDelete = ({ handleSubmit, fail, setFail, texts }) => (
 );
 
 export default compose(
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   connect(null, {
     deleteExportRoutine,
-    getSavedQueries
+    getSavedQueries,
   }),
   withRouter,
   withHandlers({
@@ -38,7 +38,7 @@ export default compose(
       getSavedQueries,
       data: { id },
       setFail,
-      texts
+      texts,
     }) => async () => {
       if (await deleteExportRoutine(id)) {
         setFail(null);
@@ -48,9 +48,9 @@ export default compose(
       } else {
         setFail(texts.DELETE_FAILED);
       }
-    }
+    },
   }),
   reduxForm({
-    form: "ExportRoutineDeleteDialogForm"
+    form: 'ExportRoutineDeleteDialogForm',
   })
 )(ExportRoutineDelete);

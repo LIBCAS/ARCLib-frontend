@@ -1,18 +1,18 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle, withState } from "recompose";
-import { withRouter } from "react-router-dom";
-import { get, filter as lodashFilter } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle, withState } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { get, filter as lodashFilter } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import SortOrder from "../../components/filter/SortOrder";
-import Table from "../../components/ingestBatches/Table";
-import Pagination from "../../components/Pagination";
-import SelectField from "../../components/SelectField";
-import { getBatches } from "../../actions/batchActions";
-import { getUsersByParams } from "../../actions/usersActions";
-import { setFilter } from "../../actions/appActions";
-import { filterOperationsTypes } from "../../enums";
+import PageWrapper from '../../components/PageWrapper';
+import SortOrder from '../../components/filter/SortOrder';
+import Table from '../../components/ingestBatches/Table';
+import Pagination from '../../components/Pagination';
+import SelectField from '../../components/SelectField';
+import { getBatches } from '../../actions/batchActions';
+import { getUsersByParams } from '../../actions/usersActions';
+import { setFilter } from '../../actions/appActions';
+import { filterOperationsTypes } from '../../enums';
 
 const enableUrl = `/ingest-batches`;
 
@@ -38,12 +38,12 @@ const IngestBatches = ({
             <SortOrder
               {...{
                 fullWidth: false,
-                className: "margin-bottom-small",
+                className: 'margin-bottom-small',
                 sortOptions: [
-                  { label: texts.UPDATED, value: "updated" },
-                  { label: texts.CREATED, value: "created" },
-                  { label: texts.PRODUCER, value: "producerName" },
-                  { label: texts.STATE, value: "state" },
+                  { label: texts.UPDATED, value: 'updated' },
+                  { label: texts.CREATED, value: 'created' },
+                  { label: texts.PRODUCER, value: 'producerName' },
+                  { label: texts.STATE, value: 'state' },
                 ],
                 handleUpdate: refresh,
               }}
@@ -52,7 +52,7 @@ const IngestBatches = ({
               {...{
                 key: `${selectKey}`,
                 placeholder: texts.FILTER_BY_USER,
-                className: "margin-bottom-small margin-left-very-small",
+                className: 'margin-bottom-small margin-left-very-small',
                 style: { minWidth: 200 },
                 options: users,
                 onChange: (value) => {
@@ -61,14 +61,11 @@ const IngestBatches = ({
                   }
                   setFilter({
                     filter: [
-                      ...lodashFilter(
-                        filter.filter,
-                        (f) => f.field !== "userId"
-                      ),
+                      ...lodashFilter(filter.filter, (f) => f.field !== 'userId'),
                       ...(value
                         ? [
                             {
-                              field: "userId",
+                              field: 'userId',
                               operation: filterOperationsTypes.EQ,
                               value,
                             },
@@ -86,15 +83,15 @@ const IngestBatches = ({
               history,
               language,
               texts,
-              batches: get(batches, "items"),
+              batches: get(batches, 'items'),
               handleUpdate: refresh,
             }}
           />
           <Pagination
             {...{
               handleUpdate: refresh,
-              count: get(batches, "items.length", 0),
-              countAll: get(batches, "count", 0),
+              count: get(batches, 'items.length', 0),
+              countAll: get(batches, 'count', 0),
             }}
           />
         </div>
@@ -107,10 +104,10 @@ const IngestBatches = ({
 
 export default compose(
   withRouter,
-  withState("timeoutId", "setTimeoutId", null),
-  withState("fetching", "setFetching", false),
-  withState("users", "setUsers", null),
-  withState("selectKey", "setSelectKey", false),
+  withState('timeoutId', 'setTimeoutId', null),
+  withState('fetching', 'setFetching', false),
+  withState('users', 'setUsers', null),
+  withState('selectKey', 'setSelectKey', false),
   connect(({ app: { filter }, batch: { batches } }) => ({ filter, batches }), {
     getBatches,
     getUsersByParams,
@@ -118,25 +115,19 @@ export default compose(
   }),
   lifecycle({
     async componentDidMount() {
-      const {
-        getBatches,
-        setTimeoutId,
-        getUsersByParams,
-        setUsers,
-        texts,
-      } = this.props;
+      const { getBatches, setTimeoutId, getUsersByParams, setUsers, texts } = this.props;
 
       this.mounted = true;
 
       setUsers([
         {
-          value: "",
+          value: '',
           label: `-- ${texts.RESET} --`,
         },
         ...((await getUsersByParams({ page: 0, pageSize: 9999 })) || []).map(
           ({ id, fullName }) => ({
             value: id,
-            label: fullName || "Neznámý",
+            label: fullName || 'Neznámý',
           })
         ),
       ]);

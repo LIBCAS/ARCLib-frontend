@@ -1,17 +1,11 @@
-import React from "react";
-import { find } from "lodash";
-import { connect } from "react-redux";
-import {
-  compose,
-  withState,
-  withHandlers,
-  defaultProps,
-  mapProps
-} from "recompose";
-import { Modal } from "react-bootstrap";
+import React from 'react';
+import { find } from 'lodash';
+import { connect } from 'react-redux';
+import { compose, withState, withHandlers, defaultProps, mapProps } from 'recompose';
+import { Modal } from 'react-bootstrap';
 
-import Button from "./Button";
-import DropDown from "./DropDown";
+import Button from './Button';
+import DropDown from './DropDown';
 
 const DialogDropDown = ({
   open,
@@ -33,8 +27,8 @@ const DialogDropDown = ({
       {...{
         show: open,
         onHide: onClose,
-        backdrop: "static",
-        animation: false
+        backdrop: 'static',
+        animation: false,
       }}
     >
       <Modal.Header closeButton>
@@ -47,7 +41,7 @@ const DialogDropDown = ({
               closeDialog: () => {
                 setOpen(false);
                 setItem({});
-              }
+              },
             }}
           />
         )}
@@ -56,7 +50,7 @@ const DialogDropDown = ({
         {closeButton && (
           <Button
             {...{
-              onClick: onClose
+              onClick: onClose,
             }}
           >
             {closeButtonLabel || texts.STORNO}
@@ -66,8 +60,8 @@ const DialogDropDown = ({
           <Button
             {...{
               primary: true,
-              className: "margin-left-small",
-              onClick: () => onSubmit()
+              className: 'margin-left-small',
+              onClick: () => onSubmit(),
             }}
           >
             {submitButtonLabel || texts.SUBMIT}
@@ -77,13 +71,13 @@ const DialogDropDown = ({
     </Modal>
     <DropDown
       {...{
-        onClick: key => {
+        onClick: (key) => {
           const newItem = find(items, ({ value }) => value === key);
           setItem(newItem ? newItem : {});
           setOpen(true);
         },
         items,
-        ...props
+        ...props,
       }}
     />
   </div>
@@ -93,11 +87,11 @@ export default compose(
   defaultProps({
     items: [],
     closeButton: true,
-    submitButton: true
+    submitButton: true,
   }),
   connect(({ app: { texts } }) => ({ texts })),
-  withState("open", "setOpen", false),
-  withState("item", "setItem", {}),
+  withState('open', 'setOpen', false),
+  withState('item', 'setItem', {}),
   withHandlers({
     onSubmit: ({ item: { onClick }, setOpen }) => async () => {
       if (!onClick || (await onClick())) {
@@ -106,7 +100,7 @@ export default compose(
     },
     onClose: ({ setOpen }) => () => {
       setOpen(false);
-    }
+    },
   }),
   mapProps(({ onClick, dispatch, ...rest }) => rest)
 )(DialogDropDown);

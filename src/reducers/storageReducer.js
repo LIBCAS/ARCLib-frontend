@@ -1,11 +1,11 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   archivalStorage: null,
   storages: null,
   storage: null,
   storageSyncStatus: null,
-  storageState: null
+  storageState: null,
 };
 
 const reducer = (state = initialState, action) => {

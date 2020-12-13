@@ -1,10 +1,10 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   batches: null,
   batch: null,
   workflow: null,
-  incidents: null
+  incidents: null,
 };
 
 const reducer = (state = initialState, action) => {

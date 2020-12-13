@@ -1,17 +1,10 @@
-import React from "react";
-import {
-  compose,
-  defaultProps,
-  withProps,
-  withState,
-  withHandlers,
-  mapProps
-} from "recompose";
-import classNames from "classnames";
-import { map, noop, isEmpty, filter } from "lodash";
-import { Tag, Card, Icon } from "antd";
+import React from 'react';
+import { compose, defaultProps, withProps, withState, withHandlers, mapProps } from 'recompose';
+import classNames from 'classnames';
+import { map, noop, isEmpty, filter } from 'lodash';
+import { Tag, Card, Icon } from 'antd';
 
-import TextField from "./TextField";
+import TextField from './TextField';
 
 const TagsField = ({
   className,
@@ -27,53 +20,52 @@ const TagsField = ({
   <div
     {...{
       className: classNames(`tags-field ${className}`, {
-        "card-visible": !textFieldVisible || !isEmpty(value)
-      })
+        'card-visible': !textFieldVisible || !isEmpty(value),
+      }),
     }}
   >
     {(!textFieldVisible || !isEmpty(value)) && (
       <Card
         {...{
           bodyStyle: {
-            padding: "0.5em 0px 0px 0.5em",
-            borderRadius: "4px",
-            border: "1px solid #d9d9d9",
-            overflowX: "auto",
+            padding: '0.5em 0px 0px 0.5em',
+            borderRadius: '4px',
+            border: '1px solid #d9d9d9',
+            overflowX: 'auto',
             borderBottomLeftRadius: textFieldVisible ? 0 : 4,
-            borderBottomRightRadius: textFieldVisible ? 0 : 4
+            borderBottomRightRadius: textFieldVisible ? 0 : 4,
           },
           bordered: false,
-          ...props
+          ...props,
         }}
       />
     )}
-    {!disabled &&
-      textFieldVisible && (
-        <TextField
-          {...{
-            style: {
-              width: "100%",
-              marginRight: "0.5em",
-              marginBottom: "0.5em",
-              borderTopLeftRadius: 0,
-              borderTopRightRadius: 0,
-              ...textFieldStyle
-            },
-            value: textFieldValue,
-            onChange: ({ target: { value } }) => setTextFieldValue(value),
-            onPressEnter: onChange,
-            addonAfter: (
-              <span {...{ onClick: onChange }}>
-                <Icon
-                  {...{
-                    type: "check"
-                  }}
-                />
-              </span>
-            )
-          }}
-        />
-      )}
+    {!disabled && textFieldVisible && (
+      <TextField
+        {...{
+          style: {
+            width: '100%',
+            marginRight: '0.5em',
+            marginBottom: '0.5em',
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
+            ...textFieldStyle,
+          },
+          value: textFieldValue,
+          onChange: ({ target: { value } }) => setTextFieldValue(value),
+          onPressEnter: onChange,
+          addonAfter: (
+            <span {...{ onClick: onChange }}>
+              <Icon
+                {...{
+                  type: 'check',
+                }}
+              />
+            </span>
+          ),
+        }}
+      />
+    )}
   </div>
 );
 
@@ -84,27 +76,27 @@ export default compose(
     onChange: noop,
     newTagStyle: {},
     textFieldStyle: {},
-    tagStyle: {}
+    tagStyle: {},
   }),
-  withState("textFieldValue", "setTextFieldValue", ""),
-  withState("textFieldVisible", "setTextFieldVisible", false),
+  withState('textFieldValue', 'setTextFieldValue', ''),
+  withState('textFieldVisible', 'setTextFieldVisible', false),
   withHandlers({
     onChange: ({
       setTextFieldVisible,
       textFieldValue,
       setTextFieldValue,
       onChange,
-      value
+      value,
     }) => () => {
       setTextFieldVisible(false);
       if (!isEmpty(textFieldValue)) {
         onChange([...value, textFieldValue]);
       }
-      setTextFieldValue("");
+      setTextFieldValue('');
     },
-    onClose: ({ value, onChange }) => tag => {
-      onChange(filter(value, val => val !== tag));
-    }
+    onClose: ({ value, onChange }) => (tag) => {
+      onChange(filter(value, (val) => val !== tag));
+    },
   }),
   withProps(
     ({
@@ -115,7 +107,7 @@ export default compose(
       setTextFieldVisible,
       newTagLabel,
       newTagStyle,
-      tagStyle
+      tagStyle,
     }) => ({
       children: (
         <div>
@@ -124,49 +116,37 @@ export default compose(
               {...{
                 key,
                 style: {
-                  marginRight: "0.5em",
-                  marginBottom: "0.5em",
-                  ...tagStyle
-                }
+                  marginRight: '0.5em',
+                  marginBottom: '0.5em',
+                  ...tagStyle,
+                },
               }}
             >
               {tag}
-              {!disabled && " "}
-              {!disabled && (
-                <Icon {...{ type: "close", onClick: () => onClose(tag) }} />
-              )}
+              {!disabled && ' '}
+              {!disabled && <Icon {...{ type: 'close', onClick: () => onClose(tag) }} />}
             </Tag>
           ))}
-          {!disabled &&
-            !textFieldVisible && (
-              <Tag
-                {...{
-                  onClick: () => setTextFieldVisible(true),
-                  style: {
-                    background: "#fff",
-                    marginRight: "0.5em",
-                    marginBottom: "0.5em",
-                    border: "1px dashed #d9d9d9",
-                    ...newTagStyle
-                  }
-                }}
-              >
-                <Icon {...{ type: "plus" }} />
-                {newTagLabel && ` ${newTagLabel}`}
-              </Tag>
-            )}
+          {!disabled && !textFieldVisible && (
+            <Tag
+              {...{
+                onClick: () => setTextFieldVisible(true),
+                style: {
+                  background: '#fff',
+                  marginRight: '0.5em',
+                  marginBottom: '0.5em',
+                  border: '1px dashed #d9d9d9',
+                  ...newTagStyle,
+                },
+              }}
+            >
+              <Icon {...{ type: 'plus' }} />
+              {newTagLabel && ` ${newTagLabel}`}
+            </Tag>
+          )}
         </div>
-      )
+      ),
     })
   ),
-  mapProps(
-    ({
-      setTextFieldVisible,
-      onClose,
-      tagStyle,
-      newTagStyle,
-      newTagLabel,
-      ...rest
-    }) => rest
-  )
+  mapProps(({ setTextFieldVisible, onClose, tagStyle, newTagStyle, newTagLabel, ...rest }) => rest)
 )(TagsField);

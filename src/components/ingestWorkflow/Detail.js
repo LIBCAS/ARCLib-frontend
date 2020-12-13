@@ -1,24 +1,23 @@
-import React from "react";
-import { get, map } from "lodash";
-import { compose, withProps } from "recompose";
-import { reduxForm, Field } from "redux-form";
+import React from 'react';
+import { get, map } from 'lodash';
+import { compose, withProps } from 'recompose';
+import { reduxForm, Field } from 'redux-form';
 
-import Events from "./Events";
-import ProcessVariables from "./ProcessVariables";
-import Tabs from "../Tabs";
-import Button from "../Button";
-import { TextField } from "../form";
-import { formatDateTime } from "../../utils";
+import Events from './Events';
+import ProcessVariables from './ProcessVariables';
+import Tabs from '../Tabs';
+import Button from '../Button';
+import { TextField } from '../form';
+import { formatDateTime, prettyJSON } from '../../utils';
 
 const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
   <div>
-    <div {...{ className: "margin-bottom-small" }}>
-      <div {...{ className: "margin-bottom-very-small" }}>
+    <div {...{ className: 'margin-bottom-small' }}>
+      <div {...{ className: 'margin-bottom-very-small' }}>
         <span
           {...{
-            className: "link",
-            onClick: () =>
-              history.push(`/ingest-batches/${get(workflow, "batch.id")}`),
+            className: 'link',
+            onClick: () => history.push(`/ingest-batches/${get(workflow, 'batch.id')}`),
           }}
         >
           {texts.SWITCH_TO_BATCH}
@@ -28,11 +27,8 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
         <div>
           <span
             {...{
-              className: "link",
-              onClick: () =>
-                history.push(
-                  `/aip/${get(workflow, "ingestWorkflow.externalId")}`
-                ),
+              className: 'link',
+              onClick: () => history.push(`/aip/${get(workflow, 'ingestWorkflow.externalId')}`),
             }}
           >
             {texts.SWITCH_TO_AIP_DETAIL}
@@ -42,34 +38,27 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
     </div>
     <Tabs
       {...{
-        id: "ingest-workflow-tabs",
+        id: 'ingest-workflow-tabs',
         items: [
           {
             title: texts.INGEST_WORKFLOW,
             content: (
               <div>
-                {get(workflow, "batch.producerProfile") && (
-                  <div {...{ className: "margin-bottom-small" }}>
-                    <span {...{ className: "text-bold" }}>
+                {get(workflow, 'batch.producerProfile') && (
+                  <div {...{ className: 'margin-bottom-small' }}>
+                    <span {...{ className: 'text-bold' }}>
                       {texts.PRODUCER_PROFILE}:&nbsp;&nbsp;
                     </span>
                     <span
                       {...{
-                        className: "link",
+                        className: 'link',
                         onClick: () =>
                           history.push(
-                            `/producer-profiles/${get(
-                              workflow,
-                              "batch.producerProfile.id"
-                            )}`
+                            `/producer-profiles/${get(workflow, 'batch.producerProfile.id')}`
                           ),
                       }}
                     >
-                      {get(
-                        workflow,
-                        "batch.producerProfile.name",
-                        texts.UNKNOWN
-                      )}
+                      {get(workflow, 'batch.producerProfile.name', texts.UNKNOWN)}
                     </span>
                   </div>
                 )}
@@ -79,71 +68,64 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
                       {
                         label: texts.CREATED,
                         component: TextField,
-                        name: "ingestWorkflow.created",
+                        name: 'ingestWorkflow.created',
                         show: true,
                       },
                       {
                         label: texts.UPDATED,
                         component: TextField,
-                        name: "ingestWorkflow.updated",
+                        name: 'ingestWorkflow.updated',
                         show: true,
                       },
                       {
                         label: texts.AUTHORIAL_ID,
                         component: TextField,
-                        name: "ingestWorkflow.sip.authorialPackage.authorialId",
+                        name: 'ingestWorkflow.sip.authorialPackage.authorialId',
                         show: true,
                       },
                       {
                         label: texts.EXTERNAL_ID,
                         component: TextField,
-                        name: "ingestWorkflow.externalId",
+                        name: 'ingestWorkflow.externalId',
                         show: true,
                       },
                       {
                         label: texts.PROCESSING_STATE,
                         component: TextField,
-                        name: "ingestWorkflow.processingState",
+                        name: 'ingestWorkflow.processingState',
                         show: true,
                       },
                       {
                         label: texts.TRANSFER_AREA_PATH,
                         component: TextField,
-                        name: "transferAreaPath",
+                        name: 'transferAreaPath',
                         show: true,
                       },
                       {
                         label: texts.INITIAL_WORKFLOW_CONFIGURATION,
                         component: TextField,
-                        name: "ingestWorkflow.initialConfig",
+                        name: 'ingestWorkflow.initialConfig',
                         show: true,
-                        type: "textarea",
+                        type: 'textarea',
                       },
                       {
                         label: texts.MESSAGE,
                         component: TextField,
-                        name: "ingestWorkflow.failureInfo.msg",
-                        show: get(workflow, "ingestWorkflow.failureInfo.msg"),
+                        name: 'ingestWorkflow.failureInfo.msg',
+                        show: get(workflow, 'ingestWorkflow.failureInfo.msg'),
                       },
                       {
                         label: texts.STACK_TRACE,
                         component: TextField,
-                        name: "ingestWorkflow.failureInfo.stackTrace",
-                        show: get(
-                          workflow,
-                          "ingestWorkflow.failureInfo.stackTrace"
-                        ),
-                        type: "textarea",
+                        name: 'ingestWorkflow.failureInfo.stackTrace',
+                        show: get(workflow, 'ingestWorkflow.failureInfo.stackTrace'),
+                        type: 'textarea',
                       },
                       {
                         label: texts.INGEST_WORKFLOW_FAILURE_TYPE,
                         component: TextField,
-                        name:
-                          "ingestWorkflow.failureInfo.ingestWorkflowFailureType",
-                        show: get(
-                          workflow,
-                          "ingestWorkflow.failureInfo.ingestWorkflowFailureType"
-                        ),
+                        name: 'ingestWorkflow.failureInfo.ingestWorkflowFailureType',
+                        show: get(workflow, 'ingestWorkflow.failureInfo.ingestWorkflowFailureType'),
                       },
                     ],
                     ({ show, ...field }, key) =>
@@ -167,10 +149,10 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
             content: (
               <Events
                 {...{
-                  events: get(workflow, "events"),
+                  events: get(workflow, 'events'),
                   texts,
                   history,
-                  workflowId: get(workflow, "ingestWorkflow.externalId"),
+                  workflowId: get(workflow, 'ingestWorkflow.externalId'),
                 }}
               />
             ),
@@ -180,7 +162,7 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
             content: (
               <ProcessVariables
                 {...{
-                  processVariables: get(workflow, "processVariables"),
+                  processVariables: get(workflow, 'processVariables'),
                   texts,
                 }}
               />
@@ -189,10 +171,8 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
         ],
       }}
     />
-    <div {...{ className: "flex-row flex-right" }}>
-      <Button {...{ onClick: () => history.push("/ingest-batches") }}>
-        {texts.CLOSE}
-      </Button>
+    <div {...{ className: 'flex-row flex-right' }}>
+      <Button {...{ onClick: () => history.push('/ingest-batches') }}>{texts.CLOSE}</Button>
     </div>
   </div>
 );
@@ -200,24 +180,25 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
 export default compose(
   withProps(({ workflow, texts }) => ({
     showSwitchToAipDetail:
-      get(workflow, "ingestWorkflow.processingState") !== "NEW" &&
-      get(workflow, "ingestWorkflow.processingState") !== "PROCESSING" &&
-      get(workflow, "ingestWorkflow.processingState") !== "FAILED",
+      get(workflow, 'ingestWorkflow.processingState') !== 'NEW' &&
+      get(workflow, 'ingestWorkflow.processingState') !== 'PROCESSING' &&
+      get(workflow, 'ingestWorkflow.processingState') !== 'FAILED',
     initialValues: {
       ...workflow,
       ingestWorkflow: {
-        ...get(workflow, "ingestWorkflow"),
-        created: formatDateTime(get(workflow, "ingestWorkflow.created")),
-        updated: formatDateTime(get(workflow, "ingestWorkflow.updated")),
+        ...get(workflow, 'ingestWorkflow'),
+        created: formatDateTime(get(workflow, 'ingestWorkflow.created')),
+        updated: formatDateTime(get(workflow, 'ingestWorkflow.updated')),
         processingState: get(
           texts,
-          get(workflow, "ingestWorkflow.processingState"),
-          get(workflow, "ingestWorkflow.processingState")
+          get(workflow, 'ingestWorkflow.processingState'),
+          get(workflow, 'ingestWorkflow.processingState')
         ),
+        initialConfig: prettyJSON(get(workflow, 'ingestWorkflow.initialConfig', '')),
       },
     },
   })),
   reduxForm({
-    form: "ingest-workflow-detail",
+    form: 'ingest-workflow-detail',
   })
 )(Detail);

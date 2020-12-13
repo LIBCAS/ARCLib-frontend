@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose } from "recompose";
-import { map, find, get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { map, find, get } from 'lodash';
 
-import TextField from "../TextField";
-import { setFilter } from "../../actions/appActions";
+import TextField from '../TextField';
+import { setFilter } from '../../actions/appActions';
 
 const TextEQFilter = ({
   index,
@@ -14,7 +14,7 @@ const TextEQFilter = ({
   placeholder,
   className,
   textClassName,
-  texts
+  texts,
 }) => (
   <div {...{ className }}>
     <TextField
@@ -22,28 +22,22 @@ const TextEQFilter = ({
         id: `text-eq-filter-${index}`,
         onChange: ({ target: { value } }) => {
           setFilter({
-            filter: map(
-              filter.filter,
-              f => (f.index === index ? { ...f, value } : f)
-            )
+            filter: map(filter.filter, (f) => (f.index === index ? { ...f, value } : f)),
           });
           if (handleUpdate) handleUpdate();
         },
         className: textClassName,
-        value: find(get(filter, "filter"), f => f.index === index)
-          ? find(get(filter, "filter"), f => f.index === index).value
+        value: find(get(filter, 'filter'), (f) => f.index === index)
+          ? find(get(filter, 'filter'), (f) => f.index === index).value
           : undefined,
-        placeholder: placeholder || texts.EQ
+        placeholder: placeholder || texts.EQ,
       }}
     />
   </div>
 );
 
 export default compose(
-  connect(
-    ({ app: { filter, language, texts } }) => ({ filter, language, texts }),
-    {
-      setFilter
-    }
-  )
+  connect(({ app: { filter, language, texts } }) => ({ filter, language, texts }), {
+    setFilter,
+  })
 )(TextEQFilter);

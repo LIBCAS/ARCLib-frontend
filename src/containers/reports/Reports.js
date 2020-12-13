@@ -1,15 +1,15 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/reports/Table";
-import { setDialog } from "../../actions/appActions";
-import { getReports } from "../../actions/reportActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/reports/Table';
+import { setDialog } from '../../actions/appActions';
+import { getReports } from '../../actions/reportActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const Reports = ({ history, reports, setDialog, texts, user }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.REPORTS }] }}>
@@ -17,9 +17,9 @@ const Reports = ({ history, reports, setDialog, texts, user }) => (
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
+          className: 'margin-bottom-small',
           onClick: () => {
-            setDialog("ReportNew");
+            setDialog('ReportNew');
           },
         }}
       >

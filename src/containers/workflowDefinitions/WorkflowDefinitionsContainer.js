@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import WorkflowDefinitions from "./WorkflowDefinitions";
-import WorkflowDefinition from "./WorkflowDefinition";
+import WorkflowDefinitions from './WorkflowDefinitions';
+import WorkflowDefinition from './WorkflowDefinition';
 
-const WorkflowDefinitionsContainer = props => {
+const WorkflowDefinitionsContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const WorkflowDefinitionsContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <WorkflowDefinition {...props} />
+          render: () => <WorkflowDefinition {...props} />,
         }}
       />
     );

@@ -1,20 +1,14 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/issueDictionary/Table";
-import { getIssueDictionary } from "../../actions/issueDictionaryActions";
-import { setDialog } from "../../actions/appActions";
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/issueDictionary/Table';
+import { getIssueDictionary } from '../../actions/issueDictionaryActions';
+import { setDialog } from '../../actions/appActions';
 
-const IssueDictionary = ({
-  history,
-  issueDictionary,
-  texts,
-  setDialog,
-  user,
-}) => (
+const IssueDictionary = ({ history, issueDictionary, texts, setDialog, user }) => (
   <PageWrapper
     {...{
       breadcrumb: [{ label: texts.ISSUE_DICTIONARY }],

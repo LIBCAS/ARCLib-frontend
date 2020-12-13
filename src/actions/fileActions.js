@@ -1,7 +1,7 @@
-import fetch from "../utils/fetch";
-import { openErrorDialogIfRequestFailed } from "../actions/appActions";
+import fetch from '../utils/fetch';
+import { openErrorDialogIfRequestFailed } from '../actions/appActions';
 
-export const getFile = id => async dispatch => {
+export const getFile = (id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/files/${id}`);
 
@@ -20,15 +20,15 @@ export const getFile = id => async dispatch => {
   }
 };
 
-export const postFile = file => async dispatch => {
+export const postFile = (file) => async (dispatch) => {
   try {
     const formData = new FormData();
 
-    formData.append("file", file);
+    formData.append('file', file);
 
     const response = await fetch(`/api/files/`, {
-      method: "POST",
-      body: formData
+      method: 'POST',
+      body: formData,
     });
 
     if (response.status === 200) {

@@ -1,12 +1,12 @@
-export * from "./CZ";
-export * from "./EN";
+export * from './CZ';
+export * from './EN';
 
 export const languages = {
-  CZ: "CZ",
-  EN: "EN"
+  CZ: 'CZ',
+  EN: 'EN',
 };
 
 export const languagesLabels = {
   [languages.CZ]: languages.EN,
-  [languages.EN]: languages.CZ
+  [languages.EN]: languages.CZ,
 };

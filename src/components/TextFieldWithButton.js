@@ -1,9 +1,9 @@
-import React from "react";
-import { compose, defaultProps } from "recompose";
-import { noop } from "lodash";
+import React from 'react';
+import { compose, defaultProps } from 'recompose';
+import { noop } from 'lodash';
 
-import Button from "./Button";
-import TextField from "./TextField";
+import Button from './Button';
+import TextField from './TextField';
 
 const TextFieldWithButton = ({
   label,
@@ -14,7 +14,7 @@ const TextFieldWithButton = ({
   buttonWidth,
   onChange,
   id,
-  primary
+  primary,
 }) => (
   <div {...{ className: `flex-row-nowrap flex-centered ${className}` }}>
     <TextField
@@ -24,9 +24,9 @@ const TextFieldWithButton = ({
         style: {
           width: `calc(100% - ${buttonWidth})`,
           borderTopRightRadius: 0,
-          borderBottomRightRadius: 0
+          borderBottomRightRadius: 0,
         },
-        onChange: ({ target: { value } }) => onChange(value)
+        onChange: ({ target: { value } }) => onChange(value),
       }}
     />
     <Button
@@ -37,8 +37,8 @@ const TextFieldWithButton = ({
         style: {
           width: buttonWidth,
           borderTopLeftRadius: 0,
-          borderBottomLeftRadius: 0
-        }
+          borderBottomLeftRadius: 0,
+        },
       }}
     >
       {label}
@@ -48,8 +48,8 @@ const TextFieldWithButton = ({
 
 export default compose(
   defaultProps({
-    id: "text-field-with-button",
+    id: 'text-field-with-button',
     buttonWidth: 100,
-    onChange: noop
+    onChange: noop,
   })
 )(TextFieldWithButton);

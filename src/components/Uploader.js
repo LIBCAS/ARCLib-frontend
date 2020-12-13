@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, defaultProps } from "recompose";
-import { get, noop } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, defaultProps } from 'recompose';
+import { get, noop } from 'lodash';
 
-import DialogButton from "./DialogButton";
-import DropFiles from "./DropFiles";
-import TextField from "./TextField";
-import { setDialog, showLoader } from "../actions/appActions";
-import { postFile } from "../actions/fileActions";
+import DialogButton from './DialogButton';
+import DropFiles from './DropFiles';
+import TextField from './TextField';
+import { setDialog, showLoader } from '../actions/appActions';
+import { postFile } from '../actions/fileActions';
 
 const Uploader = ({
   key,
@@ -18,15 +18,15 @@ const Uploader = ({
   disabled,
   showLoader,
   id,
-  postFile
+  postFile,
 }) => (
-  <div {...{ key, className: "flex-row-nowrap flex-bottom" }}>
+  <div {...{ key, className: 'flex-row-nowrap flex-bottom' }}>
     <TextField
       {...{
         id,
-        defaultValue: get(defaultValue, "name"),
-        value: get(value, "name"),
-        disabled: true
+        defaultValue: get(defaultValue, 'name'),
+        value: get(value, 'name'),
+        disabled: true,
       }}
     />
     {!disabled && (
@@ -40,7 +40,7 @@ const Uploader = ({
             <DropFiles
               {...{
                 label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-                onDrop: async files => {
+                onDrop: async (files) => {
                   const file = files[0];
 
                   if (file) {
@@ -51,11 +51,11 @@ const Uploader = ({
                   }
 
                   closeDialog();
-                }
+                },
               }}
             />
           ),
-          className: "margin-left-mini"
+          className: 'margin-left-mini',
         }}
       />
     )}
@@ -63,10 +63,10 @@ const Uploader = ({
 );
 
 export default compose(
-  defaultProps({ id: "uploader-text-field", onChange: noop }),
+  defaultProps({ id: 'uploader-text-field', onChange: noop }),
   connect(({ app: { texts, dialog } }) => ({ texts, dialog }), {
     setDialog,
     showLoader,
-    postFile
+    postFile,
   })
 )(Uploader);

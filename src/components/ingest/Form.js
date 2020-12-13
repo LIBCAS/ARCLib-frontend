@@ -1,21 +1,18 @@
-import React from "react";
-import { connect } from "react-redux";
-import { reduxForm, Field, formValueSelector } from "redux-form";
-import { compose, withHandlers, withState } from "recompose";
-import { map, get, find } from "lodash";
-import { FormGroup, ControlLabel } from "react-bootstrap";
+import React from 'react';
+import { connect } from 'react-redux';
+import { reduxForm, Field, formValueSelector } from 'redux-form';
+import { compose, withHandlers, withState } from 'recompose';
+import { map, get, find } from 'lodash';
+import { FormGroup, ControlLabel } from 'react-bootstrap';
 
-import TextField from "../TextField";
-import Button from "../Button";
-import ErrorBlock from "../ErrorBlock";
-import { TextField as FormTextField, SelectField, Validation } from "../form";
-import { setDialog } from "../../actions/appActions";
-import { processOne } from "../../actions/batchActions";
-import { hashTypesOptions, hashTypes } from "../../enums";
-import {
-  hasValue,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
+import TextField from '../TextField';
+import Button from '../Button';
+import ErrorBlock from '../ErrorBlock';
+import { TextField as FormTextField, SelectField, Validation } from '../form';
+import { setDialog } from '../../actions/appActions';
+import { processOne } from '../../actions/batchActions';
+import { hashTypesOptions, hashTypes } from '../../enums';
+import { hasValue, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const Form = ({
   handleSubmit,
@@ -30,22 +27,22 @@ const Form = ({
   producerProfileExternalId,
 }) => (
   <form {...{ onSubmit: handleSubmit }}>
-    <div {...{ className: "margin-bottom-small" }}>
+    <div {...{ className: 'margin-bottom-small' }}>
       <div
         {...{
-          className: "flex-row-nowrap responsive-mobile flex-right flex-bottom",
+          className: 'flex-row-nowrap responsive-mobile flex-right flex-bottom',
         }}
       >
         <FormGroup
           {...{
-            controlId: "ingest-form-sip-content-filename",
-            className: "margin-none width-full",
+            controlId: 'ingest-form-sip-content-filename',
+            className: 'margin-none width-full',
           }}
         >
           <ControlLabel>{texts.SIP_CONTENT}</ControlLabel>
           <TextField
             {...{
-              id: "ingest-form-sip-content-filename-text-field",
+              id: 'ingest-form-sip-content-filename-text-field',
               disabled: true,
               value: fileName,
             }}
@@ -54,7 +51,7 @@ const Form = ({
         <Button
           {...{
             onClick: () =>
-              setDialog("DropFilesDialog", {
+              setDialog('DropFilesDialog', {
                 title: texts.UPLOAD_SIP_CONTENT,
                 label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                 multiple: false,
@@ -62,10 +59,10 @@ const Form = ({
                   const file = files[0];
 
                   setSipContent(hasValue(file) ? file : null);
-                  setFileName(get(file, "name", ""));
+                  setFileName(get(file, 'name', ''));
                 },
               }),
-            className: "margin-top-very-small margin-left-mini",
+            className: 'margin-top-very-small margin-left-mini',
             style: { minWidth: 150 },
           }}
         >
@@ -79,22 +76,22 @@ const Form = ({
         {
           component: SelectField,
           label: texts.HASH_TYPE,
-          name: "hashType",
+          name: 'hashType',
           validate: [Validation.required[language]],
           options: hashTypesOptions,
         },
         {
           component: FormTextField,
           label: texts.HASH_VALUE,
-          name: "hashValue",
+          name: 'hashValue',
           validate: [Validation.required[language]],
         },
         {
           component: SelectField,
           label: texts.PRODUCER_PROFILE_NAME,
-          name: "producerProfileExternalId",
+          name: 'producerProfileExternalId',
           validate: [Validation.required[language]],
-          options: map(get(producerProfiles, "items"), (producerProfile) => ({
+          options: map(get(producerProfiles, 'items'), (producerProfile) => ({
             value: producerProfile.externalId,
             label: producerProfile.name,
           })),
@@ -102,14 +99,14 @@ const Form = ({
         {
           component: FormTextField,
           label: texts.WORKFLOW_CONFIGURATION,
-          name: "workflowConfig",
+          name: 'workflowConfig',
           validate: [Validation.required[language], Validation.json[language]],
-          type: "textarea",
+          type: 'textarea',
         },
         {
           component: FormTextField,
           label: texts.TRANSFER_AREA_PATH,
-          name: "transferAreaPath",
+          name: 'transferAreaPath',
         },
       ],
       (field, key) => (
@@ -122,23 +119,23 @@ const Form = ({
           />
           {get(
             find(
-              get(producerProfiles, "items"),
+              get(producerProfiles, 'items'),
               ({ externalId }) => externalId === producerProfileExternalId
             ),
-            "debuggingModeActive"
+            'debuggingModeActive'
           ) &&
-            field.name === "producerProfileExternalId" && (
+            field.name === 'producerProfileExternalId' && (
               <p>{texts.PRODUCER_PROFILE_HAS_DEBUG_MODE_ACTIVE}</p>
             )}
         </div>
       )
     )}
-    <div {...{ className: "flex-row flex-right" }}>
+    <div {...{ className: 'flex-row flex-right' }}>
       <Button
         {...{
           primary: true,
-          type: "submit",
-          className: "margin-left-small",
+          type: 'submit',
+          className: 'margin-left-small',
         }}
       >
         {texts.SUBMIT}
@@ -147,7 +144,7 @@ const Form = ({
   </form>
 );
 
-const selector = formValueSelector("ingest-form");
+const selector = formValueSelector('ingest-form');
 
 export default compose(
   connect(
@@ -160,31 +157,29 @@ export default compose(
     { setDialog, processOne }
   ),
   connect((state) => ({
-    producerProfileExternalId: selector(state, "producerProfileExternalId"),
+    producerProfileExternalId: selector(state, 'producerProfileExternalId'),
   })),
-  withState("sipContent", "setSipContent", null),
-  withState("fileName", "setFileName", ""),
-  withState("fail", "setFail", ""),
+  withState('sipContent', 'setSipContent', null),
+  withState('fileName', 'setFileName', ''),
+  withState('fail', 'setFail', ''),
   withHandlers({
-    onSubmit: ({ sipContent, texts, processOne, setFail, setDialog }) => async (
-      formData
-    ) => {
+    onSubmit: ({ sipContent, texts, processOne, setFail, setDialog }) => async (formData) => {
       if (hasValue(sipContent)) {
         setFail(null);
 
         const response = await processOne({
           ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-            "hashValue",
-            "workflowConfig",
-            "transferAreaPath",
+            'hashValue',
+            'workflowConfig',
+            'transferAreaPath',
           ]),
           sipContent,
         });
 
         if (response) {
-          setDialog("Info", {
+          setDialog('Info', {
             content: (
-              <h3 {...{ className: "color-green" }}>
+              <h3 {...{ className: 'color-green' }}>
                 <strong>{texts.SIP_PROCESS_START_SUCCESSFULL}</strong>
               </h3>
             ),
@@ -197,7 +192,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ingest-form",
+    form: 'ingest-form',
     enableReinitialize: true,
   })
 )(Form);

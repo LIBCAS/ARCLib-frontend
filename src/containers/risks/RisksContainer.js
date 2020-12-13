@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import Risks from "./Risks";
-import Risk from "./Risk";
+import Risks from './Risks';
+import Risk from './Risk';
 
-const RisksContainer = props => {
+const RisksContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const RisksContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <Risk {...props} />
+          render: () => <Risk {...props} />,
         }}
       />
     );

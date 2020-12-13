@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getValidationProfiles = () => async dispatch => {
+export const getValidationProfiles = () => async (dispatch) => {
   dispatch({
     type: c.VALIDATION_PROFILE,
     payload: {
-      validationProfiles: null
-    }
+      validationProfiles: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/validation_profile/list_dtos");
+    const response = await fetch('/api/validation_profile/list_dtos');
 
     if (response.status === 200) {
       const validationProfiles = await response.json();
@@ -19,8 +19,8 @@ export const getValidationProfiles = () => async dispatch => {
       dispatch({
         type: c.VALIDATION_PROFILE,
         payload: {
-          validationProfiles
-        }
+          validationProfiles,
+        },
       });
 
       return validationProfiles;
@@ -35,14 +35,14 @@ export const getValidationProfiles = () => async dispatch => {
   }
 };
 
-export const getValidationProfile = id => async dispatch => {
+export const getValidationProfile = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.VALIDATION_PROFILE,
     payload: {
-      validationProfile: null
-    }
+      validationProfile: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getValidationProfile = id => async dispatch => {
       dispatch({
         type: c.VALIDATION_PROFILE,
         payload: {
-          validationProfile
-        }
+          validationProfile,
+        },
       });
 
       dispatch(showLoader(false));
@@ -76,15 +76,15 @@ export const getValidationProfile = id => async dispatch => {
 export const clearValidationProfile = () => ({
   type: c.VALIDATION_PROFILE,
   payload: {
-    validationProfile: null
-  }
+    validationProfile: null,
+  },
 });
 
-export const deleteValidationProfile = id => async dispatch => {
+export const deleteValidationProfile = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/validation_profile/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -98,15 +98,15 @@ export const deleteValidationProfile = id => async dispatch => {
   }
 };
 
-export const saveValidationProfile = body => async dispatch => {
+export const saveValidationProfile = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/validation_profile/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -115,8 +115,8 @@ export const saveValidationProfile = body => async dispatch => {
       dispatch({
         type: c.VALIDATION_PROFILE,
         payload: {
-          validationProfile
-        }
+          validationProfile,
+        },
       });
     }
 

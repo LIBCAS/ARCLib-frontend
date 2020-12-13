@@ -1,24 +1,24 @@
-import React from "react";
-import { compose, withHandlers } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { compose, withHandlers } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
-import Table from "../indexSearch/Table";
+import DialogContainer from './DialogContainer';
+import Table from '../indexSearch/Table';
 
 const SearchQueryDetail = ({ handleSubmit, data, history, texts }) => (
   <DialogContainer
     {...{
       title: texts.SEARCH_QUERY_RESULTS,
-      name: "SearchQueryDetail",
+      name: 'SearchQueryDetail',
       handleSubmit,
       submitLabel: texts.CLOSE,
       noCloseButton: true,
-      large: true
+      large: true,
     }}
   >
-    <Table {...{ history, items: get(data, "items"), texts }} />
+    <Table {...{ history, items: get(data, 'items'), texts }} />
   </DialogContainer>
 );
 
@@ -27,9 +27,9 @@ export default compose(
   withHandlers({
     onSubmit: ({ closeDialog }) => async () => {
       closeDialog();
-    }
+    },
   }),
   reduxForm({
-    form: "SearchQueryDetailDialogForm"
+    form: 'SearchQueryDetailDialogForm',
   })
 )(SearchQueryDetail);

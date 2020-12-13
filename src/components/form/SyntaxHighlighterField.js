@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { FormGroup } from "react-bootstrap";
-import { compose, defaultProps, withState } from "recompose";
+import React from 'react';
+import { connect } from 'react-redux';
+import { FormGroup } from 'react-bootstrap';
+import { compose, defaultProps, withState } from 'recompose';
 
-import Button from "../Button";
-import SyntaxHighlighter from "../SyntaxHighlighter";
-import ErrorBlock from "../ErrorBlock";
-import UploadTextButton from "../UploadTextButton";
-import { downloadFile } from "../../utils";
+import Button from '../Button';
+import SyntaxHighlighter from '../SyntaxHighlighter';
+import ErrorBlock from '../ErrorBlock';
+import UploadTextButton from '../UploadTextButton';
+import { downloadFile } from '../../utils';
 
 const FormSyntaxHighlighterField = ({
   meta: { touched, error },
@@ -23,12 +23,12 @@ const FormSyntaxHighlighterField = ({
   allowDownload,
 }) => (
   <FormGroup {...{ className, controlId: id }}>
-    <div {...{ className: "margin-bottom-small" }}>
+    <div {...{ className: 'margin-bottom-small' }}>
       <SyntaxHighlighter
         {...{
           key: stateKey,
           lineNumbers: true,
-          mode: "xml",
+          mode: 'xml',
           value,
           onChange,
           disabled,
@@ -36,7 +36,7 @@ const FormSyntaxHighlighterField = ({
         }}
       />
       {touched && <ErrorBlock {...{ label: error }} />}
-      <div {...{ className: "flex-row flex-right" }}>
+      <div {...{ className: 'flex-row flex-right' }}>
         {!disabled && (
           <UploadTextButton
             {...{
@@ -45,15 +45,15 @@ const FormSyntaxHighlighterField = ({
                 onChange(value);
                 setTimeout(() => setStateKey(!stateKey), 1);
               },
-              className: "margin-top-very-small",
+              className: 'margin-top-very-small',
             }}
           />
         )}
         {allowDownload && (
           <Button
             {...{
-              onClick: () => downloadFile(value, `${fileName}.xml`, "text/xml"),
-              className: "margin-top-very-small margin-left-small",
+              onClick: () => downloadFile(value, `${fileName}.xml`, 'text/xml'),
+              className: 'margin-top-very-small margin-left-small',
             }}
           >
             {texts.DOWNLOAD}
@@ -66,10 +66,10 @@ const FormSyntaxHighlighterField = ({
 
 export default compose(
   defaultProps({
-    id: "syntax-highlighter-field",
+    id: 'syntax-highlighter-field',
     allowDownload: true,
-    fileName: "xml_file",
+    fileName: 'xml_file',
   }),
   connect(({ app: { texts } }) => ({ texts })),
-  withState("stateKey", "setStateKey", true)
+  withState('stateKey', 'setStateKey', true)
 )(FormSyntaxHighlighterField);

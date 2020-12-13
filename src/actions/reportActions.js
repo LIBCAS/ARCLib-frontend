@@ -1,9 +1,9 @@
-import { toLower } from "lodash";
+import { toLower } from 'lodash';
 
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams, downloadBlob } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams, downloadBlob } from '../utils';
 
 export const getReports = (withFilter = true) => async (dispatch, getState) => {
   dispatch({
@@ -14,7 +14,7 @@ export const getReports = (withFilter = true) => async (dispatch, getState) => {
   });
 
   try {
-    const response = await fetch("/api/report", {
+    const response = await fetch('/api/report', {
       params: withFilter ? createFilterPagerParams(getState) : undefined,
     });
 
@@ -82,7 +82,7 @@ export const deleteReport = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/report/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -100,9 +100,9 @@ export const saveReport = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/report/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(body),
     });

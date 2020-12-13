@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import SipProfiles from "./SipProfiles";
-import SipProfile from "./SipProfile";
+import SipProfiles from './SipProfiles';
+import SipProfile from './SipProfile';
 
-const SipProfilesContainer = props => {
+const SipProfilesContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const SipProfilesContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <SipProfile {...props} />
+          render: () => <SipProfile {...props} />,
         }}
       />
     );

@@ -1,11 +1,11 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   format: null,
   formats: null,
   formatDefinition: null,
   formatDefinitions: null,
-  formatOccurrences: null
+  formatOccurrences: null,
 };
 
 const reducer = (state = initialState, action) => {

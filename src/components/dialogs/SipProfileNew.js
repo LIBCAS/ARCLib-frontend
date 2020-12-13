@@ -1,39 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map, get, find } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map, get, find } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import {
-  TextField,
-  SelectField,
-  SyntaxHighlighterField,
-  Validation,
-} from "../form";
-import {
-  saveSipProfile,
-  getSipProfiles,
-} from "../../actions/sipProfileActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission, packageTypeOptions } from "../../enums";
+import DialogContainer from './DialogContainer';
+import { TextField, SelectField, SyntaxHighlighterField, Validation } from '../form';
+import { saveSipProfile, getSipProfiles } from '../../actions/sipProfileActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { Permission, packageTypeOptions } from '../../enums';
 
-const SipProfileNew = ({ 
-  producersEnabled,
-  user,
-  handleSubmit, 
-  texts, 
-  language, 
-  producers }) => (
+const SipProfileNew = ({ producersEnabled, user, handleSubmit, texts, language, producers }) => (
   <DialogContainer
     {...{
       title: texts.SIP_PROFILE_NEW,
-      name: "SipProfileNew",
+      name: 'SipProfileNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       large: true,
@@ -45,13 +28,13 @@ const SipProfileNew = ({
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.PRODUCER,
-            name: "producer",
+            name: 'producer',
             validate: [Validation.required[language]],
             options: producersEnabled
               ? map(producers, (producer) => ({
@@ -60,8 +43,8 @@ const SipProfileNew = ({
                 }))
               : [
                   {
-                    label: get(user, "producer.name"),
-                    value: get(user, "producer.id"),
+                    label: get(user, 'producer.name'),
+                    value: get(user, 'producer.id'),
                   },
                 ],
             disabled: !producersEnabled,
@@ -69,44 +52,39 @@ const SipProfileNew = ({
           {
             component: SyntaxHighlighterField,
             label: texts.XSL_TRANSFORMATION,
-            name: "xsl",
+            name: 'xsl',
             validate: [Validation.required[language]],
             allowDownload: false,
           },
           {
             component: TextField,
             label: texts.PATH_TO_XML,
-            name: "pathToSipId.pathToXmlGlobPattern",
+            name: 'pathToSipId.pathToXmlRegex',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.XPATH_TO_ID,
-            name: "pathToSipId.xpathToId",
+            name: 'pathToSipId.xpathToId',
             validate: [Validation.required[language]],
           },
           {
             component: TextField,
             label: texts.SIP_METADATA_PATH,
-            name: "sipMetadataPathGlobPattern",
+            name: 'sipMetadataPathRegex',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.SIP_PACKAGE_TYPE,
-            name: "packageType",
+            name: 'packageType',
             validate: [Validation.required[language]],
             options: packageTypeOptions,
           },
         ],
-        ({ text, ...field }, key) =>
-          text ? (
-            <p {...{ key }}>{text}</p>
-          ) : (
-            <Field
-              {...{ key, id: `sip-profile-new-${field.name}`, ...field }}
-            />
-          )
+        (field, key) => (
+          <Field {...{ key, id: `sip-profile-new-${field.name}`, ...field }} />
+        )
       )}
     </form>
   </DialogContainer>
@@ -116,10 +94,6 @@ export default compose(
   connect(
     ({ producer: { producers } }) => ({
       producers,
-      initialValues: {
-        packageType: get(packageTypeOptions, "[0].value"),
-        producer: get(producers, "[0].id"),
-      },
     }),
     {
       saveSipProfile,
@@ -127,22 +101,17 @@ export default compose(
       reset,
     }
   ),
-  withProps({
-    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
-  }),
-  withProps(
-    ({
+  withProps(({ user, producers }) => {
+    const producersEnabled = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
+
+    return {
       producersEnabled,
-      user,
-      producers,
-    }) => ({
       initialValues: {
-        producer: producersEnabled
-          ? get(producers, "[0].id")
-          : get(user, "producer.name")
+        packageType: get(packageTypeOptions, '[0].value'),
+        producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.id'),
       },
-    })
-  ),
+    };
+  }),
   withRouter,
   withHandlers({
     onSubmit: ({
@@ -158,20 +127,20 @@ export default compose(
       const response = await saveSipProfile({
         id: uuidv1(),
         ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-          "name",
-          "pathToSipId.pathToXmlGlobPattern",
-          "pathToSipId.xpathToId",
-          "sipMetadataPathGlobPattern",
+          'name',
+          'pathToSipId.pathToXmlRegex',
+          'pathToSipId.xpathToId',
+          'sipMetadataPathRegex',
         ]),
         editable: true,
         producer: producersEnabled
-        ? find(producers, (item) => item.id === producer)
-        : get(user, "producer"),
+          ? find(producers, (item) => item.id === producer)
+          : get(user, 'producer'),
       });
 
       if (response === 200) {
         getSipProfiles();
-        reset("SipProfileNewDialogForm");
+        reset('SipProfileNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError(
@@ -185,7 +154,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "SipProfileNewDialogForm",
+    form: 'SipProfileNewDialogForm',
     enableReinitialize: true,
   })
 )(SipProfileNew);

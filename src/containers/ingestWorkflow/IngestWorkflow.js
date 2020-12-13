@@ -1,13 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle, withState } from "recompose";
-import { withRouter, Route } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle, withState } from 'recompose';
+import { withRouter, Route } from 'react-router-dom';
+import { get } from 'lodash';
 
-import PageWrapper from "../../components/PageWrapper";
-import Detail from "../../components/ingestWorkflow/Detail";
-import Event from "./Event";
-import { getWorkflow } from "../../actions/workflowActions";
+import PageWrapper from '../../components/PageWrapper';
+import Detail from '../../components/ingestWorkflow/Detail';
+import Event from './Event';
+import { getWorkflow } from '../../actions/workflowActions';
 
 const IngestWorkflow = ({ workflow, texts, match, location, ...props }) =>
   /^\/ingest-workflows\/[^/]+\/events\/.+/.test(location.pathname) ? (
@@ -23,9 +23,9 @@ const IngestWorkflow = ({ workflow, texts, match, location, ...props }) =>
         breadcrumb: [
           {
             label: `${texts.INGEST_WORKFLOW}${
-              get(workflow, "ingestWorkflow.externalId")
-                ? ` ${get(workflow, "ingestWorkflow.externalId")}`
-                : ""
+              get(workflow, 'ingestWorkflow.externalId')
+                ? ` ${get(workflow, 'ingestWorkflow.externalId')}`
+                : ''
             }`,
           },
         ],
@@ -40,7 +40,7 @@ export default compose(
   connect(({ workflow: { workflow } }) => ({ workflow }), {
     getWorkflow,
   }),
-  withState("timeoutId", "setTimeoutId", null),
+  withState('timeoutId', 'setTimeoutId', null),
   lifecycle({
     async componentDidMount() {
       const { match, getWorkflow, setTimeoutId } = this.props;

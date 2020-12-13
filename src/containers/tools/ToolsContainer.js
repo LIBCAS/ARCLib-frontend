@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import Tools from "./Tools";
-import Tool from "./Tool";
+import Tools from './Tools';
+import Tool from './Tool';
 
-const ToolsContainer = props => {
+const ToolsContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const ToolsContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <Tool {...props} />
+          render: () => <Tool {...props} />,
         }}
       />
     );

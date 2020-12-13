@@ -1,28 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState } from "recompose";
-import { reduxForm } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { get } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState } from 'recompose';
+import { reduxForm } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
 import {
   acknowledgeDeletionRequest,
   getDeletionRequests,
-} from "../../actions/deletionRequestActions";
+} from '../../actions/deletionRequestActions';
 
-const AcknowledgeDeletionRequest = ({
-  handleSubmit,
-  data,
-  fail,
-  setFail,
-  texts,
-}) => (
+const AcknowledgeDeletionRequest = ({ handleSubmit, data, fail, setFail, texts }) => (
   <DialogContainer
     {...{
       title: texts.ACKNOWLEDGE_DELETION_REQUEST,
-      name: "AcknowledgeDeletionRequest",
+      name: 'AcknowledgeDeletionRequest',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       onClose: () => setFail(null),
@@ -30,14 +24,14 @@ const AcknowledgeDeletionRequest = ({
   >
     <p>
       {texts.ACKNOWLEDGE_DELETION_REQUEST_TEXT}
-      {get(data, "aipId") ? <strong> {get(data, "aipId")}</strong> : ""}?
+      {get(data, 'aipId') ? <strong> {get(data, 'aipId')}</strong> : ''}?
     </p>
     <ErrorBlock {...{ label: fail }} />
   </DialogContainer>
 );
 
 export default compose(
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   connect(null, {
     acknowledgeDeletionRequest,
     getDeletionRequests,
@@ -62,6 +56,6 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "AcknowledgeDeletionRequestDialogForm",
+    form: 'AcknowledgeDeletionRequestDialogForm',
   })
 )(AcknowledgeDeletionRequest);

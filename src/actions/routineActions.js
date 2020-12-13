@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getRoutines = () => async dispatch => {
+export const getRoutines = () => async (dispatch) => {
   dispatch({
     type: c.ROUTINE,
     payload: {
-      routines: null
-    }
+      routines: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/ingest_routine/list_dtos");
+    const response = await fetch('/api/ingest_routine/list_dtos');
 
     if (response.status === 200) {
       const routines = await response.json();
@@ -19,8 +19,8 @@ export const getRoutines = () => async dispatch => {
       dispatch({
         type: c.ROUTINE,
         payload: {
-          routines
-        }
+          routines,
+        },
       });
 
       return routines;
@@ -35,14 +35,14 @@ export const getRoutines = () => async dispatch => {
   }
 };
 
-export const getRoutine = id => async dispatch => {
+export const getRoutine = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.ROUTINE,
     payload: {
-      routine: null
-    }
+      routine: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getRoutine = id => async dispatch => {
       dispatch({
         type: c.ROUTINE,
         payload: {
-          routine
-        }
+          routine,
+        },
       });
 
       dispatch(showLoader(false));
@@ -73,11 +73,11 @@ export const getRoutine = id => async dispatch => {
   }
 };
 
-export const deleteRoutine = id => async dispatch => {
+export const deleteRoutine = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/ingest_routine/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -91,15 +91,15 @@ export const deleteRoutine = id => async dispatch => {
   }
 };
 
-export const saveRoutine = body => async dispatch => {
+export const saveRoutine = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/ingest_routine/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -108,8 +108,8 @@ export const saveRoutine = body => async dispatch => {
       dispatch({
         type: c.ROUTINE,
         payload: {
-          routine
-        }
+          routine,
+        },
       });
     }
 

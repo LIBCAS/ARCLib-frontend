@@ -1,35 +1,36 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withState, withProps } from "recompose";
-import { reduxForm, Field, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { find, get, map } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withState, withProps } from 'recompose';
+import { reduxForm, Field, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { find, get, map } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import ErrorBlock from "../ErrorBlock";
-import { TextField, SelectField, Validation } from "../form";
-import { saveUser, getUsers } from "../../actions/usersActions";
+import DialogContainer from './DialogContainer';
+import ErrorBlock from '../ErrorBlock';
+import { TextField, SelectField, Validation } from '../form';
+import { saveUser, getUsers } from '../../actions/usersActions';
 import {
   hasPermission,
   isRoleDisabled,
   removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission } from "../../enums";
+} from '../../utils';
+import { Permission } from '../../enums';
 
-const UserNew = ({ 
+const UserNew = ({
   producersEnabled,
   user,
-  handleSubmit, 
-  producers, 
-  roles, 
-  texts, 
-  language, 
-  fail }) => (
+  handleSubmit,
+  producers,
+  roles,
+  texts,
+  language,
+  fail,
+}) => (
   <DialogContainer
     {...{
       title: texts.USER_NEW,
-      name: "UserNew",
+      name: 'UserNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -40,13 +41,13 @@ const UserNew = ({
           {
             component: TextField,
             label: texts.USERNAME,
-            name: "username",
+            name: 'username',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.PRODUCER,
-            name: "producer",
+            name: 'producer',
             validate: [Validation.required[language]],
             options: producersEnabled
               ? map(producers, (producer) => ({
@@ -55,8 +56,8 @@ const UserNew = ({
                 }))
               : [
                   {
-                    label: get(user, "producer.name"),
-                    value: get(user, "producer.id"),
+                    label: get(user, 'producer.name'),
+                    value: get(user, 'producer.id'),
                   },
                 ],
             disabled: !producersEnabled,
@@ -64,21 +65,18 @@ const UserNew = ({
           {
             component: SelectField,
             label: texts.ROLES,
-            name: "roles",
+            name: 'roles',
             options: map(roles, (role) => ({
               value: role.id,
-              label: role.description || role.name || "",
+              label: role.description || role.name || '',
               disabled: isRoleDisabled(role),
             })),
             isMultiple: true,
           },
         ],
-        ({ text, ...field }, key) =>
-          text ? (
-            <p {...{ key }}>{text}</p>
-          ) : (
-            <Field {...{ key, id: `user-new-${field.name}`, ...field }} />
-          )
+        (field, key) => (
+          <Field {...{ key, id: `user-new-${field.name}`, ...field }} />
+        )
       )}
     </form>
     <ErrorBlock {...{ label: fail }} />
@@ -90,9 +88,6 @@ export default compose(
     ({ producer: { producers }, roles: { roles } }) => ({
       producers,
       roles,
-      initialValues: {
-        producer: get(producers, "[0].id"),
-      },
     }),
     {
       saveUser,
@@ -100,24 +95,18 @@ export default compose(
       reset,
     }
   ),
-  withProps({
-    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
-  }),
-  withProps(
-    ({
+  withProps(({ user, producers }) => {
+    const producersEnabled = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
+
+    return {
       producersEnabled,
-      user,
-      producers,
-    }) => ({
       initialValues: {
-        producer: producersEnabled
-          ? get(producers, "[0].id")
-          : get(user, "producer.name")
+        producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.id'),
       },
-    })
-  ),
+    };
+  }),
   withRouter,
-  withState("fail", "setFail", null),
+  withState('fail', 'setFail', null),
   withHandlers({
     onSubmit: ({
       producersEnabled,
@@ -134,17 +123,15 @@ export default compose(
       if (
         await saveUser({
           id: uuidv1(),
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["username"]),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['username']),
           producer: producersEnabled
-          ? find(producers, (item) => item.id === producer)
-          : get(user, "producer"),
-          roles: (formData.roles || []).map((id) =>
-            find(roles, (r) => r.id === id)
-          ),
+            ? find(producers, (item) => item.id === producer)
+            : get(user, 'producer'),
+          roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
         })
       ) {
         getUsers();
-        reset("UserNewDialogForm");
+        reset('UserNewDialogForm');
         closeDialog();
         setFail(null);
       } else {
@@ -153,7 +140,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "UserNewDialogForm",
+    form: 'UserNewDialogForm',
     enableReinitialize: true,
   })
 )(UserNew);

@@ -1,16 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { map, isEmpty } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { map, isEmpty } from 'lodash';
 
-import Table from "./Table";
-import TableColFilter from "../filter/TableColFilter";
-import { setFilter } from "../../actions/appActions";
+import Table from './Table';
+import TableColFilter from '../filter/TableColFilter';
+import { setFilter } from '../../actions/appActions';
 
 const TableWithFilter = ({ filterItems, items, className, ...props }) => (
   <Table
     {...{
-      className: `table-with-filter${className ? ` ${className}` : ""}`,
+      className: `table-with-filter${className ? ` ${className}` : ''}`,
       items: [
         {
           items: map(filterItems, (filterItem, index) => ({
@@ -18,19 +18,19 @@ const TableWithFilter = ({ filterItems, items, className, ...props }) => (
               <TableColFilter
                 {...{
                   index,
-                  ...filterItem
+                  ...filterItem,
                 }}
               />
             ) : (
-              ""
-            )
+              ''
+            ),
           })),
-          className: "no-hover"
+          className: 'no-hover',
         },
-        ...items
+        ...items,
       ],
       withFilter: true,
-      ...props
+      ...props,
     }}
   />
 );
@@ -42,8 +42,8 @@ export default compose(
       const { setFilter } = this.props;
 
       setFilter({
-        filter: []
+        filter: [],
       });
-    }
+    },
   })
 )(TableWithFilter);

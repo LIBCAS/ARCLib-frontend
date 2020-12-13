@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getSipProfiles = () => async dispatch => {
+export const getSipProfiles = () => async (dispatch) => {
   dispatch({
     type: c.SIP_PROFILE,
     payload: {
-      sipProfiles: null
-    }
+      sipProfiles: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/sip_profile/list_dtos");
+    const response = await fetch('/api/sip_profile/list_dtos');
 
     if (response.status === 200) {
       const sipProfiles = await response.json();
@@ -19,8 +19,8 @@ export const getSipProfiles = () => async dispatch => {
       dispatch({
         type: c.SIP_PROFILE,
         payload: {
-          sipProfiles
-        }
+          sipProfiles,
+        },
       });
 
       return sipProfiles;
@@ -35,14 +35,14 @@ export const getSipProfiles = () => async dispatch => {
   }
 };
 
-export const getSipProfile = id => async dispatch => {
+export const getSipProfile = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.SIP_PROFILE,
     payload: {
-      sipProfile: null
-    }
+      sipProfile: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getSipProfile = id => async dispatch => {
       dispatch({
         type: c.SIP_PROFILE,
         payload: {
-          sipProfile
-        }
+          sipProfile,
+        },
       });
 
       dispatch(showLoader(false));
@@ -76,15 +76,15 @@ export const getSipProfile = id => async dispatch => {
 export const clearSipProfile = () => ({
   type: c.SIP_PROFILE,
   payload: {
-    sipProfile: null
-  }
+    sipProfile: null,
+  },
 });
 
-export const deleteSipProfile = id => async dispatch => {
+export const deleteSipProfile = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/sip_profile/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -98,15 +98,15 @@ export const deleteSipProfile = id => async dispatch => {
   }
 };
 
-export const saveSipProfile = body => async dispatch => {
+export const saveSipProfile = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/sip_profile/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -115,8 +115,8 @@ export const saveSipProfile = body => async dispatch => {
       dispatch({
         type: c.SIP_PROFILE,
         payload: {
-          sipProfile
-        }
+          sipProfile,
+        },
       });
     }
 

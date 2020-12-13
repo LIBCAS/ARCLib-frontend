@@ -1,24 +1,18 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers, withProps } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { find, map, get, isEmpty } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers, withProps } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { find, map, get, isEmpty } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import Button from "../Button";
-import DialogContainer from "./DialogContainer";
-import { TextField, SelectField, Checkbox, Validation } from "../form";
+import Button from '../Button';
+import DialogContainer from './DialogContainer';
+import { TextField, SelectField, Checkbox, Validation } from '../form';
 
-import {
-  newProducerProfile,
-  getProducerProfiles,
-} from "../../actions/producerProfileActions";
-import {
-  hasPermission,
-  removeStartEndWhiteSpaceInSelectedFields,
-} from "../../utils";
-import { Permission } from "../../enums";
+import { newProducerProfile, getProducerProfiles } from '../../actions/producerProfileActions';
+import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
+import { Permission } from '../../enums';
 
 const ProducerProfileNew = ({
   producersEnabled,
@@ -36,7 +30,7 @@ const ProducerProfileNew = ({
   <DialogContainer
     {...{
       title: texts.PRODUCER_PROFILE_NEW,
-      name: "ProducerProfileNew",
+      name: 'ProducerProfileNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
     }}
@@ -47,13 +41,13 @@ const ProducerProfileNew = ({
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: SelectField,
             label: texts.PRODUCER,
-            name: "producer",
+            name: 'producer',
             validate: [Validation.required[language]],
             options: producersEnabled
               ? map(producers, (producer) => ({
@@ -62,8 +56,8 @@ const ProducerProfileNew = ({
                 }))
               : [
                   {
-                    label: get(user, "producer.name"),
-                    value: get(user, "producer.id"),
+                    label: get(user, 'producer.name'),
+                    value: get(user, 'producer.id'),
                   },
                 ],
             disabled: !producersEnabled,
@@ -71,7 +65,7 @@ const ProducerProfileNew = ({
           {
             component: SelectField,
             label: texts.SIP_PROFILE,
-            name: "sipProfile",
+            name: 'sipProfile',
             validate: [Validation.required[language]],
             options: map(sipProfiles, (sipProfile) => ({
               label: sipProfile.name,
@@ -81,7 +75,7 @@ const ProducerProfileNew = ({
           {
             component: SelectField,
             label: texts.VALIDATION_PROFILE,
-            name: "validationProfile",
+            name: 'validationProfile',
             validate: [Validation.required[language]],
             options: map(validationProfiles, (validationProfile) => ({
               label: validationProfile.name,
@@ -91,7 +85,7 @@ const ProducerProfileNew = ({
           {
             component: SelectField,
             label: texts.WORKFLOW_DEFINITION,
-            name: "workflowDefinition",
+            name: 'workflowDefinition',
             validate: [Validation.required[language]],
             options: map(workflowDefinitions, (workflowDefinition) => ({
               label: workflowDefinition.name,
@@ -101,17 +95,14 @@ const ProducerProfileNew = ({
           {
             component: TextField,
             label: texts.WORKFLOW_CONFIGURATION,
-            name: "workflowConfig",
-            validate: [
-              Validation.required[language],
-              Validation.json[language],
-            ],
-            type: "textarea",
+            name: 'workflowConfig',
+            validate: [Validation.required[language], Validation.json[language]],
+            type: 'textarea',
             buttons: [
               {
                 label: texts.UPLOAD_WORKFLOW_CONFIGURATION,
                 onClick: () =>
-                  setDialog("DropFilesDialog", {
+                  setDialog('DropFilesDialog', {
                     title: texts.UPLOAD_WORKFLOW_CONFIGURATION,
                     label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
                     multiple: false,
@@ -126,11 +117,11 @@ const ProducerProfileNew = ({
                         reader.onloadend = () => {
                           const config = reader.result;
 
-                          change("workflowConfig", config);
+                          change('workflowConfig', config);
                         };
                       }
                     },
-                    afterClose: () => setDialog("ProducerProfileNew"),
+                    afterClose: () => setDialog('ProducerProfileNew'),
                   }),
               },
             ],
@@ -138,16 +129,14 @@ const ProducerProfileNew = ({
           {
             component: Checkbox,
             label: texts.DEBUGGING_MODE_ACTIVE,
-            name: "debuggingModeActive",
+            name: 'debuggingModeActive',
           },
         ],
         ({ buttons, name, ...field }, key) => (
           <div {...{ key }}>
-            <Field
-              {...{ id: `producer-profile-new-${name}`, name, ...field }}
-            />
+            <Field {...{ id: `producer-profile-new-${name}`, name, ...field }} />
             {!isEmpty(buttons) && (
-              <div {...{ className: "flex-row flex-right" }}>
+              <div {...{ className: 'flex-row flex-right' }}>
                 {map(buttons, ({ label, ...props }, key) => (
                   <Button {...{ key, ...props }}>{label}</Button>
                 ))}
@@ -194,12 +183,10 @@ export default compose(
       workflowDefinitions,
     }) => ({
       initialValues: {
-        producer: producersEnabled
-          ? get(producers, "[0].id")
-          : get(user, "producer.name"),
-        sipProfile: get(sipProfiles, "[0].id"),
-        validationProfile: get(validationProfiles, "[0].id"),
-        workflowDefinition: get(workflowDefinitions, "[0].id"),
+        producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.name'),
+        sipProfile: get(sipProfiles, '[0].id'),
+        validationProfile: get(validationProfiles, '[0].id'),
+        workflowDefinition: get(workflowDefinitions, '[0].id'),
       },
     })
   ),
@@ -217,33 +204,21 @@ export default compose(
       texts,
       user,
       reset,
-    }) => async ({
-      producer,
-      sipProfile,
-      validationProfile,
-      workflowDefinition,
-      ...formData
-    }) => {
+    }) => async ({ producer, sipProfile, validationProfile, workflowDefinition, ...formData }) => {
       if (
         await newProducerProfile({
           id: uuidv1(),
           producer: producersEnabled
             ? find(producers, (item) => item.id === producer)
-            : get(user, "producer"),
+            : get(user, 'producer'),
           sipProfile: find(sipProfiles, (item) => item.id === sipProfile),
-          validationProfile: find(
-            validationProfiles,
-            (item) => item.id === validationProfile
-          ),
-          workflowDefinition: find(
-            workflowDefinitions,
-            (item) => item.id === workflowDefinition
-          ),
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+          validationProfile: find(validationProfiles, (item) => item.id === validationProfile),
+          workflowDefinition: find(workflowDefinitions, (item) => item.id === workflowDefinition),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name']),
         })
       ) {
         getProducerProfiles();
-        reset("ProducerProfileNewDialogForm");
+        reset('ProducerProfileNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({
@@ -253,7 +228,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ProducerProfileNewDialogForm",
+    form: 'ProducerProfileNewDialogForm',
     enableReinitialize: true,
   })
 )(ProducerProfileNew);

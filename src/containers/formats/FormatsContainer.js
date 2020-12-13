@@ -1,10 +1,10 @@
-import React from "react";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Route } from 'react-router-dom';
 
-import Formats from "./Formats";
-import Format from "./Format";
+import Formats from './Formats';
+import Format from './Format';
 
-const FormatsContainer = props => {
+const FormatsContainer = (props) => {
   const { match, location } = props;
 
   if (match.url === location.pathname) {
@@ -14,7 +14,7 @@ const FormatsContainer = props => {
       <Route
         {...{
           path: `${match.url}/:id`,
-          render: () => <Format {...props} />
+          render: () => <Format {...props} />,
         }}
       />
     );

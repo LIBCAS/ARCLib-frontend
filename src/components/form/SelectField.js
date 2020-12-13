@@ -1,19 +1,12 @@
-import React from "react";
-import { ControlLabel, FormGroup } from "react-bootstrap";
+import React from 'react';
+import { ControlLabel, FormGroup } from 'react-bootstrap';
 
-import SelectComponent from "../SelectField";
-import ErrorBlock from "../ErrorBlock";
+import SelectComponent from '../SelectField';
+import ErrorBlock from '../ErrorBlock';
 
-const SelectField = ({
-  meta: { touched, error },
-  input,
-  label,
-  id,
-  className,
-  ...props
-}) => (
+const SelectField = ({ meta: { touched, error }, input, label, id, className, ...props }) => (
   <div>
-    <FormGroup {...{ controlId: id || "selectfield", className }}>
+    <FormGroup {...{ controlId: id || 'selectfield', className }}>
       {label && <ControlLabel>{label}</ControlLabel>}
       <SelectComponent
         {...{

@@ -1,7 +1,7 @@
-import React from "react";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { map, get, compact } from 'lodash';
 
-import Table from "../table/Table";
+import Table from '../table/Table';
 
 const IssueDictionaryTable = ({ history, issueDictionary, texts }) => (
   <Table
@@ -15,10 +15,10 @@ const IssueDictionaryTable = ({ history, issueDictionary, texts }) => (
       items: map(issueDictionary, (item) => ({
         onClick: () => history.push(`/issue-dictionary/${item.id}`),
         items: compact([
-          { label: get(item, "name", "") },
-          { label: get(item, "code", "") },
-          { label: get(item, "number", "") },
-          { label: get(item, "reconfigurable") ? texts.YES : texts.NO },
+          { label: get(item, 'name', '') },
+          { label: get(item, 'code', '') },
+          { label: get(item, 'number', '') },
+          { label: get(item, 'reconfigurable') ? texts.YES : texts.NO },
         ]),
       })),
     }}

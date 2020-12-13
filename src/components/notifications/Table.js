@@ -1,16 +1,13 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose } from "recompose";
-import { map, get, compact } from "lodash";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { map, get, compact } from 'lodash';
 
-import ConfirmButton from "../ConfirmButton";
-import Table from "../table/Table";
-import {
-  deleteNotification,
-  getNotifications,
-} from "../../actions/notificationActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import ConfirmButton from '../ConfirmButton';
+import Table from '../table/Table';
+import { deleteNotification, getNotifications } from '../../actions/notificationActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const NotificationsTable = ({
   history,
@@ -27,14 +24,14 @@ const NotificationsTable = ({
           { label: texts.CREATOR },
           { label: texts.CRON_EXPRESSION },
           { label: texts.MESSAGE },
-          deleteEnabled && { label: "" },
+          deleteEnabled && { label: '' },
         ]),
         items: map(notifications, (item) => ({
           onClick: () => history.push(`/notifications/${item.id}`),
           items: compact([
-            { label: get(item, "creator.fullName", "") },
-            { label: get(item, "cron", "") },
-            { label: get(item, "message", "") },
+            { label: get(item, 'creator.fullName', '') },
+            { label: get(item, 'cron', '') },
+            { label: get(item, 'message', '') },
             deleteEnabled && {
               label: (
                 <ConfirmButton
@@ -43,13 +40,13 @@ const NotificationsTable = ({
                     title: texts.NOTIFICATION_DELETE,
                     text: <p>{texts.NOTIFICATION_DELETE_TEXT}</p>,
                     onClick: async () => {
-                      await deleteNotification(get(item, "id"));
+                      await deleteNotification(get(item, 'id'));
                       getNotifications();
                     },
                   }}
                 />
               ),
-              className: "text-right",
+              className: 'text-right',
             },
           ]),
         })),
@@ -58,6 +55,4 @@ const NotificationsTable = ({
   );
 };
 
-export default compose(connect(null, { deleteNotification, getNotifications }))(
-  NotificationsTable
-);
+export default compose(connect(null, { deleteNotification, getNotifications }))(NotificationsTable);

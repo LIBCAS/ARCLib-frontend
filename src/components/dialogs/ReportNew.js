@@ -1,26 +1,21 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, withHandlers } from "recompose";
-import { reduxForm, Field, SubmissionError, reset } from "redux-form";
-import { withRouter } from "react-router-dom";
-import { map } from "lodash";
-import uuidv1 from "uuid/v1";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, withHandlers } from 'recompose';
+import { reduxForm, Field, SubmissionError, reset } from 'redux-form';
+import { withRouter } from 'react-router-dom';
+import { map } from 'lodash';
+import uuidv1 from 'uuid/v1';
 
-import DialogContainer from "./DialogContainer";
-import {
-  TextField,
-  Checkbox,
-  SyntaxHighlighterField,
-  Validation,
-} from "../form";
-import { saveReport, getReports } from "../../actions/reportActions";
-import { removeStartEndWhiteSpaceInSelectedFields } from "../../utils";
+import DialogContainer from './DialogContainer';
+import { TextField, Checkbox, SyntaxHighlighterField, Validation } from '../form';
+import { saveReport, getReports } from '../../actions/reportActions';
+import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
 const ReportNew = ({ handleSubmit, texts, language }) => (
   <DialogContainer
     {...{
       title: texts.REPORT_NEW,
-      name: "ReportNew",
+      name: 'ReportNew',
       handleSubmit,
       submitLabel: texts.SUBMIT,
       large: true,
@@ -32,20 +27,20 @@ const ReportNew = ({ handleSubmit, texts, language }) => (
           {
             component: TextField,
             label: texts.NAME,
-            name: "name",
+            name: 'name',
             validate: [Validation.required[language]],
           },
           {
             component: SyntaxHighlighterField,
             label: texts.TEMPLATE,
-            name: "template",
+            name: 'template',
             validate: [Validation.required[language]],
             allowDownload: false,
           },
           {
             component: Checkbox,
             label: texts.ARCLIB_XML_DS,
-            name: "arclibXmlDs",
+            name: 'arclibXmlDs',
           },
         ],
         (field) => (
@@ -66,17 +61,15 @@ export default compose(
   }),
   withRouter,
   withHandlers({
-    onSubmit: ({ closeDialog, saveReport, getReports, texts, reset }) => async (
-      formData
-    ) => {
+    onSubmit: ({ closeDialog, saveReport, getReports, texts, reset }) => async (formData) => {
       const ok = await saveReport({
         id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ["name"]),
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['name']),
       });
 
       if (ok) {
         getReports();
-        reset("ReportNewDialogForm");
+        reset('ReportNewDialogForm');
         closeDialog();
       } else {
         throw new SubmissionError({
@@ -86,7 +79,7 @@ export default compose(
     },
   }),
   reduxForm({
-    form: "ReportNewDialogForm",
+    form: 'ReportNewDialogForm',
     enableReinitialize: true,
   })
 )(ReportNew);

@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getNotifications = () => async dispatch => {
+export const getNotifications = () => async (dispatch) => {
   dispatch({
     type: c.NOTIFICATION,
     payload: {
-      notifications: null
-    }
+      notifications: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/formats_revision_notification");
+    const response = await fetch('/api/formats_revision_notification');
 
     if (response.status === 200) {
       const notifications = await response.json();
@@ -19,8 +19,8 @@ export const getNotifications = () => async dispatch => {
       dispatch({
         type: c.NOTIFICATION,
         payload: {
-          notifications
-        }
+          notifications,
+        },
       });
 
       return notifications;
@@ -35,14 +35,14 @@ export const getNotifications = () => async dispatch => {
   }
 };
 
-export const getNotification = id => async dispatch => {
+export const getNotification = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.NOTIFICATION,
     payload: {
-      notification: null
-    }
+      notification: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getNotification = id => async dispatch => {
       dispatch({
         type: c.NOTIFICATION,
         payload: {
-          notification
-        }
+          notification,
+        },
       });
 
       dispatch(showLoader(false));
@@ -73,11 +73,11 @@ export const getNotification = id => async dispatch => {
   }
 };
 
-export const deleteNotification = id => async dispatch => {
+export const deleteNotification = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/formats_revision_notification/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -91,19 +91,16 @@ export const deleteNotification = id => async dispatch => {
   }
 };
 
-export const putNotification = body => async dispatch => {
+export const putNotification = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/formats_revision_notification/${body.id}`,
-      {
-        method: "PUT",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch(`/api/formats_revision_notification/${body.id}`, {
+      method: 'PUT',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
 
     if (response.status === 200) {
       const notification = await response.json();
@@ -111,8 +108,8 @@ export const putNotification = body => async dispatch => {
       dispatch({
         type: c.NOTIFICATION,
         payload: {
-          notification
-        }
+          notification,
+        },
       });
 
       dispatch(showLoader(false));

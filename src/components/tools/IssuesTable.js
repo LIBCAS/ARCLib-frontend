@@ -1,7 +1,7 @@
-import React from "react";
-import { map, get, filter } from "lodash";
+import React from 'react';
+import { map, get, filter } from 'lodash';
 
-import Table from "../table/Table";
+import Table from '../table/Table';
 
 const IssuesTable = ({ history, issues, texts, user, setDialog, tool }) => (
   <Table
@@ -17,10 +17,10 @@ const IssuesTable = ({ history, issues, texts, user, setDialog, tool }) => (
         (item) => ({
           onClick: () => history.push(`/issue-dictionary/${item.id}`),
           items: [
-            { label: get(item, "name", "") },
-            { label: get(item, "code", "") },
-            { label: get(item, "number", "") },
-            { label: get(item, "reconfigurable") ? texts.YES : texts.NO },
+            { label: get(item, 'name', '') },
+            { label: get(item, 'code', '') },
+            { label: get(item, 'number', '') },
+            { label: get(item, 'reconfigurable') ? texts.YES : texts.NO },
           ],
         })
       ),

@@ -1,17 +1,17 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 
-export const getTools = () => async dispatch => {
+export const getTools = () => async (dispatch) => {
   dispatch({
     type: c.TOOL,
     payload: {
-      tools: null
-    }
+      tools: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/tool");
+    const response = await fetch('/api/tool');
 
     if (response.status === 200) {
       const tools = await response.json();
@@ -19,8 +19,8 @@ export const getTools = () => async dispatch => {
       dispatch({
         type: c.TOOL,
         payload: {
-          tools
-        }
+          tools,
+        },
       });
 
       return tools;
@@ -35,14 +35,14 @@ export const getTools = () => async dispatch => {
   }
 };
 
-export const getTool = id => async dispatch => {
+export const getTool = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.TOOL,
     payload: {
-      tool: null
-    }
+      tool: null,
+    },
   });
 
   try {
@@ -54,8 +54,8 @@ export const getTool = id => async dispatch => {
       dispatch({
         type: c.TOOL,
         payload: {
-          tool
-        }
+          tool,
+        },
       });
 
       dispatch(showLoader(false));
@@ -73,11 +73,11 @@ export const getTool = id => async dispatch => {
   }
 };
 
-export const deleteTool = id => async dispatch => {
+export const deleteTool = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/tool/${id}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
 
     dispatch(showLoader(false));
@@ -91,15 +91,15 @@ export const deleteTool = id => async dispatch => {
   }
 };
 
-export const putTool = body => async dispatch => {
+export const putTool = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/tool/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -108,8 +108,8 @@ export const putTool = body => async dispatch => {
       dispatch({
         type: c.TOOL,
         payload: {
-          tool
-        }
+          tool,
+        },
       });
 
       dispatch(showLoader(false));

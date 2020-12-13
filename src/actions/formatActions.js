@@ -1,19 +1,19 @@
-import * as c from "./constants";
-import fetch from "../utils/fetch";
-import { showLoader, openErrorDialogIfRequestFailed } from "./appActions";
-import { createFilterPagerParams } from "../utils";
+import * as c from './constants';
+import fetch from '../utils/fetch';
+import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { createFilterPagerParams } from '../utils';
 
 export const getFormats = () => async (dispatch, getState) => {
   dispatch({
     type: c.FORMAT,
     payload: {
-      formats: null
-    }
+      formats: null,
+    },
   });
 
   try {
-    const response = await fetch("/api/search/format_library/format", {
-      params: createFilterPagerParams(getState)
+    const response = await fetch('/api/search/format_library/format', {
+      params: createFilterPagerParams(getState),
     });
 
     if (response.status === 200) {
@@ -22,8 +22,8 @@ export const getFormats = () => async (dispatch, getState) => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          formats
-        }
+          formats,
+        },
       });
 
       return formats;
@@ -38,14 +38,14 @@ export const getFormats = () => async (dispatch, getState) => {
   }
 };
 
-export const getFormat = id => async dispatch => {
+export const getFormat = (id) => async (dispatch) => {
   dispatch(showLoader());
 
   dispatch({
     type: c.FORMAT,
     payload: {
-      format: null
-    }
+      format: null,
+    },
   });
 
   try {
@@ -57,8 +57,8 @@ export const getFormat = id => async dispatch => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          format
-        }
+          format,
+        },
       });
 
       dispatch(showLoader(false));
@@ -76,15 +76,15 @@ export const getFormat = id => async dispatch => {
   }
 };
 
-export const putFormat = body => async dispatch => {
+export const putFormat = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/format/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -93,8 +93,8 @@ export const putFormat = body => async dispatch => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          format
-        }
+          format,
+        },
       });
 
       dispatch(showLoader(false));
@@ -112,18 +112,15 @@ export const putFormat = body => async dispatch => {
   }
 };
 
-export const updateFormatsFromExternal = () => async dispatch => {
+export const updateFormatsFromExternal = () => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/update_formats_from_external`,
-      {
-        method: "PUT",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        })
-      }
-    );
+    const response = await fetch(`/api/format_library/update_formats_from_external`, {
+      method: 'PUT',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -136,18 +133,15 @@ export const updateFormatsFromExternal = () => async dispatch => {
   }
 };
 
-export const updateFormatFromExternal = id => async dispatch => {
+export const updateFormatFromExternal = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/update_format_from_external/${id}`,
-      {
-        method: "PUT",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        })
-      }
-    );
+    const response = await fetch(`/api/format_library/update_format_from_external/${id}`, {
+      method: 'PUT',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -160,19 +154,16 @@ export const updateFormatFromExternal = id => async dispatch => {
   }
 };
 
-export const updateWithLocalDefinition = body => async dispatch => {
+export const updateWithLocalDefinition = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/update_with_local_definition`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch(`/api/format_library/update_with_local_definition`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -185,14 +176,14 @@ export const updateWithLocalDefinition = body => async dispatch => {
   }
 };
 
-export const getFormatDefinitionByFormatId = formatId => async dispatch => {
+export const getFormatDefinitionByFormatId = (formatId) => async (dispatch) => {
   try {
-    const response = await fetch("/api/search/format_library/format_definition", {
+    const response = await fetch('/api/search/format_library/format_definition', {
       params: {
-        "filter[0].field": "formatId",
-        "filter[0].operation": "EQ",
-        "filter[0].value": formatId
-      }
+        'filter[0].field': 'formatId',
+        'filter[0].operation': 'EQ',
+        'filter[0].value': formatId,
+      },
     });
 
     if (response.status === 200) {
@@ -201,8 +192,8 @@ export const getFormatDefinitionByFormatId = formatId => async dispatch => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          formatDefinitions
-        }
+          formatDefinitions,
+        },
       });
 
       return formatDefinitions;
@@ -217,7 +208,7 @@ export const getFormatDefinitionByFormatId = formatId => async dispatch => {
   }
 };
 
-export const getFormatDefinition = id => async dispatch => {
+export const getFormatDefinition = (id) => async (dispatch) => {
   try {
     const response = await fetch(`/api/format_definition/${id}`);
 
@@ -227,8 +218,8 @@ export const getFormatDefinition = id => async dispatch => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          formatDefinition
-        }
+          formatDefinition,
+        },
       });
 
       return formatDefinition;
@@ -243,15 +234,15 @@ export const getFormatDefinition = id => async dispatch => {
   }
 };
 
-export const putFormatDefinition = body => async dispatch => {
+export const putFormatDefinition = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
     const response = await fetch(`/api/format_definition/${body.id}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: new Headers({
-        "Content-Type": "application/json"
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 200) {
@@ -260,8 +251,8 @@ export const putFormatDefinition = body => async dispatch => {
       dispatch({
         type: c.FORMAT,
         payload: {
-          formatDefinition
-        }
+          formatDefinition,
+        },
       });
 
       dispatch(showLoader(false));
@@ -279,12 +270,10 @@ export const putFormatDefinition = body => async dispatch => {
   }
 };
 
-export const exportFormatDefinitionsJSON = () => async dispatch => {
+export const exportFormatDefinitionsJSON = () => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/export_format_definitions_json`
-    );
+    const response = await fetch(`/api/format_library/export_format_definitions_json`);
 
     if (response.status === 200) {
       const json = await response.json();
@@ -304,12 +293,10 @@ export const exportFormatDefinitionsJSON = () => async dispatch => {
   }
 };
 
-export const exportFormatDefinitionsByteArray = () => async dispatch => {
+export const exportFormatDefinitionsByteArray = () => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/export_format_definitions_byte_array`
-    );
+    const response = await fetch(`/api/format_library/export_format_definitions_byte_array`);
 
     if (response.status === 200) {
       const content = await response.blob();
@@ -329,12 +316,10 @@ export const exportFormatDefinitionsByteArray = () => async dispatch => {
   }
 };
 
-export const exportFormatDefinitionJSON = id => async dispatch => {
+export const exportFormatDefinitionJSON = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/export_format_definition_json/${id}`
-    );
+    const response = await fetch(`/api/format_library/export_format_definition_json/${id}`);
 
     if (response.status === 200) {
       const json = await response.json();
@@ -354,12 +339,10 @@ export const exportFormatDefinitionJSON = id => async dispatch => {
   }
 };
 
-export const exportFormatDefinitionByteArray = id => async dispatch => {
+export const exportFormatDefinitionByteArray = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/export_format_definition_byte_array/${id}`
-    );
+    const response = await fetch(`/api/format_library/export_format_definition_byte_array/${id}`);
 
     if (response.status === 200) {
       const content = await response.blob();
@@ -379,19 +362,16 @@ export const exportFormatDefinitionByteArray = id => async dispatch => {
   }
 };
 
-export const importFormatDefinitionsJSON = body => async dispatch => {
+export const importFormatDefinitionsJSON = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/import_format_definitions_json`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch(`/api/format_library/import_format_definitions_json`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -404,19 +384,16 @@ export const importFormatDefinitionsJSON = body => async dispatch => {
   }
 };
 
-export const importFormatDefinitionsByteArray = body => async dispatch => {
+export const importFormatDefinitionsByteArray = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/import_format_definitions_byte_array`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/binary"
-        }),
-        body
-      }
-    );
+    const response = await fetch(`/api/format_library/import_format_definitions_byte_array`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/binary',
+      }),
+      body,
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -429,19 +406,16 @@ export const importFormatDefinitionsByteArray = body => async dispatch => {
   }
 };
 
-export const importFormatDefinitionJSON = body => async dispatch => {
+export const importFormatDefinitionJSON = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/import_format_definition_json`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify(body)
-      }
-    );
+    const response = await fetch(`/api/format_library/import_format_definition_json`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -454,19 +428,16 @@ export const importFormatDefinitionJSON = body => async dispatch => {
   }
 };
 
-export const importFormatDefinitionByteArray = body => async dispatch => {
+export const importFormatDefinitionByteArray = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(
-      `/api/format_library/import_format_definition_byte_array`,
-      {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/binary"
-        }),
-        body
-      }
-    );
+    const response = await fetch(`/api/format_library/import_format_definition_byte_array`, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/binary',
+      }),
+      body,
+    });
 
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -510,12 +481,14 @@ export const getFormatOccurrences = (formatDefinitionId) => async (dispatch) => 
   dispatch({
     type: c.FORMAT,
     payload: {
-      formatOccurrences: null
-    }
+      formatOccurrences: null,
+    },
   });
 
   try {
-    const response = await fetch(`/api/search/format_library/format_definition/${formatDefinitionId}/occurrences`);
+    const response = await fetch(
+      `/api/search/format_library/format_definition/${formatDefinitionId}/occurrences`
+    );
 
     if (response.status === 200) {
       const formatOccurrences = await response.json();
@@ -523,8 +496,8 @@ export const getFormatOccurrences = (formatDefinitionId) => async (dispatch) => 
       dispatch({
         type: c.FORMAT,
         payload: {
-          formatOccurrences
-        }
+          formatOccurrences,
+        },
       });
 
       return formatOccurrences;

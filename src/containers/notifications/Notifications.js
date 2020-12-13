@@ -1,23 +1,22 @@
-import React from "react";
-import { connect } from "react-redux";
-import { compose, lifecycle } from "recompose";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { withRouter } from 'react-router-dom';
 
-import Button from "../../components/Button";
-import PageWrapper from "../../components/PageWrapper";
-import Table from "../../components/notifications/Table";
-import { getNotifications } from "../../actions/notificationActions";
-import { setDialog } from "../../actions/appActions";
-import { hasPermission } from "../../utils";
-import { Permission } from "../../enums";
+import Button from '../../components/Button';
+import PageWrapper from '../../components/PageWrapper';
+import Table from '../../components/notifications/Table';
+import { getNotifications } from '../../actions/notificationActions';
+import { setDialog } from '../../actions/appActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 const Notifications = ({ history, notifications, texts, setDialog }) => (
   <PageWrapper
     {...{
       breadcrumb: [
         {
-          label:
-            texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
+          label: texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
         },
       ],
     }}
@@ -26,8 +25,8 @@ const Notifications = ({ history, notifications, texts, setDialog }) => (
       <Button
         {...{
           primary: true,
-          className: "margin-bottom-small",
-          onClick: () => setDialog("NotificationNew"),
+          className: 'margin-bottom-small',
+          onClick: () => setDialog('NotificationNew'),
         }}
       >
         {texts.NEW}

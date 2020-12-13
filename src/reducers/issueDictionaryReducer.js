@@ -1,8 +1,8 @@
-import * as c from "../actions/constants";
+import * as c from '../actions/constants';
 
 const initialState = {
   issueDictionary: null,
-  issue: null
+  issue: null,
 };
 
 const reducer = (state = initialState, action) => {
