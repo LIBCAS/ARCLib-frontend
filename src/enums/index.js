@@ -8,6 +8,5 @@ export * from './issueDictionary';
 export * from './languages';
 export * from './pager';
 export * from './permissions';
-export * from './sipProfile';
 export * from './storage';
 export * from './tool';

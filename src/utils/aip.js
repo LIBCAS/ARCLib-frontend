@@ -27,6 +27,7 @@ const createAipSearchFilter = (filterItemsUncleared) => {
     'creating_application',
     'premis_event',
     'arc_event',
+    'element'
   ];
   let i = 0;
   let filter = {};

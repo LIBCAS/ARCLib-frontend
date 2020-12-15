@@ -9,7 +9,6 @@ import { TextField, SelectField, SyntaxHighlighterField, Validation, Checkbox } 
 import { saveSipProfile } from '../../actions/sipProfileActions';
 import { getProducers } from '../../actions/producerActions';
 import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
-import { packageTypeOptions } from '../../enums';
 
 const Detail = ({
   history,
@@ -40,21 +39,21 @@ const Detail = ({
             },
             producersEnabled && editEnabled
               ? {
-                  component: SelectField,
-                  label: texts.PRODUCER,
-                  name: 'producer',
-                  validate: [Validation.required[language]],
-                  options: map(producers, (producer) => ({
-                    value: producer.id,
-                    label: producer.name || '',
-                  })),
-                }
+                component: SelectField,
+                label: texts.PRODUCER,
+                name: 'producer',
+                validate: [Validation.required[language]],
+                options: map(producers, (producer) => ({
+                  value: producer.id,
+                  label: producer.name || '',
+                })),
+              }
               : {
-                  component: TextField,
-                  label: texts.PRODUCER,
-                  name: 'producer.name',
-                  disabled: true,
-                },
+                component: TextField,
+                label: texts.PRODUCER,
+                name: 'producer.name',
+                disabled: true,
+              },
             {
               component: SyntaxHighlighterField,
               label: texts.XSL_TRANSFORMATION,
@@ -79,13 +78,6 @@ const Detail = ({
               label: <span>{texts.SIP_METADATA_PATH}</span>,
               name: 'sipMetadataPathRegex',
               validate: [Validation.required[language]],
-            },
-            {
-              component: SelectField,
-              label: texts.SIP_PACKAGE_TYPE,
-              name: 'packageType',
-              validate: [Validation.required[language]],
-              options: packageTypeOptions,
             },
             {
               component: Checkbox,
@@ -120,8 +112,8 @@ const Detail = ({
               {texts.SAVE_AND_CLOSE}
             </Button>
           ) : (
-            <div />
-          )}
+              <div />
+            )}
         </div>
       </form>
     </div>
@@ -157,8 +149,8 @@ export default compose(
         ]),
         ...(producersEnabled
           ? {
-              producer: find(producers, (item) => item.id === formData.producer),
-            }
+            producer: find(producers, (item) => item.id === formData.producer),
+          }
           : {}),
       });
 
@@ -169,8 +161,8 @@ export default compose(
           response === 409
             ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
             : {
-                packageType: texts.SAVE_FAILED,
-              }
+              packageType: texts.SAVE_FAILED,
+            }
         );
       }
     },

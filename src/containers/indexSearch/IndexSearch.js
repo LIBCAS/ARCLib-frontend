@@ -86,10 +86,35 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
             field: 'xml_version_of',
             type: filterTypes.TEXT_EQ_NEQ,
           },
+        ],
+      },
+      {
+        title: texts.GENERAL_CONTENT_SEARCH,
+        id: 'GENERAL_CONTENT_SEARCH',
+        defaultCollapsed: false,
+      },
+      {
+        id: 'GENERAL_CONTENT_SEARCH',
+        filters: [
           {
-            label: texts.DOCUMENT,
-            field: 'document',
+            label: texts.XML_ELEMENT_NAME,
+            field: 'element_name',
+            type: filterTypes.TEXT_EQ_NEQ,
+          },
+          {
+            label: texts.TEXT_CONTENT,
+            field: 'element_content',
             type: filterTypes.TEXT_CONTAINS,
+          },
+          {
+            label: texts.ANY_ATTRIBUTE_NAME,
+            field: 'element_attribute_names',
+            type: filterTypes.TEXT_EQ_NEQ,
+          },
+          {
+            label: texts.ANY_ATTRIBUTE_VALUE,
+            field: 'element_attribute_values',
+            type: filterTypes.TEXT,
           },
         ],
       },
@@ -426,31 +451,6 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
             label: texts.EVENT_COUNT,
             field: 'arc_event_count',
             type: filterTypes.NUMBER,
-          },
-        ],
-      },
-      {
-        title: texts.XML_ELEMENT,
-        id: 'XML_ELEMENT',
-        defaultCollapsed: true,
-      },
-      {
-        id: 'XML_ELEMENT',
-        filters: [
-          {
-            label: texts.NAME,
-            field: 'element_name',
-            type: filterTypes.TEXT_EQ_NEQ,
-          },
-          {
-            label: texts.ATTRIBUTE,
-            field: 'element_attributes',
-            type: filterTypes.TEXT,
-          },
-          {
-            label: texts.TEXT_CONTENT,
-            field: 'element_content',
-            type: filterTypes.TEXT,
           },
         ],
       },

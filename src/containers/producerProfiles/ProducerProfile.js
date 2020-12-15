@@ -19,7 +19,7 @@ const ProducerProfile = ({ history, producerProfile, getProducerProfile, texts, 
       ],
     }}
   >
-    {get(props.user, 'producer') && producerProfile && (
+    {producerProfile && (
       <Detail
         {...{
           history,

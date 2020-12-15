@@ -10,7 +10,7 @@ import DialogContainer from './DialogContainer';
 import { TextField, SelectField, SyntaxHighlighterField, Validation } from '../form';
 import { saveSipProfile, getSipProfiles } from '../../actions/sipProfileActions';
 import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
-import { Permission, packageTypeOptions } from '../../enums';
+import { Permission } from '../../enums';
 
 const SipProfileNew = ({ producersEnabled, user, handleSubmit, texts, language, producers }) => (
   <DialogContainer
@@ -38,15 +38,15 @@ const SipProfileNew = ({ producersEnabled, user, handleSubmit, texts, language, 
             validate: [Validation.required[language]],
             options: producersEnabled
               ? map(producers, (producer) => ({
-                  label: producer.name,
-                  value: producer.id,
-                }))
+                label: producer.name,
+                value: producer.id,
+              }))
               : [
-                  {
-                    label: get(user, 'producer.name'),
-                    value: get(user, 'producer.id'),
-                  },
-                ],
+                {
+                  label: get(user, 'producer.name'),
+                  value: get(user, 'producer.id'),
+                },
+              ],
             disabled: !producersEnabled,
           },
           {
@@ -74,13 +74,6 @@ const SipProfileNew = ({ producersEnabled, user, handleSubmit, texts, language, 
             name: 'sipMetadataPathRegex',
             validate: [Validation.required[language]],
           },
-          {
-            component: SelectField,
-            label: texts.SIP_PACKAGE_TYPE,
-            name: 'packageType',
-            validate: [Validation.required[language]],
-            options: packageTypeOptions,
-          },
         ],
         (field, key) => (
           <Field {...{ key, id: `sip-profile-new-${field.name}`, ...field }} />
@@ -107,7 +100,6 @@ export default compose(
     return {
       producersEnabled,
       initialValues: {
-        packageType: get(packageTypeOptions, '[0].value'),
         producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.id'),
       },
     };
@@ -147,8 +139,8 @@ export default compose(
           response === 409
             ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
             : {
-                packageType: texts.SIP_PROFILE_NEW_FAILED,
-              }
+              packageType: texts.SIP_PROFILE_NEW_FAILED,
+            }
         );
       }
     },
