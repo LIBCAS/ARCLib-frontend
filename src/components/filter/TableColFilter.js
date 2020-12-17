@@ -4,7 +4,7 @@ import { compose, lifecycle } from 'recompose';
 import { isEmpty } from 'lodash';
 
 import TextFilter from './TextFilter';
-import TextContainsFilter from './TextContains-Filter';
+import TextContainsFilter from './TextContainsFilter';
 import TextEQFilter from './TextEQFilter';
 import NumberFilter from './NumberFilter';
 import EnumFilter from './EnumFilter';
