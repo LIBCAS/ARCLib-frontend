@@ -12,7 +12,7 @@ import TextField from '../TextField';
 import Sort from '../filter/Sort';
 import Order from '../filter/Order';
 import TextFilter from '../filter/TextFilter';
-import TextContainsFilter from '../filter/TextContainsFilter';
+import TextContainsFilter from '../filter/TextContains-Filter';
 import TextEQFilter from '../filter/TextEQFilter';
 import EnumFilter from '../filter/EnumFilter';
 import NumberFilter from '../filter/NumberFilter';
