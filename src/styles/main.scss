@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
-  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
   color: $c-text;
   overflow: hidden;
 }
@@ -298,7 +298,7 @@ select {
 .checkbox {
   label {
     font-weight: 700;
-    color: rgba(0, 0, 0, 0.65);
+    color: $c-disabled;
   }
 }
 
@@ -329,11 +329,11 @@ select {
 .ant {
   &-input {
     &-disabled {
-      color: rgba(0, 0, 0, 0.65);
+      color: $c-disabled;
     }
     &-number {
       &-disabled {
-        color: rgba(0, 0, 0, 0.65);
+        color: $c-disabled;
       }
     }
   }
@@ -353,7 +353,7 @@ select {
   }
   &-select {
     &-disabled {
-      color: rgba(0, 0, 0, 0.65);
+      color: $c-disabled;
     }
   }
   &-card {
@@ -375,6 +375,10 @@ select {
   }
 }
 
+.ant-select-disabled .ant-select-selection--multiple .ant-select-selection__choice {
+  color: $c-disabled;
+}
+
 /* VISIBILITY */
 
 .hidden {
@@ -385,7 +389,7 @@ select {
 
 .pre {
   white-space: pre;
-  font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
 }
 
 .table-checkbox {

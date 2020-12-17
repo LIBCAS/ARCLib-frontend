@@ -12,7 +12,7 @@ const Notification = ({ history, notification, texts, ...props }) => (
     {...{
       breadcrumb: [
         {
-          label: texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
+          label: texts.NOTIFICATIONS,
           url: '/notifications',
         },
         { label: texts.NOTIFICATION },

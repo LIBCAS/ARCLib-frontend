@@ -13,7 +13,7 @@ import { Permission } from '../../enums';
 
 const Roles = ({ history, getRoles, roles, setDialog, texts }) => (
   <PageWrapper {...{ breadcrumb: [{ label: texts.ROLES }] }}>
-    {hasPermission(Permission.USER_RECORDS_WRITE) && (
+    {hasPermission(Permission.USER_ROLE_RECORDS_WRITE) && (
       <Button
         {...{
           primary: true,

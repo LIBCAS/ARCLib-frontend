@@ -86,6 +86,26 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
             field: 'xml_version_of',
             type: filterTypes.TEXT_EQ_NEQ,
           },
+          {
+            label: texts.PRODUCER_PROFILE_EXTERNAL_ID,
+            field: 'producer_profile',
+            type: filterTypes.TEXT_EQ,
+          },
+          {
+            label: texts.SIP_PROFILE_EXTERNAL_ID,
+            field: 'sip_profile',
+            type: filterTypes.TEXT_EQ,
+          },
+          {
+            label: texts.VALIDATION_PROFILE_EXTERNAL_ID,
+            field: 'validation_profile',
+            type: filterTypes.TEXT_EQ,
+          },
+          {
+            label: texts.WORKFLOW_DEFINITION_EXTERNAL_ID,
+            field: 'workflow_definition',
+            type: filterTypes.TEXT_EQ,
+          },
         ],
       },
       {

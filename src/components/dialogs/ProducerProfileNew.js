@@ -170,26 +170,19 @@ export default compose(
       reset,
     }
   ),
-  withProps({
-    producersEnabled: hasPermission(Permission.SUPER_ADMIN_PRIVILEGE),
-  }),
-  withProps(
-    ({
+  withProps(({ user, producers, sipProfiles, validationProfiles, workflowDefinitions }) => {
+    const producersEnabled = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
+
+    return {
       producersEnabled,
-      user,
-      producers,
-      sipProfiles,
-      validationProfiles,
-      workflowDefinitions,
-    }) => ({
       initialValues: {
         producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.name'),
         sipProfile: get(sipProfiles, '[0].id'),
         validationProfile: get(validationProfiles, '[0].id'),
         workflowDefinition: get(workflowDefinitions, '[0].id'),
       },
-    })
-  ),
+    };
+  }),
   withRouter,
   withHandlers({
     onSubmit: ({

@@ -19,6 +19,7 @@ const Uploader = ({
   showLoader,
   id,
   postFile,
+  onUpload,
 }) => (
   <div {...{ key, className: 'flex-row-nowrap flex-bottom' }}>
     <TextField
@@ -45,7 +46,8 @@ const Uploader = ({
 
                   if (file) {
                     showLoader();
-                    const uploadedFile = await postFile(file);
+                    const uploadFn = onUpload || postFile;
+                    const uploadedFile = await uploadFn(file);
                     onChange(uploadedFile);
                     showLoader(false);
                   }

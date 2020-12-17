@@ -31,6 +31,12 @@ const Detail = ({
               name: 'name',
               validate: [Validation.required[language]],
             },
+            {
+              component: TextField,
+              label: texts.EXTERNAL_ID,
+              name: 'externalId',
+              disabled: true,
+            },
             producersEnabled && editEnabled
               ? {
                   component: SelectField,

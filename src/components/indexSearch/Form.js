@@ -12,7 +12,7 @@ import TextField from '../TextField';
 import Sort from '../filter/Sort';
 import Order from '../filter/Order';
 import TextFilter from '../filter/TextFilter';
-import TextCONTAINSFilter from '../filter/TextCONTAINSFilter';
+import TextContainsFilter from '../filter/TextContainsFilter';
 import TextEQFilter from '../filter/TextEQFilter';
 import EnumFilter from '../filter/EnumFilter';
 import NumberFilter from '../filter/NumberFilter';
@@ -169,7 +169,7 @@ const Form = ({
                   }}
                 >
                   <ControlLabel>{field.label}</ControlLabel>
-                  <TextCONTAINSFilter
+                  <TextContainsFilter
                     {...{
                       index,
                       className: 'flex-row flex-top',

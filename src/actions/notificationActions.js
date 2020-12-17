@@ -126,3 +126,29 @@ export const putNotification = (body) => async (dispatch) => {
     return false;
   }
 };
+
+export const getNotificationRelatedEntities = (type, text) => async (dispatch) => {
+  try {
+    const response = await fetch('/api/related_entities', {
+      params: {
+        filter: [
+          { field: 'type', operation: 'EQ', value: type },
+          { field: 'name', operation: 'CONTAINS', value: text },
+        ],
+      },
+    });
+
+    if (response.status === 200) {
+      const relatedEntities = await response.json();
+
+      return relatedEntities;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return [];
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return [];
+  }
+};

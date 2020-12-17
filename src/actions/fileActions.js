@@ -45,3 +45,29 @@ export const postFile = (file) => async (dispatch) => {
     return null;
   }
 };
+
+export const postFormatFile = (file) => async (dispatch) => {
+  try {
+    const formData = new FormData();
+
+    formData.append('file', file);
+
+    const response = await fetch(`/api/format_files/`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      const file = await response.json();
+
+      return file;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return null;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return null;
+  }
+};

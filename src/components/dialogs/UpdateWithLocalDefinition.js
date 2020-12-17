@@ -24,6 +24,7 @@ import {
   getFormatDefinitionByFormatId,
 } from '../../actions/formatActions';
 import { setDialog, showLoader } from '../../actions/appActions';
+import { postFormatFile } from '../../actions/fileActions';
 import { getIssueDictionary } from '../../actions/issueDictionaryActions';
 import { formatClassifications } from '../../enums';
 import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
@@ -37,6 +38,7 @@ const UpdateWithLocalDefinition = ({
   setDialog,
   data,
   setFail,
+  postFormatFile,
 }) => (
   <DialogContainer
     {...{
@@ -130,6 +132,7 @@ const UpdateWithLocalDefinition = ({
                         component: UploadField,
                         label: texts.PRESERVATION_PLAN_FILE,
                         name: 'preservationPlanFile',
+                        onUpload: postFormatFile,
                       },
                       {
                         component: Checkbox,
@@ -334,6 +337,7 @@ export default compose(
       getIssueDictionary,
       getFormatDefinitionByFormatId,
       reset,
+      postFormatFile,
     }
   ),
   withRouter,

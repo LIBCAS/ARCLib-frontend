@@ -21,7 +21,6 @@ const FormatDefinitionTable = ({
   texts,
   putFormatDefinition,
   getFormatDefinitionByFormatId,
-  user,
   exportFormatDefinitionJSON,
   exportFormatDefinitionByteArray,
 }) => (

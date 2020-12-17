@@ -16,7 +16,7 @@ const Notifications = ({ history, notifications, texts, setDialog }) => (
     {...{
       breadcrumb: [
         {
-          label: texts.PLANNED_NOTIFICATIONS_TO_ADMINISTRATORS_ABOUT_FORMAT_POLITICS_REVISIONS,
+          label: texts.NOTIFICATIONS,
         },
       ],
     }}

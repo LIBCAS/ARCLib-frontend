@@ -38,6 +38,10 @@ const IngestBatchesTable = ({
         { label: texts.UPDATED },
         { label: texts.STATE },
         { label: texts.PENDING_INCIDENTS },
+        { label: texts.PRODUCER_PROFILE },
+        { label: texts.SIP_PROFILE },
+        { label: texts.VALIDATION_PROFILE },
+        { label: texts.WORKFLOW_DEFINITION },
         { label: '' },
       ],
       items: map(batches, (item) => ({
@@ -68,9 +72,13 @@ const IngestBatchesTable = ({
                 <strong>{texts.YES}</strong>
               </span>
             ) : (
-              texts.NO
-            ),
+                texts.NO
+              ),
           },
+          { label: get(item, 'producerProfile.name', '') },
+          { label: get(item, 'initialSipProfile.name', '') },
+          { label: get(item, 'initialValidationProfile.name', '') },
+          { label: get(item, 'initialWorkflowDefinition.name', '') },
           {
             label: (
               <div {...{ className: 'flex-row-normal-nowrap flex-right' }}>
@@ -175,6 +183,26 @@ const IngestBatchesTable = ({
         {
           type: filterTypes.BOOL,
           field: 'pendingIncidents',
+          handleUpdate,
+        },
+        {
+          type: filterTypes.TEXT_CONTAINS,
+          field: 'producerProfile',
+          handleUpdate,
+        },
+        {
+          type: filterTypes.TEXT_CONTAINS,
+          field: 'initialSipProfile',
+          handleUpdate,
+        },
+        {
+          type: filterTypes.TEXT_CONTAINS,
+          field: 'initialValidationProfile',
+          handleUpdate,
+        },
+        {
+          type: filterTypes.TEXT_CONTAINS,
+          field: 'initialWorkflowDefinition',
           handleUpdate,
         },
         null,

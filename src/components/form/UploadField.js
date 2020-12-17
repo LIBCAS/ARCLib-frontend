@@ -5,7 +5,15 @@ import { compose, defaultProps } from 'recompose';
 import Uploader from '../Uploader';
 import ErrorBlock from '../ErrorBlock';
 
-const UploadField = ({ meta: { touched, error }, input, label, id, className, disabled }) => (
+const UploadField = ({
+  meta: { touched, error },
+  input,
+  label,
+  id,
+  className,
+  disabled,
+  onUpload,
+}) => (
   <FormGroup {...{ className, controlId: id }}>
     {label && <ControlLabel>{label}</ControlLabel>}
     <Uploader
@@ -13,6 +21,7 @@ const UploadField = ({ meta: { touched, error }, input, label, id, className, di
         ...input,
         disabled,
         id,
+        onUpload,
       }}
     />
     {touched && <ErrorBlock {...{ label: error }} />}

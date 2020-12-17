@@ -1,3 +1,4 @@
+import AutoCompleteField from './AutoCompleteField';
 import DateTimeField from './DateTimeField';
 import Checkbox from './Checkbox';
 import SelectField from './SelectField';
@@ -9,6 +10,7 @@ import UploadField from './UploadField';
 import * as Validation from './Validation';
 
 export {
+  AutoCompleteField,
   DateTimeField,
   Checkbox,
   SelectField,

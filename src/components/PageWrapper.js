@@ -93,7 +93,7 @@ const PageWrapper = ({
         {
           url: '/roles',
           label: texts.ROLES,
-          permission: Permission.USER_RECORDS_READ,
+          permission: Permission.USER_ROLE_RECORDS_READ,
         },
         {
           url: '/producers',
@@ -103,7 +103,7 @@ const PageWrapper = ({
         {
           url: '/archival-storage-administration',
           label: texts.ARCHIVAL_STORAGE_ADMINISTRATION,
-          permission: Permission.STORAGE_ADMINISTRATION_READ,
+          permission: Permission.SUPER_ADMIN_PRIVILEGE,
         },
         {
           url: '/logical-storage-administration',

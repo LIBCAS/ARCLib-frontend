@@ -1,7 +1,8 @@
 import fetch from '../utils/fetch';
-import { openErrorDialogIfRequestFailed } from '../actions/appActions';
+import { openErrorDialogIfRequestFailed, showLoader } from '../actions/appActions';
 
 const index = (url) => async (dispatch) => {
+  dispatch(showLoader());
   try {
     const response = await fetch(`/api/administration/reindex/${url}`, {
       method: 'POST',
@@ -10,10 +11,12 @@ const index = (url) => async (dispatch) => {
       }),
     });
 
+    dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
     return response.ok;
   } catch (error) {
     console.log(error);
+    dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }

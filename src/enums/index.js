@@ -5,6 +5,7 @@ export * from './format';
 export * from './hash';
 export * from './ingestBatch';
 export * from './issueDictionary';
+export * from './notification';
 export * from './languages';
 export * from './pager';
 export * from './permissions';

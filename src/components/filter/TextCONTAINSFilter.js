@@ -6,7 +6,7 @@ import { map, find, get } from 'lodash';
 import TextField from '../TextField';
 import { setFilter } from '../../actions/appActions';
 
-const TextCONTAINSFilter = ({
+const TextContainsFilter = ({
   index,
   setFilter,
   filter,
@@ -40,4 +40,4 @@ export default compose(
   connect(({ app: { filter, language, texts } }) => ({ filter, language, texts }), {
     setFilter,
   })
-)(TextCONTAINSFilter);
+)(TextContainsFilter);

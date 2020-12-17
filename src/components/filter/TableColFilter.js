@@ -4,6 +4,7 @@ import { compose, lifecycle } from 'recompose';
 import { isEmpty } from 'lodash';
 
 import TextFilter from './TextFilter';
+import TextContainsFilter from './TextContainsFilter';
 import TextEQFilter from './TextEQFilter';
 import NumberFilter from './NumberFilter';
 import EnumFilter from './EnumFilter';
@@ -38,6 +39,15 @@ const TableColFilter = ({
       />
     ) : type === filterTypes.TEXT_EQ ? (
       <TextEQFilter
+        {...{
+          index,
+          handleUpdate,
+          className: 'flex-col',
+          textClassName: `text-field full ${textClassName}`,
+        }}
+      />
+    ) : type === filterTypes.TEXT_CONTAINS ? (
+      <TextContainsFilter
         {...{
           index,
           handleUpdate,

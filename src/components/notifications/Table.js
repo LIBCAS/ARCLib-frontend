@@ -21,16 +21,20 @@ const NotificationsTable = ({
     <Table
       {...{
         thCells: compact([
+          { label: texts.TYPE },
           { label: texts.CREATOR },
           { label: texts.CRON_EXPRESSION },
+          { label: texts.SUBJECT },
           { label: texts.MESSAGE },
           deleteEnabled && { label: '' },
         ]),
         items: map(notifications, (item) => ({
           onClick: () => history.push(`/notifications/${item.id}`),
           items: compact([
+            { label: get(texts, get(item, 'type'), get(item, 'type')) },
             { label: get(item, 'creator.fullName', '') },
             { label: get(item, 'cron', '') },
+            { label: get(item, 'subject', '') },
             { label: get(item, 'message', '') },
             deleteEnabled && {
               label: (

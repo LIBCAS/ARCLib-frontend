@@ -21,12 +21,12 @@ import {
 } from '../../actions/formatActions';
 import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 import { Permission } from '../../enums';
+import { postFormatFile } from '../../actions/fileActions';
 
 const Detail = ({
   history,
   texts,
   handleSubmit,
-  user,
   formatDefinition,
   formatOccurrences,
   language,
@@ -35,6 +35,7 @@ const Detail = ({
   setTabNumber,
   getFormatOccurrences,
   showLoader,
+  postFormatFile,
 }) => {
   const editEnabled = hasPermission(Permission.FORMAT_RECORDS_WRITE);
   return (
@@ -134,6 +135,7 @@ const Detail = ({
                             component: UploadField,
                             label: texts.PRESERVATION_PLAN_FILE,
                             name: 'preservationPlanFile',
+                            onUpload: postFormatFile,
                             validate: [Validation.required[language]],
                             disabled:
                               get(formatDefinition, 'internalInformationFilled') || !editEnabled,
@@ -289,6 +291,7 @@ export default compose(
       getFormatDefinition,
       getFormatOccurrences,
       showLoader,
+      postFormatFile,
     }
   ),
   withState('fail', 'setFail', null),

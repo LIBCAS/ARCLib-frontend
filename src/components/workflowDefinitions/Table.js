@@ -14,6 +14,7 @@ const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, text
     <Table
       {...{
         thCells: compact([
+          { label: texts.EXTERNAL_ID },
           { label: texts.NAME },
           { label: texts.CREATED },
           { label: texts.EDITED },
@@ -22,6 +23,7 @@ const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, text
         items: map(workflowDefinitions, (item) => ({
           onClick: () => history.push(`/workflow-definitions/${item.id}`),
           items: compact([
+            { label: get(item, 'externalId', '') },
             { label: get(item, 'name', '') },
             { label: formatDateTime(get(item, 'created')) },
             { label: formatDateTime(get(item, 'updated')) },

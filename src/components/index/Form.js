@@ -21,17 +21,20 @@ const Form = ({
   indexArclibXML,
 }) => {
   const onClick = async (callback) => {
-    callback();
-    setTimeout(() => {
-      setDialog('Info', {
-        content: (
-          <h3>
-            <strong>{texts.REINDEX_STARTED}</strong>
-          </h3>
-        ),
-        autoClose: true,
-      });
-    }, 200);
+    const ok = await callback();
+
+    if (ok) {
+      setTimeout(() => {
+        setDialog('Info', {
+          content: (
+            <h3>
+              <strong>{texts.REINDEX_STARTED}</strong>
+            </h3>
+          ),
+          autoClose: true,
+        });
+      }, 200);
+    }
   };
 
   return (

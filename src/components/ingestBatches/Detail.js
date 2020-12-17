@@ -109,22 +109,46 @@ const Detail = ({
             title: texts.INGEST_BATCH,
             content: (
               <div>
-                {get(batch, 'producerProfile') && (
-                  <div {...{ className: 'margin-bottom-small' }}>
-                    <span {...{ className: 'text-bold' }}>
-                      {texts.PRODUCER_PROFILE}:&nbsp;&nbsp;
-                    </span>
-                    <span
-                      {...{
-                        className: 'link',
-                        onClick: () =>
-                          history.push(`/producer-profiles/${get(batch, 'producerProfile.id')}`),
-                      }}
-                    >
-                      {get(batch, 'producerProfile.name', texts.UNKNOWN)}
-                    </span>
+                {[
+                  {
+                    name: 'producerProfile',
+                    url: 'producer-profiles',
+                    label: texts.PRODUCER_PROFILE,
+                  },
+                  {
+                    name: 'initialSipProfile',
+                    url: 'sip-profiles',
+                    label: texts.SIP_PROFILE,
+                  },
+                  {
+                    name: 'initialValidationProfile',
+                    url: 'validation-profiles',
+                    label: texts.VALIDATION_PROFILE,
+                  },
+                  {
+                    name: 'initialWorkflowDefinition',
+                    url: 'workflow-definitions',
+                    label: texts.WORKFLOW_DEFINITION,
+                  },
+                ].map(({ name, url, label }) => (
+                  <div>
+                    {get(batch, name) ? (
+                      <div {...{ className: 'margin-bottom-small' }}>
+                        <span {...{ className: 'text-bold' }}>{label}:&nbsp;&nbsp;</span>
+                        <span
+                          {...{
+                            className: 'link',
+                            onClick: () => history.push(`/${url}/${get(batch, `${name}.id`)}`),
+                          }}
+                        >
+                          {get(batch, `${name}.name`, texts.UNKNOWN)}
+                        </span>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
                   </div>
-                )}
+                ))}
                 <form>
                   {map(
                     [
@@ -140,6 +164,14 @@ const Detail = ({
                         name: 'workflowConfig',
                         component: TextField,
                         type: 'textarea',
+                      },
+                      {
+                        id: 'batch-detail-computedWorkflowConfig',
+                        label: texts.COMPUTED_WORKFLOW_CONFIGURATION,
+                        name: 'computedWorkflowConfig',
+                        component: TextField,
+                        type: 'textarea',
+                        disabled: true,
                       },
                       {
                         id: 'batch-detail-state',
@@ -221,6 +253,7 @@ export default compose(
       ...batch,
       producerProfile: get(batch, 'producerProfile.producer.name', ''),
       workflowConfig: prettyJSON(get(batch, 'workflowConfig', '')),
+      computedWorkflowConfig: prettyJSON(get(batch, 'computedWorkflowConfig', '')),
       state: get(ingestBatchStateTexts[language], get(batch, 'state')),
     },
   })),

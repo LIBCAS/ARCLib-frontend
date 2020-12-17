@@ -10,7 +10,7 @@ import { hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
 const RolesTable = ({ history, roles, texts, deleteRole, getRoles }) => {
-  const deleteEnabled = hasPermission(Permission.USER_RECORDS_WRITE);
+  const deleteEnabled = hasPermission(Permission.USER_ROLE_RECORDS_WRITE);
   return (
     <Table
       {...{

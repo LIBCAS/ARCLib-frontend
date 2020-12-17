@@ -113,7 +113,7 @@ const App = ({ store, user, language, texts }) => {
                 {
                   path: '/archival-storage-administration',
                   Component: ArchivalStorageAdministration,
-                  permission: Permission.STORAGE_ADMINISTRATION_READ,
+                  permission: Permission.SUPER_ADMIN_PRIVILEGE,
                 },
                 {
                   path: '/workflow-definitions',
@@ -153,7 +153,7 @@ const App = ({ store, user, language, texts }) => {
                 {
                   path: '/roles',
                   Component: RolesContainer,
-                  permission: Permission.USER_RECORDS_READ,
+                  permission: Permission.USER_ROLE_RECORDS_READ,
                 },
                 {
                   path: '/formats',
