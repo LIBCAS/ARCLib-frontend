@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 import { compose, withHandlers, lifecycle } from 'recompose';
 import { get, map, find } from 'lodash';
+import { Tag } from 'antd';
 
 import Button from '../Button';
 import { TextField, SelectField, SyntaxHighlighterField, Validation, Checkbox } from '../form';
@@ -20,8 +21,16 @@ const Detail = ({
   producersEnabled,
   editEnabled,
 }) => {
+  const isDeleted = !!get(sipProfile, 'deleted');
+  const isEditable = !!(editEnabled && get(sipProfile, 'editable') && !isDeleted);
+
   return (
     <div>
+      {isDeleted && (
+        <Tag color="#FF4136" className="margin-bottom-small">
+          {texts.DELETED_ITEM}
+        </Tag>
+      )}
       <form {...{ onSubmit: handleSubmit }}>
         {map(
           [
@@ -39,21 +48,21 @@ const Detail = ({
             },
             producersEnabled && editEnabled
               ? {
-                component: SelectField,
-                label: texts.PRODUCER,
-                name: 'producer',
-                validate: [Validation.required[language]],
-                options: map(producers, (producer) => ({
-                  value: producer.id,
-                  label: producer.name || '',
-                })),
-              }
+                  component: SelectField,
+                  label: texts.PRODUCER,
+                  name: 'producer',
+                  validate: [Validation.required[language]],
+                  options: map(producers, (producer) => ({
+                    value: producer.id,
+                    label: producer.name || '',
+                  })),
+                }
               : {
-                component: TextField,
-                label: texts.PRODUCER,
-                name: 'producer.name',
-                disabled: true,
-              },
+                  component: TextField,
+                  label: texts.PRODUCER,
+                  name: 'producer.name',
+                  disabled: true,
+                },
             {
               component: SyntaxHighlighterField,
               label: texts.XSL_TRANSFORMATION,
@@ -91,7 +100,7 @@ const Detail = ({
               {...{
                 key: field.name,
                 id: `sip-profile-detail-${field.name}`,
-                disabled: !editEnabled || !get(sipProfile, 'editable'),
+                disabled: !isEditable,
                 ...field,
               }}
             />
@@ -99,9 +108,9 @@ const Detail = ({
         )}
         <div {...{ className: 'flex-row flex-right' }}>
           <Button {...{ onClick: () => history.push('/sip-profiles') }}>
-            {editEnabled && get(sipProfile, 'editable') ? texts.STORNO : texts.CLOSE}
+            {isEditable ? texts.STORNO : texts.CLOSE}
           </Button>
-          {editEnabled && get(sipProfile, 'editable') ? (
+          {isEditable ? (
             <Button
               {...{
                 primary: true,
@@ -112,8 +121,8 @@ const Detail = ({
               {texts.SAVE_AND_CLOSE}
             </Button>
           ) : (
-              <div />
-            )}
+            <div />
+          )}
         </div>
       </form>
     </div>
@@ -149,8 +158,8 @@ export default compose(
         ]),
         ...(producersEnabled
           ? {
-            producer: find(producers, (item) => item.id === formData.producer),
-          }
+              producer: find(producers, (item) => item.id === formData.producer),
+            }
           : {}),
       });
 
@@ -161,8 +170,8 @@ export default compose(
           response === 409
             ? { name: texts.ENTITY_WITH_THIS_NAME_ALREADY_EXISTS }
             : {
-              packageType: texts.SAVE_FAILED,
-            }
+                packageType: texts.SAVE_FAILED,
+              }
         );
       }
     },

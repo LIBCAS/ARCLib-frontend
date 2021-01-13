@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
 import { withRouter } from 'react-router-dom';
+import { get } from 'lodash';
 
 import PageWrapper from '../../components/PageWrapper';
 import Detail from '../../components/notifications/Detail';
 import { getNotification } from '../../actions/notificationActions';
+import { prettyJSON } from '../../utils';
 
 const Notification = ({ history, notification, texts, ...props }) => (
   <PageWrapper
@@ -25,7 +27,7 @@ const Notification = ({ history, notification, texts, ...props }) => (
           history,
           texts,
           notification,
-          initialValues: notification,
+          initialValues: { ...notification, params: prettyJSON(get(notification, 'params', '')) },
           ...props,
         }}
       />

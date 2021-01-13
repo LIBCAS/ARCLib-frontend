@@ -5,6 +5,8 @@ import { map, get, compact } from 'lodash';
 
 import ConfirmButton from '../ConfirmButton';
 import Table from '../table/Table';
+import PrettyJSONTableCell from '../table/PrettyJSONTableCell';
+import { showLoader } from '../../actions/appActions';
 import { deleteNotification, getNotifications } from '../../actions/notificationActions';
 import { hasPermission } from '../../utils';
 import { Permission } from '../../enums';
@@ -15,6 +17,7 @@ const NotificationsTable = ({
   texts,
   deleteNotification,
   getNotifications,
+  showLoader,
 }) => {
   const deleteEnabled = hasPermission(Permission.NOTIFICATION_RECORDS_WRITE);
   return (
@@ -26,6 +29,7 @@ const NotificationsTable = ({
           { label: texts.CRON_EXPRESSION },
           { label: texts.SUBJECT },
           { label: texts.MESSAGE },
+          { label: texts.PARAMS },
           deleteEnabled && { label: '' },
         ]),
         items: map(notifications, (item) => ({
@@ -36,6 +40,15 @@ const NotificationsTable = ({
             { label: get(item, 'cron', '') },
             { label: get(item, 'subject', '') },
             { label: get(item, 'message', '') },
+            {
+              label: (
+                <PrettyJSONTableCell
+                  {...{
+                    json: get(item, 'params', ''),
+                  }}
+                />
+              ),
+            },
             deleteEnabled && {
               label: (
                 <ConfirmButton
@@ -44,8 +57,10 @@ const NotificationsTable = ({
                     title: texts.NOTIFICATION_DELETE,
                     text: <p>{texts.NOTIFICATION_DELETE_TEXT}</p>,
                     onClick: async () => {
+                      showLoader();
                       await deleteNotification(get(item, 'id'));
                       getNotifications();
+                      showLoader(false);
                     },
                   }}
                 />
@@ -59,4 +74,6 @@ const NotificationsTable = ({
   );
 };
 
-export default compose(connect(null, { deleteNotification, getNotifications }))(NotificationsTable);
+export default compose(connect(null, { deleteNotification, getNotifications, showLoader }))(
+  NotificationsTable
+);

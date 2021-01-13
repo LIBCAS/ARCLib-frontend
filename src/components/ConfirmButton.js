@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 
 import Button from './Button';
 import ErrorBlock from './ErrorBlock';
+import Tooltip from './Tooltip';
 
 const ConfirmButton = ({
   label,
@@ -18,48 +19,60 @@ const ConfirmButton = ({
   setFail,
   onClose,
   key,
+  tooltip,
   ...props
-}) => (
-  <div {...{ key }}>
-    <Modal
-      {...{
-        show: open,
-        onHide: onClose,
-        backdrop: 'static',
-        animation: false,
-      }}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {text}
-        <ErrorBlock {...{ label: fail }} />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button
+}) => {
+  const button = <Button {...{ onClick: () => setOpen(true), ...props }}>{label}</Button>;
+  return (
+    <div {...{ key, onClick: (e) => e.stopPropagation() }}>
+      <Modal
+        {...{
+          show: open,
+          onHide: onClose,
+          backdrop: 'static',
+          animation: false,
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {text}
+          <ErrorBlock {...{ label: fail }} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            {...{
+              onClick: onClose,
+            }}
+          >
+            {texts.STORNO}
+          </Button>
+          <Button
+            {...{
+              primary: true,
+              className: 'margin-left-small',
+              onClick: () => onSubmit(),
+            }}
+          >
+            {texts.SUBMIT}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {tooltip ? (
+        <Tooltip
           {...{
-            onClick: onClose,
+            key,
+            title: tooltip,
+            content: button,
           }}
-        >
-          {texts.STORNO}
-        </Button>
-        <Button
-          {...{
-            primary: true,
-            className: 'margin-left-small',
-            onClick: () => onSubmit(),
-          }}
-        >
-          {texts.SUBMIT}
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    <div {...{ onClick: (e) => e.stopPropagation() }}>
-      <Button {...{ onClick: () => setOpen(true), ...props }}>{label}</Button>
+        />
+      ) : (
+        button
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default compose(
   defaultProps({ onClick: () => true }),

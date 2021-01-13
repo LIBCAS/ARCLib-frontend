@@ -8,7 +8,7 @@ import { setDialog } from '../../actions/appActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
-const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, texts, user }) => {
+const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, texts }) => {
   const deleteEnabled = hasPermission(Permission.WORKFLOW_DEFINITION_RECORDS_WRITE);
   return (
     <Table
@@ -29,7 +29,7 @@ const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, text
             { label: formatDateTime(get(item, 'updated')) },
             deleteEnabled
               ? {
-                  label: get(item, 'editable') ? (
+                  label: (
                     <Button
                       {...{
                         onClick: (e) => {
@@ -43,8 +43,6 @@ const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, text
                     >
                       {texts.DELETE}
                     </Button>
-                  ) : (
-                    <div />
                   ),
                   className: 'text-right',
                 }

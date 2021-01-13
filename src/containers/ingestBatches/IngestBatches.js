@@ -11,7 +11,7 @@ import Pagination from '../../components/Pagination';
 import SelectField from '../../components/SelectField';
 import { getBatches } from '../../actions/batchActions';
 import { getUsersByParams } from '../../actions/usersActions';
-import { setFilter } from '../../actions/appActions';
+import { setFilter, setPager } from '../../actions/appActions';
 import { filterOperationsTypes } from '../../enums';
 
 const enableUrl = `/ingest-batches`;
@@ -25,10 +25,16 @@ const IngestBatches = ({
   users,
   filter,
   setFilter,
+  pager,
+  setPager,
   selectKey,
   setSelectKey,
 }) => {
-  const refresh = () => getBatches();
+  const handleUpdate = () => getBatches();
+  const onFilterUpdate = () => {
+    setPager({ ...pager, page: 0 });
+    setTimeout(handleUpdate);
+  };
 
   return (
     <PageWrapper {...{ breadcrumb: [{ label: texts.INGEST_BATCHES }] }}>
@@ -45,7 +51,7 @@ const IngestBatches = ({
                   { label: texts.PRODUCER, value: 'producerName' },
                   { label: texts.STATE, value: 'state' },
                 ],
-                handleUpdate: refresh,
+                handleUpdate,
               }}
             />
             <SelectField
@@ -73,7 +79,7 @@ const IngestBatches = ({
                         : []),
                     ],
                   });
-                  setTimeout(refresh);
+                  onFilterUpdate();
                 },
               }}
             />
@@ -84,12 +90,12 @@ const IngestBatches = ({
               language,
               texts,
               batches: get(batches, 'items'),
-              handleUpdate: refresh,
+              handleUpdate: onFilterUpdate,
             }}
           />
           <Pagination
             {...{
-              handleUpdate: refresh,
+              handleUpdate,
               count: get(batches, 'items.length', 0),
               countAll: get(batches, 'count', 0),
             }}
@@ -108,10 +114,11 @@ export default compose(
   withState('fetching', 'setFetching', false),
   withState('users', 'setUsers', null),
   withState('selectKey', 'setSelectKey', false),
-  connect(({ app: { filter }, batch: { batches } }) => ({ filter, batches }), {
+  connect(({ app: { filter, pager }, batch: { batches } }) => ({ filter, pager, batches }), {
     getBatches,
     getUsersByParams,
     setFilter,
+    setPager,
   }),
   lifecycle({
     async componentDidMount() {

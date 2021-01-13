@@ -3,11 +3,13 @@ import { connect } from 'react-redux';
 import { compose, defaultProps } from 'recompose';
 import { get, noop } from 'lodash';
 
+import Button from './Button';
 import DialogButton from './DialogButton';
 import DropFiles from './DropFiles';
 import TextField from './TextField';
 import { setDialog, showLoader } from '../actions/appActions';
-import { postFile } from '../actions/fileActions';
+import { postFile, getFile } from '../actions/fileActions';
+import { downloadBlob } from '../utils';
 
 const Uploader = ({
   key,
@@ -19,7 +21,10 @@ const Uploader = ({
   showLoader,
   id,
   postFile,
+  getFile,
   onUpload,
+  onDownload,
+  downloadEnabled,
 }) => (
   <div {...{ key, className: 'flex-row-nowrap flex-bottom' }}>
     <TextField
@@ -61,6 +66,27 @@ const Uploader = ({
         }}
       />
     )}
+    {(downloadEnabled || onDownload) && get(value, 'id') ? (
+      <Button
+        {...{
+          className: 'margin-left-mini',
+          style: { minWidth: 90 },
+          onClick: async () => {
+            showLoader();
+            const downloadFn = onDownload || getFile;
+            const blob = await downloadFn(get(value, 'id'));
+            if (blob) {
+              downloadBlob(blob, get(value, 'name'));
+            }
+            showLoader(false);
+          },
+        }}
+      >
+        {texts.DOWNLOAD}
+      </Button>
+    ) : (
+      <div />
+    )}
   </div>
 );
 
@@ -70,5 +96,6 @@ export default compose(
     setDialog,
     showLoader,
     postFile,
+    getFile,
   })
 )(Uploader);

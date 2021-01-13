@@ -13,6 +13,8 @@ const UploadField = ({
   className,
   disabled,
   onUpload,
+  onDownload,
+  downloadEnabled,
 }) => (
   <FormGroup {...{ className, controlId: id }}>
     {label && <ControlLabel>{label}</ControlLabel>}
@@ -22,6 +24,8 @@ const UploadField = ({
         disabled,
         id,
         onUpload,
+        onDownload,
+        downloadEnabled,
       }}
     />
     {touched && <ErrorBlock {...{ label: error }} />}

@@ -86,6 +86,12 @@ const NotificationNew = ({
             type: 'textarea',
             validate: [Validation.required[language]],
           },
+          {
+            component: TextField,
+            label: texts.PARAMS,
+            name: 'parameters',
+            type: 'textarea',
+          },
         ]),
         (field, key) => (
           <Field {...{ key, id: `notification-new-${field.name}`, ...field }} />

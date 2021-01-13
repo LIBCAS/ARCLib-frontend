@@ -129,7 +129,9 @@ const Detail = ({
               setDialog('AipForget', {
                 id: get(aip, 'ingestWorkflow.sip.authorialPackage.id'),
               }),
-            show: get(aip, 'indexedFields.debug_mode[0]'),
+            show:
+              get(aip, 'indexedFields.debug_mode[0]') &&
+              hasPermission(Permission.BATCH_PROCESSING_WRITE),
           },
         ],
         ({ show, label, tooltip, ...props }, key) =>

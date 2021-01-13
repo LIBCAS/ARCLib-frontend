@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
@@ -6,6 +7,8 @@ import { Layout, Menu, Icon } from 'antd';
 import { map, findIndex, get, isEmpty, find } from 'lodash';
 
 import { isProduction } from '../utils';
+import { orderTypes } from '../enums';
+import { setFilter } from '../actions/appActions';
 
 const { Sider } = Layout;
 const { Item, ItemGroup } = Menu;
@@ -18,6 +21,7 @@ const SiderMenu = ({
   setCollapsed,
   className,
   menuStyle,
+  setFilter,
 }) => (
   <Sider
     {...{
@@ -43,6 +47,8 @@ const SiderMenu = ({
     <Menu
       {...{
         onClick: (e) => {
+          setFilter({ sort: '', order: orderTypes.ASC, filter: [] });
+
           if (!isNaN(e.key) && get(menuItems[Number(e.key)], 'onClick')) {
             menuItems[Number(e.key)].onClick();
           } else if (
@@ -134,4 +140,4 @@ const SiderMenu = ({
   </Sider>
 );
 
-export default compose(withRouter)(SiderMenu);
+export default compose(connect(null, { setFilter }), withRouter)(SiderMenu);

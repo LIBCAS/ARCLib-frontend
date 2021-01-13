@@ -43,12 +43,5 @@ export default compose(
         sort: get(options, '[0].value', ''),
       });
     },
-    componentWillUnmount() {
-      const { setFilter } = this.props;
-
-      setFilter({
-        sort: '',
-      });
-    },
   })
 )(Sort);

@@ -29,7 +29,7 @@ const SipProfileTable = ({ history, sipProfiles, setDialog, texts, user }) => {
             { label: formatDateTime(get(item, 'updated')) },
             deleteEnabled
               ? {
-                  label: get(item, 'editable') ? (
+                  label: (
                     <Button
                       {...{
                         onClick: (e) => {
@@ -43,8 +43,6 @@ const SipProfileTable = ({ history, sipProfiles, setDialog, texts, user }) => {
                     >
                       {texts.DELETE}
                     </Button>
-                  ) : (
-                    <div />
                   ),
                   className: 'text-right',
                 }

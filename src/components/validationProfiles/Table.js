@@ -8,7 +8,7 @@ import { setDialog } from '../../actions/appActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
-const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts, user }) => {
+const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts }) => {
   const deleteEnabled = hasPermission(Permission.VALIDATION_PROFILE_RECORDS_WRITE);
   return (
     <Table
@@ -29,7 +29,7 @@ const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts,
             { label: formatDateTime(get(item, 'updated')) },
             deleteEnabled
               ? {
-                  label: get(item, 'editable') ? (
+                  label: (
                     <Button
                       {...{
                         onClick: (e) => {
@@ -43,8 +43,6 @@ const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts,
                     >
                       {texts.DELETE}
                     </Button>
-                  ) : (
-                    <div />
                   ),
                   className: 'text-right',
                 }

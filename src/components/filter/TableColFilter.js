@@ -151,7 +151,7 @@ export default compose(
                   index,
                   field,
                   operation:
-                    type === filterTypes.TEXT
+                    type === filterTypes.TEXT || type === filterTypes.TEXT_CONTAINS
                       ? filterOperationsTypes.CONTAINS
                       : filterOperationsTypes.EQ,
                   value: '',

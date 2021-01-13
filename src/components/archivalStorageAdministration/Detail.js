@@ -67,20 +67,8 @@ const Detail = ({ handleSubmit, texts, language, setDialog, history, archivalSto
             tooltip: texts.FAILED_AND_ALL_CURRENTLY_PROCESSING_STUCKED_OBJECTS_WILL_BE_CLEANED,
           },
         ],
-        ({ tooltip, ...button }, key) => (
-          <Tooltip
-            {...{
-              key,
-              title: tooltip,
-              content: (
-                <ConfirmButton
-                  {...{
-                    ...button,
-                  }}
-                />
-              ),
-            }}
-          />
+        (button, key) => (
+          <ConfirmButton {...{ key, ...button }} />
         )
       )}
     </div>

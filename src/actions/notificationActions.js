@@ -1,6 +1,7 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
+import { NotificationType } from '../enums';
 
 export const getNotifications = () => async (dispatch) => {
   dispatch({
@@ -11,7 +12,7 @@ export const getNotifications = () => async (dispatch) => {
   });
 
   try {
-    const response = await fetch('/api/formats_revision_notification');
+    const response = await fetch('/api/notification');
 
     if (response.status === 200) {
       const notifications = await response.json();
@@ -46,7 +47,7 @@ export const getNotification = (id) => async (dispatch) => {
   });
 
   try {
-    const response = await fetch(`/api/formats_revision_notification/${id}`);
+    const response = await fetch(`/api/notification/${id}`);
 
     if (response.status === 200) {
       const notification = await response.json();
@@ -76,7 +77,7 @@ export const getNotification = (id) => async (dispatch) => {
 export const deleteNotification = (id) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(`/api/formats_revision_notification/${id}`, {
+    const response = await fetch(`/api/notification/${id}`, {
       method: 'DELETE',
     });
 
@@ -94,7 +95,7 @@ export const deleteNotification = (id) => async (dispatch) => {
 export const putNotification = (body) => async (dispatch) => {
   dispatch(showLoader());
   try {
-    const response = await fetch(`/api/formats_revision_notification/${body.id}`, {
+    const response = await fetch(`/api/notification/${body.id}`, {
       method: 'PUT',
       headers: new Headers({
         'Content-Type': 'application/json',
@@ -129,19 +130,34 @@ export const putNotification = (body) => async (dispatch) => {
 
 export const getNotificationRelatedEntities = (type, text) => async (dispatch) => {
   try {
-    const response = await fetch('/api/related_entities', {
-      params: {
-        filter: [
-          { field: 'type', operation: 'EQ', value: type },
-          { field: 'name', operation: 'CONTAINS', value: text },
-        ],
-      },
-    });
+    const response = await fetch(
+      `/api/notification/list/autocomplete/${
+        type === NotificationType.REPORT ? 'reports' : 'formats'
+      }`,
+      {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+        ...(text
+          ? {
+              body: JSON.stringify({
+                filter: [{ field: 'autoCompleteLabel', operation: 'CONTAINS', value: text }],
+              }),
+            }
+          : {}),
+      }
+    );
 
     if (response.status === 200) {
       const relatedEntities = await response.json();
 
-      return relatedEntities;
+      return (relatedEntities && relatedEntities.items ? relatedEntities.items : []).map(
+        ({ autoCompleteLabel, ...item }) => ({
+          ...item,
+          name: autoCompleteLabel,
+        })
+      );
     }
 
     dispatch(await openErrorDialogIfRequestFailed(response));

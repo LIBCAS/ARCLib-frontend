@@ -9,7 +9,7 @@ import PageWrapper from '../../components/PageWrapper';
 import SortOrder from '../../components/filter/SortOrder';
 import Table from '../../components/producerProfiles/Table';
 import Pagination from '../../components/Pagination';
-import { setDialog } from '../../actions/appActions';
+import { setDialog, setPager } from '../../actions/appActions';
 import { getProducers } from '../../actions/producerActions';
 import { getProducerProfiles } from '../../actions/producerProfileActions';
 import { getSipProfiles } from '../../actions/sipProfileActions';
@@ -29,74 +29,88 @@ const ProducerProfiles = ({
   getWorkflowDefinitions,
   texts,
   user,
-}) => (
-  <PageWrapper {...{ breadcrumb: [{ label: texts.PRODUCER_PROFILES }] }}>
-    {hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) && (
-      <Button
+  pager,
+  setPager,
+}) => {
+  const handleUpdate = () => getProducerProfiles();
+  const onFilterUpdate = () => {
+    setPager({ ...pager, page: 0 });
+    setTimeout(handleUpdate);
+  };
+
+  return (
+    <PageWrapper {...{ breadcrumb: [{ label: texts.PRODUCER_PROFILES }] }}>
+      {hasPermission(Permission.PRODUCER_PROFILE_RECORDS_WRITE) && (
+        <Button
+          {...{
+            primary: true,
+            className: 'margin-bottom-small',
+            onClick: () => {
+              if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
+                getProducers(false);
+              }
+              getSipProfiles();
+              getValidationProfiles();
+              getWorkflowDefinitions();
+              setDialog('ProducerProfileNew');
+            },
+          }}
+        >
+          {texts.NEW}
+        </Button>
+      )}
+      <SortOrder
         {...{
-          primary: true,
-          className: 'margin-bottom-small',
-          onClick: () => {
-            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
-              getProducers(false);
-            }
-            getSipProfiles();
-            getValidationProfiles();
-            getWorkflowDefinitions();
-            setDialog('ProducerProfileNew');
-          },
+          className: 'margin-bottom',
+          sortOptions: [
+            { label: texts.UPDATED, value: 'updated' },
+            { label: texts.CREATED, value: 'created' },
+            { label: texts.NAME, value: 'name' },
+            { label: texts.PRODUCER, value: 'producerName' },
+            { label: texts.SIP_PROFILE, value: 'sipProfileName' },
+            { label: texts.VALIDATION_PROFILE, value: 'validationProfileName' },
+            {
+              label: texts.WORKFLOW_DEFINITION,
+              value: 'workflowDefinitionName',
+            },
+          ],
+          handleUpdate,
         }}
-      >
-        {texts.NEW}
-      </Button>
-    )}
-    <SortOrder
-      {...{
-        className: 'margin-bottom',
-        sortOptions: [
-          { label: texts.UPDATED, value: 'updated' },
-          { label: texts.CREATED, value: 'created' },
-          { label: texts.NAME, value: 'name' },
-          { label: texts.PRODUCER, value: 'producerName' },
-          { label: texts.SIP_PROFILE, value: 'sipProfileName' },
-          { label: texts.VALIDATION_PROFILE, value: 'validationProfileName' },
-          {
-            label: texts.WORKFLOW_DEFINITION,
-            value: 'workflowDefinitionName',
-          },
-        ],
-        handleUpdate: () => getProducerProfiles(),
-      }}
-    />
-    <Table
-      {...{
-        history,
-        texts,
-        user,
-        producerProfiles: get(producerProfiles, 'items'),
-        handleUpdate: () => getProducerProfiles(),
-      }}
-    />
-    <Pagination
-      {...{
-        handleUpdate: () => getProducerProfiles(),
-        count: get(producerProfiles, 'items.length', 0),
-        countAll: get(producerProfiles, 'count', 0),
-      }}
-    />
-  </PageWrapper>
-);
+      />
+      <Table
+        {...{
+          history,
+          texts,
+          user,
+          producerProfiles: get(producerProfiles, 'items'),
+          handleUpdate: onFilterUpdate,
+        }}
+      />
+      <Pagination
+        {...{
+          handleUpdate,
+          count: get(producerProfiles, 'items.length', 0),
+          countAll: get(producerProfiles, 'count', 0),
+        }}
+      />
+    </PageWrapper>
+  );
+};
 
 export default compose(
   withRouter,
-  connect(({ producerProfile: { producerProfiles } }) => ({ producerProfiles }), {
-    getProducers,
-    getProducerProfiles,
-    setDialog,
-    getSipProfiles,
-    getValidationProfiles,
-    getWorkflowDefinitions,
-  }),
+  connect(
+    ({ app: { pager }, producerProfile: { producerProfiles } }) => ({ pager, producerProfiles }),
+    {
+      getProducers,
+      getProducerProfiles,
+      setDialog,
+      getSipProfiles,
+      getValidationProfiles,
+      getWorkflowDefinitions,
+      setPager,
+    }
+  ),
   lifecycle({
     componentDidMount() {
       const { getProducerProfiles } = this.props;

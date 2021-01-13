@@ -83,6 +83,12 @@ const Detail = ({
           type: 'textarea',
           validate: [Validation.required[language]],
         },
+        {
+          component: TextField,
+          label: texts.PARAMS,
+          name: 'parameters',
+          type: 'textarea',
+        },
       ],
       (field, key) => (
         <Field

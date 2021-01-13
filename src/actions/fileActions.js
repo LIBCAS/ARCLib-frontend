@@ -6,9 +6,9 @@ export const getFile = (id) => async (dispatch) => {
     const response = await fetch(`/api/files/${id}`);
 
     if (response.status === 200) {
-      const format = await response.json();
+      const file = await response.blob();
 
-      return format;
+      return file;
     }
 
     dispatch(await openErrorDialogIfRequestFailed(response));
@@ -43,6 +43,25 @@ export const postFile = (file) => async (dispatch) => {
     console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));
     return null;
+  }
+};
+
+export const getFormatFile = (id) => async (dispatch) => {
+  try {
+    const response = await fetch(`/api/format_files/${id}`);
+
+    if (response.status === 200) {
+      const file = await response.blob();
+
+      return file;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
   }
 };
 

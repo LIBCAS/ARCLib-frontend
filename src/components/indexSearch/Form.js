@@ -907,13 +907,11 @@ export default compose(
       }
     },
     componentWillUnmount() {
-      const { setFilter, saveQuery } = this.props;
+      const { saveQuery } = this.props;
 
       window.removeEventListener('beforeunload', saveQuery);
 
       saveQuery();
-
-      setFilter({ sort: '', order: orderTypes.ASC, filter: [] });
     },
   })
 )(Form);

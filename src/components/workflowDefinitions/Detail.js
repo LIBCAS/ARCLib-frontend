@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 import { compose, withHandlers, lifecycle } from 'recompose';
 import { get, map, find } from 'lodash';
+import { Tag } from 'antd';
 
 import Button from '../Button';
 import { TextField, SelectField, Checkbox, SyntaxHighlighterField, Validation } from '../form';
@@ -20,8 +21,16 @@ const Detail = ({
   producersEnabled,
   editEnabled,
 }) => {
+  const isDeleted = !!get(workflowDefinition, 'deleted');
+  const isEditable = !!(editEnabled && get(workflowDefinition, 'editable') && !isDeleted);
+
   return (
     <div>
+      {isDeleted && (
+        <Tag color="#FF4136" className="margin-bottom-small">
+          {texts.DELETED_ITEM}
+        </Tag>
+      )}
       <form {...{ onSubmit: handleSubmit }}>
         {map(
           [
@@ -73,7 +82,7 @@ const Detail = ({
               {...{
                 key: field.name,
                 id: `workflow-definition-detail-${field.name}`,
-                disabled: !editEnabled || !get(workflowDefinition, 'editable'),
+                disabled: !isEditable,
                 ...field,
               }}
             />
@@ -81,9 +90,9 @@ const Detail = ({
         )}
         <div {...{ className: 'flex-row flex-right' }}>
           <Button {...{ onClick: () => history.push('/workflow-definitions') }}>
-            {editEnabled && get(workflowDefinition, 'editable') ? texts.STORNO : texts.CLOSE}
+            {isEditable ? texts.STORNO : texts.CLOSE}
           </Button>
-          {editEnabled && get(workflowDefinition, 'editable') && (
+          {isEditable && (
             <Button
               {...{
                 primary: true,
