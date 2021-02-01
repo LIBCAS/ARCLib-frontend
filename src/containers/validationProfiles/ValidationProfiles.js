@@ -28,7 +28,7 @@ const ValidationProfiles = ({
           className: 'margin-bottom-small',
           onClick: () => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
-              getProducers(false);
+              getProducers();
             }
 
             setDialog('ValidationProfileNew');

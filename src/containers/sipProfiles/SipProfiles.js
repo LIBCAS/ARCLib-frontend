@@ -21,7 +21,7 @@ const SipProfiles = ({ history, sipProfiles, setDialog, texts, user, getProducer
           className: 'margin-bottom-small',
           onClick: () => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
-              getProducers(false);
+              getProducers();
             }
 
             setDialog('SipProfileNew');

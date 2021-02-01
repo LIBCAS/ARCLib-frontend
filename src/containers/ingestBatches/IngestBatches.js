@@ -10,7 +10,7 @@ import Table from '../../components/ingestBatches/Table';
 import Pagination from '../../components/Pagination';
 import SelectField from '../../components/SelectField';
 import { getBatches } from '../../actions/batchActions';
-import { getUsersByParams } from '../../actions/usersActions';
+import { getUserNames } from '../../actions/usersActions';
 import { setFilter, setPager } from '../../actions/appActions';
 import { filterOperationsTypes } from '../../enums';
 
@@ -116,13 +116,13 @@ export default compose(
   withState('selectKey', 'setSelectKey', false),
   connect(({ app: { filter, pager }, batch: { batches } }) => ({ filter, pager, batches }), {
     getBatches,
-    getUsersByParams,
+    getUserNames,
     setFilter,
     setPager,
   }),
   lifecycle({
     async componentDidMount() {
-      const { getBatches, setTimeoutId, getUsersByParams, setUsers, texts } = this.props;
+      const { getBatches, setTimeoutId, getUserNames, setUsers, texts } = this.props;
 
       this.mounted = true;
 
@@ -131,7 +131,7 @@ export default compose(
           value: '',
           label: `-- ${texts.RESET} --`,
         },
-        ...((await getUsersByParams({ page: 0, pageSize: 9999 })) || []).map(
+        ...((await getUserNames()) || []).map(
           ({ id, fullName }) => ({
             value: id,
             label: fullName || 'Neznámý',

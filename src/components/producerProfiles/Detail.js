@@ -213,7 +213,7 @@ export default compose(
       } = this.props;
       if (canEdit || canEditAll) {
         if (canEditAll) {
-          getProducers(false);
+          getProducers();
         }
         getSipProfiles();
         getValidationProfiles();

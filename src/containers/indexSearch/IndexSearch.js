@@ -256,25 +256,6 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
         ],
       },
       {
-        subtitle: texts.DEVICES,
-        id: 'AGGREGATED_EXTRACTED_TECHNICAL_METADATA',
-      },
-      {
-        id: 'AGGREGATED_EXTRACTED_TECHNICAL_METADATA',
-        filters: [
-          {
-            label: texts.DEVICE_ID,
-            field: 'device_id',
-            type: filterTypes.TEXT,
-          },
-          {
-            label: texts.FILE_COUNT,
-            field: 'device_file_count',
-            type: filterTypes.NUMBER,
-          },
-        ],
-      },
-      {
         subtitle: texts.IMAGE_CAPTURE_METADATA,
         id: 'AGGREGATED_EXTRACTED_TECHNICAL_METADATA',
       },
@@ -453,23 +434,13 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
             type: filterTypes.TEXT,
           },
           {
-            label: texts.LINKING_DEVICE_ID,
-            field: 'arc_event_linking_device_id',
-            type: filterTypes.TEXT_EQ_NEQ,
-          },
-          {
             label: texts.SCANNER_MODEL_SERIAL_NO,
             field: 'arc_event_scanner_model_serial_no',
             type: filterTypes.TEXT_EQ_NEQ,
           },
           {
-            label: texts.SCANNING_SOFTWARE_NAME,
-            field: 'arc_event_scanning_software_name',
-            type: filterTypes.TEXT,
-          },
-          {
-            label: texts.EVENT_COUNT,
-            field: 'arc_event_count',
+            label: texts.FILE_COUNT,
+            field: 'arc_event_file_count',
             type: filterTypes.NUMBER,
           },
         ],

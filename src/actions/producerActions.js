@@ -1,9 +1,8 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerParams } from '../utils';
 
-export const getProducers = (withFilter = true) => async (dispatch, getState) => {
+export const getProducers = () => async (dispatch, getState) => {
   dispatch({
     type: c.PRODUCER,
     payload: {
@@ -12,9 +11,7 @@ export const getProducers = (withFilter = true) => async (dispatch, getState) =>
   });
 
   try {
-    const response = await fetch('/api/producer', {
-      params: withFilter ? createFilterPagerParams(getState) : undefined,
-    });
+    const response = await fetch('/api/producer');
 
     if (response.status === 200) {
       const producers = await response.json();

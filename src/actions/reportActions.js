@@ -5,7 +5,7 @@ import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 import { createFilterPagerParams, downloadBlob } from '../utils';
 
-export const getReports = (withFilter = true) => async (dispatch, getState) => {
+export const getReports = () => async (dispatch, getState) => {
   dispatch({
     type: c.REPORT,
     payload: {
@@ -15,7 +15,7 @@ export const getReports = (withFilter = true) => async (dispatch, getState) => {
 
   try {
     const response = await fetch('/api/report', {
-      params: withFilter ? createFilterPagerParams(getState) : undefined,
+      params: createFilterPagerParams(getState)
     });
 
     if (response.ok) {

@@ -12,9 +12,9 @@ export const getProducerProfiles = (withFilter = true) => async (dispatch, getSt
   });
 
   try {
-    const response = await fetch('/api/producer_profile/list_dtos', {
-      params: withFilter ? createFilterPagerParams(getState) : { pageSize: 0 },
-    });
+    const response = withFilter ? await fetch('/api/producer_profile/list_dtos', {
+      params: createFilterPagerParams(getState),
+    }): await fetch('/api/producer_profile/list_dtos/all');
 
     if (response.status === 200) {
       const producerProfiles = await response.json();
