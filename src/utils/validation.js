@@ -21,9 +21,17 @@ export const cronFormatCheck = (value) => {
   regexByField['day'] = '0?[1-9]|[12]\\d|3[01]|L|W|LW';
   regexByField['month'] = '[1-9]|1[012]';
   regexByField['dayOfWeek'] = '[0-7]';
-  regexByField['year'] = '|\\d{4}';
+  // regexByField['year'] = '|\\d{4}';
 
-  ['sec', 'min', 'hour', 'day', 'month', 'dayOfWeek', 'year'].forEach((field) => {
+  [
+    'sec',
+    'min',
+    'hour',
+    'day',
+    'month',
+    'dayOfWeek',
+    // 'year'
+  ].forEach((field) => {
     let range =
       '(?:' +
       regexByField[field] +
@@ -77,9 +85,9 @@ export const cronFormatCheck = (value) => {
       ')\\s+' +
       '(' +
       regexByField['dayOfWeek'] +
-      ')(|\\s)+' +
-      '(' +
-      regexByField['year'] +
+      // ')(|\\s)+' +
+      // '(' +
+      // regexByField['year'] +
       ')' +
       ')\\s*$'
   ).test(value);

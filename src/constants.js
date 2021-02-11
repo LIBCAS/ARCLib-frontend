@@ -1,4 +1,3 @@
-export const CRON_URL =
-  'http://www.quartz-scheduler.org/documentation/quartz-2.0.2/tutorials/crontrigger.html';
+export const CRON_URL = 'https://riptutorial.com/spring/example/21209/cron-expression';
 export const GLOB_URL = 'https://en.wikipedia.org/wiki/Glob_(programming)';
-export const WIKI_URL = "https://github.com/LIBCAS/ARCLib/wiki";
+export const WIKI_URL = 'https://github.com/LIBCAS/ARCLib/wiki';

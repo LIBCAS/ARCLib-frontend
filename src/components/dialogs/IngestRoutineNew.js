@@ -13,6 +13,7 @@ import { TextField, SelectField, Checkbox, Validation } from '../form';
 import { saveRoutine, getRoutines } from '../../actions/routineActions';
 import { openUrlInNewTab, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 import { CRON_URL } from '../../constants';
+import Tooltip from '../Tooltip';
 
 const IngestRoutineNew = ({
   handleSubmit,
@@ -110,6 +111,18 @@ const IngestRoutineNew = ({
             component: Checkbox,
             label: texts.ACTIVE,
             name: 'job.active',
+          },
+          {
+            component: Checkbox,
+            label: (
+              <Tooltip
+                {...{
+                  title:texts.ROUTINE_AUTO_FLAG_CANT_BE_CHANGED_TOOLTIP,
+                  content: texts.AUTO,
+                }}
+              />
+            ),
+            name: 'auto',
           },
         ],
         ({ buttons, name, ...field }, key) => (

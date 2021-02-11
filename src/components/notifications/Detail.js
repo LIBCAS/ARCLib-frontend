@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { reduxForm, Field, SubmissionError, formValueSelector } from 'redux-form';
-import { compose, withHandlers } from 'recompose';
-import { get, map } from 'lodash';
+import { compose, withHandlers, withState } from 'recompose';
+import { get, map, compact } from 'lodash';
 
 import Button from '../Button';
 import InfoIcon from '../InfoIcon';
@@ -19,10 +19,13 @@ const Detail = ({
   language,
   type,
   getNotificationRelatedEntities,
+  change,
+  fieldKey,
+  setFieldKey,
 }) => (
   <form {...{ onSubmit: handleSubmit }}>
     {map(
-      [
+      compact([
         {
           component: TextField,
           label: texts.CREATOR,
@@ -40,9 +43,14 @@ const Detail = ({
           label: texts.TYPE,
           name: 'type',
           options: map(NotificationType, (value) => ({ value, label: get(texts, value) })),
+          onChange: () => {
+            change('relatedEntities', []);
+            setTimeout(() => setFieldKey(!fieldKey));
+          },
           validate: [Validation.required[language]],
         },
         {
+          fieldKey,
           component: AutoCompleteField,
           label: texts.RELATED_ENTITIES,
           name: 'relatedEntities',
@@ -50,7 +58,6 @@ const Detail = ({
           loadOptions: async (text) => getNotificationRelatedEntities(type, text),
           getOptionValue: (item) => item.id,
           getOptionLabel: (item) => item.name,
-          validate: [Validation.required[language]],
           texts,
         },
         {
@@ -83,17 +90,19 @@ const Detail = ({
           type: 'textarea',
           validate: [Validation.required[language]],
         },
-        {
-          component: TextField,
-          label: texts.PARAMS,
-          name: 'parameters',
-          type: 'textarea',
-        },
-      ],
-      (field, key) => (
+        type !== NotificationType.FORMAT_REVISION
+          ? {
+              component: TextField,
+              label: texts.PARAMS,
+              name: 'parameters',
+              type: 'textarea',
+            }
+          : null,
+      ]),
+      ({ fieldKey, ...field }) => (
         <Field
           {...{
-            key,
+            key: `${field.name}-${fieldKey}`,
             id: `notification-detail-${field.name}`,
             ...field,
           }}
@@ -125,19 +134,32 @@ export default compose(
     }),
     { putNotification, getNotificationRelatedEntities }
   ),
+  withState('fieldKey', 'setFieldKey', false),
   withHandlers({
-    onSubmit: ({ putNotification, notification, texts, history }) => async (formData) => {
+    onSubmit: ({ putNotification, notification, texts, history }) => async ({
+      parameters,
+      ...formData
+    }) => {
       if (
         await putNotification({
           ...notification,
           ...removeStartEndWhiteSpaceInSelectedFields(formData, ['cron', 'subject']),
+          ...(formData.type !== NotificationType.FORMAT_REVISION && parameters
+            ? { parameters }
+            : {}),
         })
       ) {
         history.push('/notifications');
       } else {
-        throw new SubmissionError({
-          message: texts.SAVE_FAILED,
-        });
+        throw new SubmissionError(
+          formData.type !== NotificationType.FORMAT_REVISION
+            ? {
+                parameters: texts.SAVE_FAILED,
+              }
+            : {
+                message: texts.SAVE_FAILED,
+              }
+        );
       }
     },
   }),

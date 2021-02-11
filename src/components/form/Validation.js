@@ -1,3 +1,5 @@
+import { isArray } from 'lodash';
+
 import { languages, CZ, EN } from '../../enums';
 import {
   cronFormatCheck,
@@ -11,6 +13,11 @@ import {
 export const required = {
   [languages.CZ]: (value) => (hasValue(value) ? undefined : CZ.REQUIRED),
   [languages.EN]: (value) => (hasValue(value) ? undefined : EN.REQUIRED),
+};
+
+export const requiredArray = {
+  [languages.CZ]: (value) => (isArray(value) && value.length ? undefined : CZ.REQUIRED),
+  [languages.EN]: (value) => (isArray(value) && value.length ? undefined : EN.REQUIRED),
 };
 
 export const cron = {

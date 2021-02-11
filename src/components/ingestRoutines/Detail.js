@@ -17,6 +17,7 @@ import {
 } from '../../utils';
 import { CRON_URL } from '../../constants';
 import { Permission } from '../../enums';
+import Tooltip from '../Tooltip';
 
 const Detail = ({
   handleSubmit,
@@ -110,15 +111,28 @@ const Detail = ({
             label: texts.ACTIVE,
             name: 'job.active',
           },
+          {
+            component: Checkbox,
+            name: 'auto',
+            disabled: true,
+            label: (
+              <Tooltip
+                {...{
+                  title:texts.ROUTINE_AUTO_FLAG_CANT_BE_CHANGED_TOOLTIP,
+                  content: texts.AUTO,
+                }}
+              />
+            ),
+          },
         ],
-        ({ buttons, name, ...field }, key) => (
+        ({ buttons, name, disabled, ...field }, key) => (
           <div {...{ key }}>
             <Field
               {...{
                 id: `ingest-routine-detail-${name}`,
                 name,
                 ...field,
-                disabled: !editEnabled,
+                disabled: disabled || !editEnabled,
               }}
             />
             {editEnabled && !isEmpty(buttons) && (
