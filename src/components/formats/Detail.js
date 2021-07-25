@@ -19,6 +19,8 @@ import {
 } from '../../actions/formatActions';
 import { formatThreatLevelOptions, Permission } from '../../enums';
 import { hasPermission } from '../../utils';
+import UploadField from '../form/UploadField';
+import { getFormatFile, postFormatFile } from '../../actions/fileActions';
 
 const Detail = ({
   history,
@@ -33,6 +35,8 @@ const Detail = ({
   setDialog,
   getRisks,
   showLoader,
+  postFormatFile,
+  getFormatFile,
 }) => {
   const editEnabled = hasPermission(Permission.FORMAT_RECORDS_WRITE);
   return (
@@ -134,6 +138,15 @@ const Detail = ({
                           disabled: !editEnabled,
                           options: formatThreatLevelOptions,
                         },
+                        {
+                          component: UploadField,
+                          label: texts.FILES,
+                          name: 'files',
+                          disabled: !editEnabled,
+                          onUpload: postFormatFile,
+                          onDownload: getFormatFile,
+                          multiple: true,
+                        },
                       ],
                       (field, key) => (
                         <Field
@@ -231,14 +244,17 @@ export default compose(
       showLoader,
       putFormat,
       getRisks,
+      postFormatFile,
+      getFormatFile,
     }
   ),
   withHandlers({
-    onSubmit: ({ putFormat, format, texts, history }) => async ({ threatLevel }) => {
+    onSubmit: ({ putFormat, format, texts, history }) => async ({ threatLevel, files }) => {
       if (
         await putFormat({
           ...format,
           threatLevel,
+          files,
         })
       ) {
         history.push('/formats');

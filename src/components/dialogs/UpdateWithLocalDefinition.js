@@ -11,20 +11,12 @@ import Table from '../table/Table';
 import ConfirmButton from '../ConfirmButton';
 import DialogContainer from './DialogContainer';
 import ErrorBlock from '../ErrorBlock';
-import {
-  TextField,
-  UploadField,
-  TagsField,
-  TagsSelectField,
-  Checkbox,
-  DateTimeField,
-} from '../form';
+import { TextField, TagsField, TagsSelectField, Checkbox, DateTimeField } from '../form';
 import {
   updateWithLocalDefinition,
   getFormatDefinitionByFormatId,
 } from '../../actions/formatActions';
 import { setDialog, showLoader } from '../../actions/appActions';
-import { postFormatFile } from '../../actions/fileActions';
 import { getIssueDictionary } from '../../actions/issueDictionaryActions';
 import { formatClassifications } from '../../enums';
 import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
@@ -38,7 +30,6 @@ const UpdateWithLocalDefinition = ({
   setDialog,
   data,
   setFail,
-  postFormatFile,
 }) => (
   <DialogContainer
     {...{
@@ -127,12 +118,6 @@ const UpdateWithLocalDefinition = ({
                         label: texts.PRESERVATION_PLAN_DESCRIPTION,
                         name: 'preservationPlanDescription',
                         type: 'textarea',
-                      },
-                      {
-                        component: UploadField,
-                        label: texts.PRESERVATION_PLAN_FILE,
-                        name: 'preservationPlanFile',
-                        onUpload: postFormatFile,
                       },
                       {
                         component: Checkbox,
@@ -337,7 +322,6 @@ export default compose(
       getIssueDictionary,
       getFormatDefinitionByFormatId,
       reset,
-      postFormatFile,
     }
   ),
   withRouter,
@@ -359,9 +343,7 @@ export default compose(
             'nationalFormatGuarantor',
           ]),
           internalInformationFilled: !!(
-            formData.nationalFormatGuarantor ||
-            formData.preservationPlanDescription ||
-            formData.preservationPlanFile
+            formData.nationalFormatGuarantor || formData.preservationPlanDescription
           ),
           preferred: preferred === true,
           id: undefined,

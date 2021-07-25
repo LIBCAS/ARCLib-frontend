@@ -12,7 +12,7 @@ import IdentifiersTable from './IdentifiersTable';
 import RelatedFormatsTable from './RelatedFormatsTable';
 import FormatOccurrencesTable from './FormatOccurrencesTable';
 import DevelopersTable from './DevelopersTable';
-import { TextField, UploadField, Checkbox, Validation } from '../form';
+import { TextField, Checkbox } from '../form';
 import { showLoader } from '../../actions/appActions';
 import {
   putFormatDefinition,
@@ -21,7 +21,7 @@ import {
 } from '../../actions/formatActions';
 import { hasPermission, removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 import { Permission } from '../../enums';
-import { postFormatFile, getFormatFile } from '../../actions/fileActions';
+import { getFormatFile } from '../../actions/fileActions';
 
 const Detail = ({
   history,
@@ -29,14 +29,11 @@ const Detail = ({
   handleSubmit,
   formatDefinition,
   formatOccurrences,
-  language,
   fail,
   tabNumber,
   setTabNumber,
   getFormatOccurrences,
   showLoader,
-  postFormatFile,
-  getFormatFile,
 }) => {
   const editEnabled = hasPermission(Permission.FORMAT_RECORDS_WRITE);
   return (
@@ -130,18 +127,6 @@ const Detail = ({
                             name: 'nationalFormatGuarantor',
                             disabled:
                               get(formatDefinition, 'internalInformationFilled') || !editEnabled,
-                            lg: 12,
-                          },
-                          {
-                            component: UploadField,
-                            label: texts.PRESERVATION_PLAN_FILE,
-                            name: 'preservationPlanFile',
-                            onUpload: postFormatFile,
-                            onDownload: getFormatFile,
-                            validate: [Validation.required[language]],
-                            disabled:
-                              get(formatDefinition, 'internalInformationFilled') || !editEnabled,
-                            lg: 12,
                           },
                           {
                             component: TextField,
@@ -293,7 +278,6 @@ export default compose(
       getFormatDefinition,
       getFormatOccurrences,
       showLoader,
-      postFormatFile,
       getFormatFile,
     }
   ),
@@ -306,11 +290,7 @@ export default compose(
       texts,
       setFail,
       getFormatDefinition,
-    }) => async ({
-      nationalFormatGuarantor,
-      preservationPlanDescription,
-      preservationPlanFile,
-    }) => {
+    }) => async ({ nationalFormatGuarantor, preservationPlanDescription }) => {
       if (
         await putFormatDefinition({
           ...formatDefinition,
@@ -318,7 +298,6 @@ export default compose(
             'nationalFormatGuarantor',
           ]),
           preservationPlanDescription,
-          preservationPlanFile,
           internalInformationFilled: true,
         })
       ) {

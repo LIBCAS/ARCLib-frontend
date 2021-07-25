@@ -5,6 +5,8 @@ import * as storage from '../utils/storage';
 import { orderTypes, EN, CZ, languages } from '../enums';
 import { tokenNotEmpty } from '../utils';
 
+const storedLanguage = storage.get('language');
+
 const initialState = {
   user: tokenNotEmpty(storage.get('token')) ? jwt_decode(storage.get('token')) : null,
   loader: { show: false, count: 0, text: null },
@@ -13,8 +15,8 @@ const initialState = {
   infoOverlayDialog: { open: false, data: null },
   filter: { sort: '', order: orderTypes.DESC, filter: [] },
   pager: { page: 0, pageSize: 10 },
-  language: storage.get('language') || languages.CZ,
-  texts: storage.get('language') === languages.EN ? EN : CZ,
+  language: storedLanguage === languages.EN ? languages.EN : languages.CZ,
+  texts: storedLanguage === languages.EN ? EN : CZ,
 };
 
 const reducer = (state = initialState, action) => {

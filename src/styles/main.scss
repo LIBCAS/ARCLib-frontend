@@ -137,6 +137,10 @@ body {
       margin-top: 0.5em;
     }
 
+    &-mini {
+      margin-top: 0.25em;
+    }
+
     &-px1 {
       margin-top: 1px;
     }
@@ -151,6 +155,10 @@ body {
 
     &-very-small {
       margin-bottom: 0.5em;
+    }
+
+    &-mini {
+      margin-bottom: 0.25em;
     }
 
     &-none {
@@ -187,6 +195,10 @@ body {
 
     &-very-small {
       margin-right: 0.5em;
+    }
+
+    &-mini {
+      margin-right: 0.25em;
     }
   }
 

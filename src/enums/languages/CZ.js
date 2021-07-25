@@ -127,6 +127,8 @@ export const CZ = {
   DOWNLOAD_XML: 'Stáhnout XML',
   DROP_FILE_OR_CLICK_TO_SELECT_FILE:
     'Přetáhněte sem soubor nebo klikněte pro zvolení souboru pro nahrání.',
+  DROP_FILES_OR_CLICK_TO_SELECT_FILES:
+    'Přetáhněte sem soubory nebo klikněte pro zvolení souborů pro nahrání.',
   DUBLIN_CORE: 'Dublin core',
   EDIT: 'Upravit',
   EDITABLE: 'Editovatelný',
@@ -185,6 +187,7 @@ export const CZ = {
   FILE_COUNT: 'Počet souborů',
   FILE_FORMAT: 'Formát souboru',
   FILE_SUCCESSFULLY_UPLOADED: 'Soubor úspěšně nahrán.',
+  FILES: 'Soubory',
   FILTER_BY_USER: 'Filtrovat dle uživatele',
   FIRST_NAME: 'Křestní jméno',
   FORGET: 'Zapomenout',
@@ -546,6 +549,7 @@ export const CZ = {
   UPDATE_WITH_LOCAL_DEFINITION: 'Aktualizovat s lokální definicí',
   UPDATED: 'Upraveno',
   UPLOAD_FILE: 'Nahrát soubor',
+  UPLOAD_FILES: 'Nahrát soubory',
   UPLOAD_SIP_CONTENT: 'Nahrát obsah SIP',
   UPLOAD_TEMPLATE: 'Nahrát šablonu',
   UPLOAD_WORKFLOW_CONFIGURATION: 'Nahrát konfiguraci workflow',

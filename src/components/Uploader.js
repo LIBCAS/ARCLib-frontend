@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose, defaultProps } from 'recompose';
-import { get, noop } from 'lodash';
+import { compact, get, noop } from 'lodash';
+import { Tag, Card, Icon } from 'antd';
+import classNames from 'classnames';
 
 import Button from './Button';
 import DialogButton from './DialogButton';
@@ -25,70 +27,152 @@ const Uploader = ({
   onUpload,
   onDownload,
   downloadEnabled,
-}) => (
-  <div {...{ key, className: 'flex-row-nowrap flex-bottom' }}>
-    <TextField
+  multiple,
+}) => {
+  const label = multiple ? texts.UPLOAD_FILES : texts.UPLOAD_FILE;
+
+  const enableDownload =
+    (downloadEnabled || onDownload) && ((multiple && value && value.length) || get(value, 'id'));
+
+  return (
+    <div
       {...{
-        id,
-        defaultValue: get(defaultValue, 'name'),
-        value: get(value, 'name'),
-        disabled: true,
+        key,
+        className: classNames(
+          multiple ? 'flex-row' : 'flex-row-nowrap',
+          multiple ? 'flex-center' : 'flex-bottom'
+        ),
       }}
-    />
-    {!disabled && (
-      <DialogButton
-        {...{
-          title: texts.UPLOAD_FILE,
-          label: texts.UPLOAD_FILE,
-          submitButton: false,
-          closeButtonLabel: texts.CLOSE,
-          content: ({ closeDialog }) => (
-            <DropFiles
-              {...{
-                label: texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
-                onDrop: async (files) => {
-                  const file = files[0];
+    >
+      {multiple ? (
+        value && value.length ? (
+          <Card
+            {...{
+              bodyStyle: {
+                padding: '0.5em 0px 0px 0.5em',
+                borderRadius: '4px',
+                border: '1px solid #d9d9d9',
+                overflowX: 'auto',
+              },
+              className: 'margin-right-mini margin-bottom-mini',
+              bordered: false,
+              children: value.map(({ id, name }) => (
+                <Tag
+                  {...{
+                    key: id,
+                    style: {
+                      marginRight: '0.5em',
+                      marginBottom: '0.5em',
+                    },
+                  }}
+                >
+                  {name}
+                  {!disabled && ' '}
+                  {!disabled && (
+                    <Icon
+                      {...{
+                        type: 'close',
+                        onClick: () => onChange(value.filter((item) => item.id !== id)),
+                      }}
+                    />
+                  )}
+                </Tag>
+              )),
+            }}
+          />
+        ) : (
+          <div />
+        )
+      ) : (
+        <TextField
+          {...{
+            id,
+            defaultValue: get(defaultValue, 'name'),
+            value: get(value, 'name'),
+            disabled: true,
+            className: 'margin-right-mini',
+          }}
+        />
+      )}
+      <div className="flex-row-normal flex-centered margin-bottom-mini">
+        {!disabled && (
+          <DialogButton
+            {...{
+              title: label,
+              label,
+              submitButton: false,
+              closeButtonLabel: texts.CLOSE,
+              className: enableDownload ? 'margin-right-mini' : undefined,
+              content: ({ closeDialog }) => (
+                <DropFiles
+                  {...{
+                    label: multiple
+                      ? texts.DROP_FILES_OR_CLICK_TO_SELECT_FILES
+                      : texts.DROP_FILE_OR_CLICK_TO_SELECT_FILE,
+                    multiple,
+                    onDrop: async (files) => {
+                      if (files && files.length) {
+                        showLoader();
+                        const uploadFn = onUpload || postFile;
+                        const promises = files.map((file) => uploadFn(file));
 
-                  if (file) {
-                    showLoader();
-                    const uploadFn = onUpload || postFile;
-                    const uploadedFile = await uploadFn(file);
-                    onChange(uploadedFile);
-                    showLoader(false);
-                  }
+                        let result;
+                        try {
+                          result = await Promise.all(promises);
+                        } catch (err) {
+                          console.error(err);
+                        }
 
-                  closeDialog();
-                },
-              }}
-            />
-          ),
-          className: 'margin-left-mini',
-        }}
-      />
-    )}
-    {(downloadEnabled || onDownload) && get(value, 'id') ? (
-      <Button
-        {...{
-          className: 'margin-left-mini',
-          style: { minWidth: 90 },
-          onClick: async () => {
-            showLoader();
-            const downloadFn = onDownload || getFile;
-            const blob = await downloadFn(get(value, 'id'));
-            if (blob) {
-              downloadBlob(blob, get(value, 'name'));
-            }
-            showLoader(false);
-          },
-        }}
-      >
-        {texts.DOWNLOAD}
-      </Button>
-    ) : (
-      <div />
-    )}
-  </div>
-);
+                        showLoader(false);
+
+                        if (result && result.length === compact(result).length) {
+                          onChange(multiple ? result : result[0]);
+                          closeDialog();
+                        }
+                      }
+                    },
+                  }}
+                />
+              ),
+            }}
+          />
+        )}
+        {enableDownload ? (
+          <Button
+            {...{
+              style: { minWidth: 90 },
+              onClick: async () => {
+                showLoader();
+
+                const downloadFn = onDownload || getFile;
+
+                try {
+                  await Promise.all(
+                    (multiple ? value : [value]).map(async ({ id, name }) => {
+                      const blob = await downloadFn(id);
+
+                      if (blob) {
+                        downloadBlob(blob, name);
+                      }
+                    })
+                  );
+                } catch (error) {
+                  console.error(error);
+                }
+
+                showLoader(false);
+              },
+            }}
+          >
+            {texts.DOWNLOAD}
+          </Button>
+        ) : (
+          <div />
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default compose(
   defaultProps({ id: 'uploader-text-field', onChange: noop }),
