@@ -126,7 +126,7 @@ const Uploader = ({
                         showLoader(false);
 
                         if (result && result.length === compact(result).length) {
-                          onChange(multiple ? result : result[0]);
+                          onChange(multiple ? [...value, ...result] : result[0]);
                           closeDialog();
                         }
                       }
