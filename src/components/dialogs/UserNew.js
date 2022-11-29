@@ -8,7 +8,7 @@ import uuidv1 from 'uuid/v1';
 
 import DialogContainer from './DialogContainer';
 import ErrorBlock from '../ErrorBlock';
-import { TextField, SelectField, Validation } from '../form';
+import { TextField, SelectField, TagsField, Validation } from '../form';
 import { saveUser, getUsers } from '../../actions/usersActions';
 import {
   hasPermission,
@@ -26,68 +26,118 @@ const UserNew = ({
   texts,
   language,
   fail,
-}) => (
-  <DialogContainer
-    {...{
-      title: texts.USER_NEW,
-      name: 'UserNew',
-      handleSubmit,
-      submitLabel: texts.SUBMIT,
-    }}
-  >
-    <form {...{ onSubmit: handleSubmit }}>
-      {map(
-        [
-          {
-            component: TextField,
-            label: texts.USERNAME,
-            name: 'username',
-            validate: [Validation.required[language]],
-          },
-          {
-            component: SelectField,
-            label: texts.PRODUCER,
-            name: 'producer',
-            validate: [Validation.required[language]],
-            options: producersEnabled
-              ? map(producers, (producer) => ({
-                  label: producer.name,
-                  value: producer.id,
-                }))
-              : [
-                  {
-                    label: get(user, 'producer.name'),
-                    value: get(user, 'producer.id'),
-                  },
-                ],
-            disabled: !producersEnabled,
-          },
-          {
-            component: SelectField,
-            label: texts.ROLES,
-            name: 'roles',
-            options: map(roles, (role) => ({
-              value: role.id,
-              label: role.description || role.name || '',
-              disabled: isRoleDisabled(role),
-            })),
-            isMultiple: true,
-          },
-        ],
-        (field, key) => (
-          <Field {...{ key, id: `user-new-${field.name}`, ...field }} />
-        )
-      )}
-    </form>
-    <ErrorBlock {...{ label: fail }} />
-  </DialogContainer>
-);
+  actualForm,
+}) => {
+
+  if (!producers || !actualForm) {
+    return null;
+  }
+
+  // NOTE: some producer is always selected, because initialValues in withProps HOC
+  // If am SuperAdmin, then first producer from array is selected
+  // Otherwise, producer of the actual user is selected (with no other options!)
+  const actualSelectedProducerId = actualForm.values.producer;
+
+  const actualSelectedProducerObj = producers.find((producer) => producer.id === actualSelectedProducerId);
+
+  // NOTE: Should never happen!!
+  if (!actualSelectedProducerObj) {
+    return null;
+  }
+
+  return (
+    <DialogContainer
+      {...{
+        title: texts.USER_NEW,
+        name: 'UserNew',
+        handleSubmit,
+        submitLabel: texts.SUBMIT,
+      }}
+    >
+      <form {...{ onSubmit: handleSubmit }}>
+        {map(
+          [
+            {
+              component: TextField,
+              label: texts.USERNAME,
+              name: 'username',
+              validate: [Validation.required[language]],
+            },
+            {
+              component: SelectField,
+              label: texts.PRODUCER,
+              name: 'producer',
+              validate: [Validation.required[language]],
+              options: producersEnabled
+                ? map(producers, (producer) => ({
+                    label: producer.name,
+                    value: producer.id,
+                  }))
+                : [
+                    {
+                      label: get(user, 'producer.name'),
+                      value: get(user, 'producer.id'),
+                    },
+                  ],
+              disabled: !producersEnabled,
+            },
+            {
+              component: SelectField,
+              label: texts.ROLES,
+              name: 'roles',
+              options: map(roles, (role) => ({
+                value: role.id,
+                label: role.description || role.name || '',
+                disabled: isRoleDisabled(role),
+              })),
+              isMultiple: true,
+            },
+          ],
+          (field, key) => (
+            <Field {...{ key, id: `user-new-${field.name}`, ...field }} />
+          )
+        )}
+
+        <div>
+          <h1 className='h1-dialog'>{texts.EXPORT_FOLDERS}</h1>
+
+          <h2 className='h2-dialog'>
+            {texts.USERS_PRODUCER_EXPORT_FOLDERS}
+          </h2>
+
+          <div>
+            <ul>
+              {actualSelectedProducerObj.exportFolders.map((exportFolder, index) => (
+                <li key={index}>
+                  {exportFolder}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Field
+            name='exportFolders'
+            component={TagsField}
+            label={texts.USERS_EXPORT_FOLDERS}
+            validate={[(values) => Validation.validateUsersExportFolders(values, actualSelectedProducerObj.exportFolders, language)]}
+          />
+        </div>
+
+      </form>
+      <ErrorBlock {...{ label: fail }} />
+    </DialogContainer>
+  );
+}
+
+
 
 export default compose(
   connect(
-    ({ producer: { producers }, roles: { roles } }) => ({
+    ({ producer: { producers }, roles: { roles }, form: { UserNewDialogForm } }) => ({
       producers,
       roles,
+      // NOTE: register to actual form (props.actualForm === store.form.UserNewDialogForm)
+      actualForm: UserNewDialogForm,
     }),
     {
       saveUser,
@@ -102,6 +152,8 @@ export default compose(
       producersEnabled,
       initialValues: {
         producer: producersEnabled ? get(producers, '[0].id') : get(user, 'producer.id'),
+
+        exportFolders: [],
       },
     };
   }),
@@ -120,15 +172,19 @@ export default compose(
       setFail,
       reset,
     }) => async ({ producer, ...formData }) => {
+
+      const submitObject = {
+        id: uuidv1(),
+        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['username']),
+        producer: producersEnabled
+          ? find(producers, (item) => item.id === producer)
+          : get(user, 'producer'),
+        roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
+        exportFolders: formData.exportFolders,
+      }
+
       if (
-        await saveUser({
-          id: uuidv1(),
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['username']),
-          producer: producersEnabled
-            ? find(producers, (item) => item.id === producer)
-            : get(user, 'producer'),
-          roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
-        })
+        await saveUser(submitObject)
       ) {
         getUsers();
         reset('UserNewDialogForm');

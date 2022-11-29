@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose, lifecycle } from 'recompose';
+import { compose, lifecycle, withState } from 'recompose';
 import { get, isEmpty, compact, map, flatten, filter } from 'lodash';
 
 import Pagination from '../../components/Pagination';
@@ -18,17 +18,54 @@ import {
   Permission,
 } from '../../enums';
 import { isProduction, hasPermission } from '../../utils';
+import * as storage from '../../utils/storage';
 
-const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }) => {
+/*
+IndexSearch as Page Component, which consists of 4 another main components:
+- PageWrapper (sidebar, header, breadcrumb)
+- Form (from sort section until table + bottom sticky panel)
+- Table (search query results)
+- Pagination (for the table)
+*/
+
+const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort, storeFilters, numberOfDublinCoreFields, setNumberOfDublinCoreFields }) => {
+
   let index = -1;
 
   const isSuperAdmin = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
   const isAdmin = isSuperAdmin || hasPermission(Permission.ADMIN_PRIVILEGE);
 
+  const numberOfDCFields = numberOfDublinCoreFields;
+  let DCFilters = [];
+
+  for (let i=1; i <= numberOfDCFields; i++) {
+    DCFilters.push({
+      label: `${texts.DESCRIPTIVE_METADATA_SEARCH} ${i}`,
+      type: filterTypes.DUBLIN_CORE_FILTER,
+      field: '',
+      internalDCIndex: i-1,
+    })
+  }
+
+  // Fields - will be sent to the Form Component
+  // Each item (one field) is one of the 3 types: Title (heading), Subtitle (heading), Filter (form input field)
+  // Each filter input field consist of:
+  //  - 'field' props like label, field, type + options if enum
+  //  - 'index' props, which is achieved by mapping this fields array
+  // Each and only filter input form fields (with filters) are then stored in Redux store and later submitted
+  // Actual filters and their values could be seen through 'props.storeFilters' - this component is subscribed
   const fields = map(
     [
       {
         filters: [
+          // NOTE: This first (index 0) is of special type 'SELECT_UPLOAD'
+          // as the only one filter input field, it is using dynamic field prop (issue #136)
+          {
+            label: texts.TYPE_AND_LIST_OF_IDENTIFIERS,
+            field: '',
+            type: filterTypes.SELECT_UPLOAD,
+            internalSUIndex: 0,
+          },
           isSuperAdmin
             ? {
               label: texts.PRODUCER_NAME,
@@ -47,7 +84,7 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
             type: filterTypes.TEXT,
           },
           {
-            label: texts.LATEST_VERSION_ONLY,
+            label: texts.LATEST_VERSION,
             field: 'latest',
             type: filterTypes.BOOL,
           },
@@ -183,18 +220,7 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
       { title: texts.DESCRIPTIVE_METADATA, id: 'DESCRIPTIVE_METADATA' },
       {
         id: 'DESCRIPTIVE_METADATA',
-        filters: [
-          {
-            label: texts.SPECIFIER,
-            type: filterTypes.TEXT_CONTAINS,
-            field: 'dublin_core_id',
-          },
-          {
-            label: texts.DUBLIN_CORE,
-            field: 'dublin_core_value',
-            type: filterTypes.TEXT_CONTAINS,
-          },
-        ],
+        filters: DCFilters,
       },
       {
         title: texts.AGGREGATED_EXTRACTED_TECHNICAL_METADATA,
@@ -458,6 +484,7 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
         : item
   );
 
+  // Sort options - will be sent to the Form Component, first part of the form
   const sortOptions = compact([
     isSuperAdmin ? { label: texts.PRODUCER_NAME, value: 'producer_name' } : null,
     { label: texts.RESPONSIBLE_PERSON_NAME, value: 'user_name' },
@@ -502,19 +529,22 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
       <div {...{ className: 'index-search' }}>
         <Form
           {...{
-            query,
-            texts,
-            language,
-            sortOptions,
             fields,
+            sortOptions,
             filters: flatten(
               map(
                 filter(fields, ({ filters }) => !isEmpty(filters)),
                 ({ filters }) => filters
               )
             ),
+            query,
+            texts,
+            language,
+            numberOfDublinCoreFields,
+            setNumberOfDublinCoreFields
           }}
         />
+
         <div
           {...{
             className: 'padding-horizontal-very-small',
@@ -532,6 +562,7 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
               items: get(aips, 'items'),
               sort,
               sortOptions,
+              displayCheckboxes: true,
             }}
           />
           <Pagination
@@ -548,11 +579,13 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort }
 };
 
 export default compose(
+  withState('numberOfDublinCoreFields', 'setNumberOfDublinCoreFields', storage.get('numberOfDublinCoreFields')),
   connect(
     ({ aip: { aips }, query: { query }, app: { filter } }) => ({
       aips,
       query,
       sort: get(filter, 'sort'),
+      storeFilters: get(filter, 'filter'),
     }),
     {
       clearAipList,
@@ -560,10 +593,25 @@ export default compose(
     }
   ),
   lifecycle({
+    componentDidMount() {
+      const { setNumberOfDublinCoreFields } = this.props;
+
+      // OnMount - set the local state according to the saved in the local storage
+      // If numberOfDCFields is not stored in LocalStorage, null is returned, use default value '1'
+      const storageNumberOfDublinCoreFields = storage.get('numberOfDublinCoreFields');
+      if (!storageNumberOfDublinCoreFields) {
+        storage.set('numberOfDublinCoreFields', 1);
+      }
+
+      const numberOfDublinCoreFields = !storageNumberOfDublinCoreFields ? 1 : storageNumberOfDublinCoreFields;
+      setNumberOfDublinCoreFields(parseInt(numberOfDublinCoreFields, 10));
+    },
     componentWillUnmount() {
-      const { clearAipList } = this.props;
+      const { clearAipList, numberOfDublinCoreFields } = this.props;
 
       clearAipList();
+
+      storage.set('numberOfDublinCoreFields', numberOfDublinCoreFields);
     },
   })
 )(IndexSearch);

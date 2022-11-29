@@ -119,3 +119,18 @@ export const localhostOrIPv4Check = (value) =>
   /^(localhost|((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]))$/.test(
     value
   );
+
+/**
+ * Checks validity of one of the user's export folders
+ * To be valid - user's export folder must be subfolder of one of the producer's export folders
+ */
+export const isUserExportFolderValid = (userExportFolder, producerExportFolders) => {
+  let counter = 0;
+  for (const producerExportFolder of producerExportFolders) {
+    if (userExportFolder.startsWith(producerExportFolder)) {
+      counter++;
+    }
+  }
+  return counter === 1;
+}
+

@@ -7,16 +7,20 @@ import Table from '../../components/searchQueries/Table';
 import { getSavedQueries } from '../../actions/queryActions';
 import { closeDialog } from '../../actions/appActions';
 
-const SearchQueries = ({ texts, ...props }) => (
-  <PageWrapper {...{ breadcrumb: [{ label: texts.SEARCH_QUERIES }] }}>
-    <Table
-      {...{
-        ...props,
-        texts,
-      }}
-    />
+const SearchQueries = ({ texts, ...props }) => {
+
+  return (
+    <PageWrapper {...{ breadcrumb: [{ label: texts.SEARCH_QUERIES }] }}>
+      <Table
+        {...{
+          ...props,
+          texts,
+        }}
+      />
   </PageWrapper>
-);
+  )
+}
+
 
 export default compose(
   connect(

@@ -48,6 +48,11 @@ import ValidationProfileNew from './ValidationProfileNew';
 import WorkflowDefinitionDelete from './WorkflowDefinitionDelete';
 import WorkflowDefinitionNew from './WorkflowDefinitionNew';
 
+import ExportTemplateNew from './ExportTemplateNew';
+import SearchQueryExportResults2 from './SearchQueryExportResults2';
+import SearchQueryExportConfigNewUpd from './SearchQueryExportConfigNewUpd';
+import Pile from './Pile';
+
 export { default as InfoOverlayDialog } from './InfoOverlayDialog';
 
 export default [
@@ -100,4 +105,9 @@ export default [
   ValidationProfileNew,
   WorkflowDefinitionDelete,
   WorkflowDefinitionNew,
+
+  ExportTemplateNew,
+  SearchQueryExportResults2,
+  SearchQueryExportConfigNewUpd,
+  Pile,
 ];

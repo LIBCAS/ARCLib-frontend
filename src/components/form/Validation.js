@@ -8,6 +8,7 @@ import {
   JSONValidityCheck,
   localhostOrIPv4Check,
   isValidDateTimeString,
+  isUserExportFolderValid,
 } from '../../utils';
 
 export const required = {
@@ -69,5 +70,19 @@ export const enterCurrentOrFutureDate = {
   [languages.CZ]: (value) =>
     Date.parse(value) >= new Date().getTime() ? undefined : CZ.ENTER_CURRENT_OR_FUTURE_DATE,
   [languages.EN]: (value) =>
-    Date.parse(value) < new Date().getTime() ? undefined : EN.ENTER_CURRENT_OR_FUTURE_DATE,
+    Date.parse(value) >= new Date().getTime() ? undefined : EN.ENTER_CURRENT_OR_FUTURE_DATE,
 };
+
+export const validateUsersExportFolders = (userExportFolders, producerExportFolders, language) => {
+  // NOTE: validating field with no userExportFolders is valid!
+  if (userExportFolders === undefined) {
+    return undefined;
+  }
+
+  for (const userExportFolder of userExportFolders) {
+    if (!isUserExportFolderValid(userExportFolder, producerExportFolders)) {
+      return language === 'CZ' ? CZ.USER_EXPORT_FOLDER_MATCH_ERROR : EN.USER_EXPORT_FOLDER_MATCH_ERROR;
+    }
+  }
+  return undefined;
+}

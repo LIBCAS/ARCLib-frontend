@@ -21,9 +21,11 @@ const DialogButton = ({
   submitButton,
   closeButtonLabel,
   submitButtonLabel,
+  rootDivClassName,
+  labelButtonClassName,
   ...props
 }) => (
-  <div {...{ key }}>
+  <div {...{ key }} className={`${rootDivClassName ? rootDivClassName : ''}`}>
     <Modal
       {...{
         show: open,
@@ -59,7 +61,13 @@ const DialogButton = ({
         )}
       </Modal.Footer>
     </Modal>
-    <Button {...{ onClick: () => setOpen(true), ...props }}>{label}</Button>
+
+    <Button
+      {...{ onClick: () => setOpen(true), ...props }}
+      className={`${labelButtonClassName ? labelButtonClassName : ''}`}
+    >
+      {label}
+    </Button>
   </div>
 );
 

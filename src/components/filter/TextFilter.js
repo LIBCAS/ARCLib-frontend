@@ -29,7 +29,9 @@ const TextFilter = ({
           setFilter({
             filter: map(filter.filter, (f) => (f.index === index ? { ...f, operation: value } : f)),
           });
-          if (handleUpdate) handleUpdate();
+          if (handleUpdate) {
+            handleUpdate();
+          }
         },
         value: find(get(filter, 'filter'), (f) => f.index === index)
           ? find(get(filter, 'filter'), (f) => f.index === index).operation

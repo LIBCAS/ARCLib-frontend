@@ -25,6 +25,8 @@ import validationProfile from './validationProfileReducer';
 import workflow from './workflowReducer';
 import workflowDefinition from './workflowDefinitionReducer';
 
+import exportTemplates from './exportTemplatesReducer';
+
 export default combineReducers({
   form,
   aip,
@@ -50,4 +52,6 @@ export default combineReducers({
   validationProfile,
   workflow,
   workflowDefinition,
+
+  exportTemplates,
 });

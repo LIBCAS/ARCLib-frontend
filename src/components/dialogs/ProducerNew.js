@@ -7,7 +7,7 @@ import { map } from 'lodash';
 import uuidv1 from 'uuid/v1';
 
 import DialogContainer from './DialogContainer';
-import { TextField, Validation } from '../form';
+import { TextField, Validation, TagsField } from '../form';
 import { saveProducer, getProducers } from '../../actions/producerActions';
 import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
@@ -33,6 +33,12 @@ const ProducerNew = ({ handleSubmit, texts, language }) => (
             component: TextField,
             label: texts.TRANSFER_AREA_PATH,
             name: 'transferAreaPath',
+            validate: [Validation.required[language]],
+          },
+          {
+            component: TagsField,
+            label: texts.EXPORT_FOLDERS,
+            name: 'exportFolders',
             validate: [Validation.required[language]],
           },
         ],

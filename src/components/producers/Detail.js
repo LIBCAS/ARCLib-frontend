@@ -5,7 +5,7 @@ import { compose, withHandlers } from 'recompose';
 import { map } from 'lodash';
 
 import Button from '../Button';
-import { TextField, Validation } from '../form';
+import { TagsField, TextField, Validation } from '../form';
 import { saveProducer } from '../../actions/producerActions';
 import { removeStartEndWhiteSpaceInSelectedFields } from '../../utils';
 
@@ -26,6 +26,12 @@ const Detail = ({ handleSubmit, texts, language, history }) => (
             name: 'transferAreaPath',
             validate: [Validation.required[language]],
           },
+          {
+            component: TagsField,
+            label: texts.EXPORT_FOLDERS,
+            name: 'exportFolders',
+            validate: [Validation.required[language]]
+          }
         ],
         (field, key) => (
           <Field

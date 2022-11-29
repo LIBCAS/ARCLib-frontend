@@ -18,7 +18,7 @@ const SearchQueryDetail = ({ handleSubmit, data, history, texts }) => (
       large: true,
     }}
   >
-    <Table {...{ history, items: get(data, 'items'), texts }} />
+    <Table {...{ history, items: get(data, 'items'), texts, displayCheckboxes: false }} />
   </DialogContainer>
 );
 

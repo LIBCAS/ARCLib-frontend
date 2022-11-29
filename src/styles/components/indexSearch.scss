@@ -16,6 +16,18 @@
           max-width: 96%;
           min-width: 100px;
         }
+
+        &-width-48 {
+          width: 48%;
+        }
+
+        &-width-50 {
+          width: 50%;
+        }
+
+        &-width-100 {
+          width: 100%;
+        }
       }
 
       .full-field {
@@ -43,6 +55,12 @@
         }
       }
     }
+  }
+
+  .dublin-core-container {
+    display: flex;
+    flex-direction: row;
+    max-width: 600px;
   }
 
   .title {
@@ -180,6 +198,10 @@
 
         .field {
           max-width: 50%;
+
+          &-width-48 {
+            width: 50%;
+          }
         }
       }
     }

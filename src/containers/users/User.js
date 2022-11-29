@@ -12,6 +12,7 @@ import { hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
 const User = ({ history, user, texts, ...props }) => {
+
   const producersEnabled = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
   const editEnabled = hasPermission(Permission.USER_RECORDS_WRITE);
 

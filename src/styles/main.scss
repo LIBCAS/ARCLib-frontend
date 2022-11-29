@@ -257,6 +257,12 @@ body {
   }
 
   &-horizontal {
+
+    &-small {
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+
     &-very-small {
       padding-left: 0.5em;
       padding-right: 0.5em;
@@ -318,6 +324,11 @@ select {
 
 .invalid {
   color: $c-error;
+}
+
+/* SUCCESS */
+.success {
+  color: $c-success;
 }
 
 /* COLORS */
@@ -419,4 +430,49 @@ select {
 
 .bold {
   font-weight: 700;
+}
+
+/* Dialog headings */
+
+.h1-dialog {
+  font-size: 24px;
+  color: #555555;
+  font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.25em;
+}
+
+.h2-dialog {
+  font-size: 14px;
+  color: #555555;
+  font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
+  font-weight: 700;
+  margin-top: 1em;
+  margin-bottom: 0.25em;
+}
+
+.hr-dialog {
+  width: 50%;
+  margin-left: 0em;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+
+/* Overflow */
+
+.auto-overflowX-visible-only-on-hover {
+  overflow: hidden;
+
+  &:hover {
+    overflow-x: auto;
+  }
+}
+
+.auto-overflowY-visible-only-on-hover {
+  overflow: hidden;
+
+  &:hover {
+    overflow-y: auto;
+  }
 }

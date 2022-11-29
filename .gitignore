@@ -23,3 +23,4 @@ src/styles/*.css
 
 # remove this line after first install
 yarn.lock
+package-lock.json

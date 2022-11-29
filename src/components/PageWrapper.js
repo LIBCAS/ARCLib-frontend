@@ -83,6 +83,11 @@ const PageWrapper = ({
       permission: Permission.AIP_RECORDS_READ,
     },
     {
+      url: '/export-templates',
+      label: texts.EXPORT_TEMPLATES,
+      permission: Permission.EXPORT_TEMPLATES_READ,
+    },
+    {
       label: texts.ADMINISTRATION,
       items: filterByPermission([
         {

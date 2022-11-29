@@ -4,6 +4,7 @@ import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 import { createAipSearchParams, downloadBlob } from '../utils';
+import { createPagerParams } from '../utils';
 
 export const getAipList = () => async (dispatch, getState) => {
   dispatch({
@@ -429,3 +430,112 @@ export const getAipInfo = (id, storageId) => async (dispatch) => {
     return false;
   }
 };
+
+export const updateCheckedAipIds = (newAipIdsList) => (dispatch) => {
+  dispatch({ type: c.AIP_CHECKED, payload: newAipIdsList });
+}
+
+export const updatePileCheckedAipIds = (newAipIdsList) => (dispatch) => {
+  dispatch({ type: c.PILE_AIP_CHECKED, payload: newAipIdsList });
+}
+
+export const resetCheckedAipIDs = () => (dispatch) => {
+  dispatch({ type: c.AIP_CHECKED, payload: [] })
+}
+
+export const resetPileCheckedAipIDs = () => (dispatch) => {
+  dispatch({ type: c.PILE_AIP_CHECKED, payload: [] });
+}
+
+// GET at /api/favorites/ids -> result of fetch is array of string ids!
+export const fetchPileAipIDs = () => async (dispatch) => {
+
+  dispatch({ type: c.PILE_AIP_IDS, payload: null });
+  try {
+
+    const response = await fetch('/api/favorites/ids');
+    let pileAipIDs = null;
+
+    if (response.status === 200) {
+      pileAipIDs = await response.json();
+      dispatch({ type: c.PILE_AIP_IDS, payload: pileAipIDs });
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return response.status === 200;
+
+  } catch(error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+}
+
+// POST at /api/favorites/ids
+export const savePileAipIDs = (newAipIDs) => async (dispatch) => {
+
+  dispatch(showLoader());
+  try {
+
+    const response = await fetch('/api/favorites/ids', {
+      method: 'POST',
+      body: JSON.stringify(newAipIDs),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    })
+
+    if (response.status === 200) {
+      dispatch(showLoader(false));
+      return true;
+    }
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+
+  } catch(error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+}
+
+// GET at /api/favorites?page=0&pageSize=10 -> result of fetch is array of objects
+export const fetchPileAips = () => async (dispatch, getState) => {
+
+  dispatch({ type: c.PILE_AIPS, payload: null });
+  dispatch(showLoader());
+
+  try {
+
+    const response = await fetch('api/favorites', {
+      params: {
+        ...createPagerParams(getState),
+      }
+    });
+
+    if (response.status === 200) {
+      const pileAips = await response.json();
+      dispatch({ type: c.PILE_AIPS, payload: pileAips });
+      dispatch(showLoader(false));
+      return pileAips;
+    }
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+
+  } catch(error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+}
+
+// Setter according to the result of GET /api/favorites?page&pageSize
+// Used when updated pileAipIDs through fetchPileAipIDs is empty array
+// /api/favorites in this case does not return empty array as expected, but 400 status
+export const setPileAipsToEmptyObject = () => async (dispatch) => {
+  dispatch({ type: c.PILE_AIPS, payload: { items: [], count: 0 } })
+}

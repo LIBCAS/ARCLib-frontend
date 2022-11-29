@@ -5,7 +5,7 @@ import { compose, withHandlers, lifecycle } from 'recompose';
 import { get, map, find } from 'lodash';
 
 import Button from '../Button';
-import { TextField, SelectField, Validation } from '../form';
+import { TextField, SelectField, TagsField, Validation } from '../form';
 import { setDialog, showLoader } from '../../actions/appActions';
 import { getProducers } from '../../actions/producerActions';
 import { saveUser, getUser } from '../../actions/usersActions';
@@ -22,7 +22,9 @@ const Detail = ({
   roles,
   producersEnabled,
   editEnabled,
+  user
 }) => {
+
   return (
     <div>
       <div>
@@ -105,6 +107,47 @@ const Detail = ({
               />
             )
           )}
+
+          <div>
+            <h1 className='h1-dialog'>{texts.EXPORT_FOLDERS}</h1>
+
+            <h2 className='h2-dialog'>
+              {texts.USERS_PRODUCER_EXPORT_FOLDERS}
+            </h2>
+
+            {user && !user.producer && (
+              <div>
+                <p className='margin-left-small'>{texts.USER_HAS_NO_PRODUCER_ASSIGNED}</p>
+              </div>
+            )}
+
+            {user && user.producer && (!user.producer.exportFolders || user.producer.exportFolders.length === 0) && (
+              <div>
+                <p className='margin-left-small'>{texts.USER_PRODUCER_NO_EXPORT_FOLDERS_ASSIGNED}</p>
+              </div>
+            )}
+
+            {user && user.producer && user.producer.exportFolders && (
+              <div>
+                <ul>
+                  {user.producer.exportFolders.map((exportFolder, index) => (
+                    <li key={index}>
+                      {exportFolder}
+                    </li>
+                  ))}
+                </ul>
+
+                <Field
+                  name='exportFolders'
+                  component={TagsField}
+                  label={texts.USERS_EXPORT_FOLDERS}
+                  validate={[(values) => Validation.validateUsersExportFolders(values, user.producer.exportFolders, language)]}
+                />
+              </div>
+
+            )}
+          </div>
+
           <div {...{ className: 'flex-row flex-right' }}>
             <Button {...{ onClick: () => history.push('/users') }}>
               {editEnabled ? texts.STORNO : texts.CLOSE}
@@ -151,6 +194,7 @@ export default compose(
           ...user,
           producer: find(producers, (item) => item.id === formData.producer),
           roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
+          exportFolders: formData.exportFolders,
         })
       ) {
         getUser(get(user, 'id'));

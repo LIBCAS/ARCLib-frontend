@@ -20,69 +20,74 @@ const PaginationContainer = ({
   className,
   texts,
   userId,
-}) => (
-  <div
-    {...{
-      className: `pagination flex-row flex-space-between${className ? ` ${className}` : ''}`,
-    }}
-  >
-    <Select
+  isPaginationInDialog = false,
+}) => {
+
+  return (
+    <div
       {...{
-        componentClass: 'select',
-        onChange: (value) => {
-          setPager({
-            page: 0,
-            pageSize: value,
-          });
-          storage.set(`pagination-pagesize-${userId}`, value);
-          if (handleUpdate) handleUpdate();
-        },
-        value: pageSize,
+        className: `pagination flex-row flex-space-between${className ? ` ${className}` : ''}`,
       }}
     >
-      {map(pageSizes, ({ label, value }, key) => (
-        <Option {...{ key, value }}>{label}</Option>
-      ))}
-    </Select>
-    <div {...{ className: 'flex-row-normal flex-centered' }}>
-      {!isNaN(count) && !isNaN(countAll) ? (
-        <span {...{ className: 'margin-right-small' }}>
-          {`${count ? `${page * pageSize + 1} - ${page * pageSize + count}` : 0} ${
-            texts.PAGINATION_COUNT_DIVIDER
-          } ${countAll}`}
-        </span>
-      ) : (
-        <div />
-      )}
-      <Button
+      <Select
         {...{
-          onClick: () => {
-            if (page > 0) {
-              setPager({ page: page - 1 });
-              if (handleUpdate) handleUpdate();
-            }
+          componentClass: 'select',
+          onChange: (value) => {
+            setPager({
+              page: 0,
+              pageSize: value,
+            });
+            storage.set(`pagination-pagesize-${userId}`, value);
+            if (handleUpdate) handleUpdate();
           },
-          disabled: page === 0,
+          value: pageSize,
         }}
       >
-        <Icon {...{ type: 'left' }} />
-      </Button>
-      <Button
-        {...{
-          onClick: () => {
-            if (page * pageSize + count < countAll) {
-              setPager({ page: page + 1 });
-              if (handleUpdate) handleUpdate();
-            }
-          },
-          disabled: page * pageSize + count >= countAll,
-        }}
-      >
-        <Icon {...{ type: 'right' }} />
-      </Button>
+        {map(pageSizes, ({ label, value }, key) => (
+          <Option {...{ key, value }}>{label}</Option>
+        ))}
+      </Select>
+      <div {...{ className: 'flex-row-normal flex-centered' }}>
+        {!isNaN(count) && !isNaN(countAll) ? (
+          <span {...{ className: 'margin-right-small' }}>
+            {`${count ? `${page * pageSize + 1} - ${page * pageSize + count}` : 0} ${
+              texts.PAGINATION_COUNT_DIVIDER
+            } ${countAll}`}
+          </span>
+        ) : (
+          <div />
+        )}
+        <Button
+          {...{
+            onClick: () => {
+              if (page > 0) {
+                setPager({ page: page - 1 });
+                if (handleUpdate) handleUpdate();
+              }
+            },
+            disabled: page === 0,
+          }}
+        >
+          <Icon {...{ type: 'left' }} />
+        </Button>
+        <Button
+          {...{
+            onClick: () => {
+              if (page * pageSize + count < countAll) {
+                setPager({ page: page + 1 });
+                if (handleUpdate) handleUpdate();
+              }
+            },
+            disabled: page * pageSize + count >= countAll,
+          }}
+        >
+          <Icon {...{ type: 'right' }} />
+        </Button>
+      </div>
     </div>
-  </div>
-);
+  );
+}
+
 
 export default compose(
   connect(({ app: { pager, texts, user } }) => ({ pager, texts, userId: get(user, 'id') }), {
@@ -90,16 +95,20 @@ export default compose(
   }),
   lifecycle({
     componentWillMount() {
-      const { setPager, userId } = this.props;
-      const pageSize = storage.get(`pagination-pagesize-${userId}`);
-      setPager({
-        page: 0,
-        pageSize: !isNaN(Number(pageSize)) && Number(pageSize) ? Number(pageSize) : 10,
-      });
+      if (!this.props.isPaginationInDialog) {
+        const { setPager, userId } = this.props;
+        const pageSize = storage.get(`pagination-pagesize-${userId}`);
+        setPager({
+          page: 0,
+          pageSize: !isNaN(Number(pageSize)) && Number(pageSize) ? Number(pageSize) : 10,
+        });
+      }
     },
     componentWillUnmount() {
-      const { setPager } = this.props;
-      setPager({ page: 0, pageSize: 10 });
+      if (!this.props.isPaginationInDialog) {
+        const { setPager } = this.props;
+        setPager({ page: 0, pageSize: 10 });
+      }
     },
   })
 )(PaginationContainer);

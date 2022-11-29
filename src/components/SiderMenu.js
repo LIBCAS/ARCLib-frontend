@@ -9,6 +9,8 @@ import { map, findIndex, get, isEmpty, find } from 'lodash';
 import { isProduction } from '../utils';
 import { orderTypes } from '../enums';
 import { setFilter } from '../actions/appActions';
+import { resetCheckedAipIDs } from '../actions/aipActions';
+import * as storage from '../utils/storage';
 
 const { Sider } = Layout;
 const { Item, ItemGroup } = Menu;
@@ -22,6 +24,7 @@ const SiderMenu = ({
   className,
   menuStyle,
   setFilter,
+  resetCheckedAipIDs,
 }) => (
   <Sider
     {...{
@@ -48,6 +51,8 @@ const SiderMenu = ({
       {...{
         onClick: (e) => {
           setFilter({ sort: '', order: orderTypes.ASC, filter: [] });
+          resetCheckedAipIDs();
+          storage.set('aipIDsChecked', JSON.stringify([]));
 
           if (!isNaN(e.key) && get(menuItems[Number(e.key)], 'onClick')) {
             menuItems[Number(e.key)].onClick();
@@ -140,4 +145,4 @@ const SiderMenu = ({
   </Sider>
 );
 
-export default compose(connect(null, { setFilter }), withRouter)(SiderMenu);
+export default compose(connect(null, { setFilter, resetCheckedAipIDs }), withRouter)(SiderMenu);

@@ -57,6 +57,7 @@ export const getHomepage = () => {
         [Permission.ISSUE_DEFINITIONS_READ, '/issue-dictionary'],
         [Permission.TOOL_RECORDS_READ, '/tools'],
         [Permission.NOTIFICATION_RECORDS_READ, '/notifications'],
+        [Permission.EXPORT_TEMPLATES_READ, '/export-templates']
       ].some(([permission, path]) => {
         if (hasPermission(permission)) {
           homepage = path;
