@@ -12,6 +12,7 @@ import { hasPermission, formatDateTime } from '../../utils';
 import { Permission } from '../../enums';
 import { get, compact } from 'lodash';
 import { fetchExportTemplates, deleteExportTemplate } from '../../actions/exportTemplatesActions';
+import { getProducers } from '../../actions/producerActions';
 import { setDialog } from '../../actions/appActions';
 
 
@@ -80,7 +81,12 @@ const ExportTemplates = (props) => {
         <Button
           primary={true}
           className='margin-bottom-small'
-          onClick={() => props.setDialog('ExportTemplateNew')}
+          onClick={() => {
+            if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
+              props.getProducers();
+            }
+            props.setDialog('ExportTemplateNew');
+          }}
         >
           {props.texts.NEW}
         </Button>
@@ -103,7 +109,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchExportTemplates: () => dispatch(fetchExportTemplates()),
     deleteExportTemplate: (id) => dispatch(deleteExportTemplate(id)),
-    setDialog: (name, data) => dispatch(setDialog(name, data))
+    setDialog: (name, data) => dispatch(setDialog(name, data)),
+    getProducers: () => dispatch(getProducers()),
   }
 }
 

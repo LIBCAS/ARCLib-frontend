@@ -9,8 +9,10 @@ import { TextField } from '../form';
 import ButtonComponent from '../Button';
 
 import { setDialog, closeDialog } from '../../actions/appActions';
+import { fetchExportTemplates } from '../../actions/exportTemplatesActions';
 import { deleteExportRoutine } from '../../actions/exportRoutineActions';
-import { formatDateTime } from '../../utils';
+import { formatDateTime, hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 
 const SearchQueryExportResults2 = (props) => {
@@ -41,6 +43,10 @@ const SearchQueryExportResults2 = (props) => {
 
         <ButtonComponent
           onClick={() => {
+            if (hasPermission(Permission.EXPORT_TEMPLATES_READ)) {
+              props.fetchExportTemplates();
+            }
+
             props.setDialog('SearchQueryExportConfigNewUpd', {
               action: 'new',
               aipQuery: props.aipQuery,
@@ -71,6 +77,10 @@ const SearchQueryExportResults2 = (props) => {
         <ButtonComponent
           disabled={props.aipQuery && props.aipQuery.exportRoutine ? false : true}
           onClick={() => {
+            if (hasPermission(Permission.EXPORT_TEMPLATES_READ)) {
+              props.fetchExportTemplates();
+            }
+
             props.setDialog('SearchQueryExportConfigNewUpd', {
               action: 'update',
               aipQuery: props.aipQuery,
@@ -122,6 +132,7 @@ const mapDispatchToProps = (dispatch) => ({
   setDialog: (name, data) => dispatch(setDialog(name, data)),
   closeDialog: () => dispatch(closeDialog()),
   deleteExportRoutine: (id) => dispatch(deleteExportRoutine(id)),
+  fetchExportTemplates: () => dispatch(fetchExportTemplates()),
 })
 
 export default compose(

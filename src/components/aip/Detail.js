@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose, withProps } from 'recompose';
+import { compose, withProps, withState } from 'recompose';
 import { reduxForm, Field } from 'redux-form';
 import { get, map, isEmpty } from 'lodash';
 import { Row, Col } from 'antd';
+import { Icon } from 'antd';
 
 import { TextField } from '../form';
 import TreeComponent from './Tree';
@@ -13,9 +14,7 @@ import Tooltip from '../Tooltip';
 import { downloadAip, downloadXml, getAipInfo } from '../../actions/aipActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
-import { dublinCoreValuesToLabelsTranslator, dublinCoreValuesToOrderValuesTranslator } from '../../enums';
-
-import { Tree } from 'antd';
+import DublinCoreMetadataGroup from './DublinCoreMetadataGroup';
 
 const Detail = ({
   aip,
@@ -26,52 +25,12 @@ const Detail = ({
   getAipInfo,
   downloadAip,
   downloadXml,
+  isMetadataDescriptionExpanded,
+  setIsMetadataDescriptionExpanded,
   ...otherProps
 }) => {
 
-  const buildDublinCoreTreeData = (aip) => {
-
-    const treeData = aip.dublinCore.map((metadataItem, metadataIndex) => {
-
-      const entries = Object.entries(metadataItem);
-      const sorted_entries = entries.sort((item1, item2) => dublinCoreValuesToOrderValuesTranslator[item2[0]] - dublinCoreValuesToOrderValuesTranslator[item1[0]]);
-      const nodes = sorted_entries.map(([dc_field_key, dc_string_arr_value], dc_fieldIndex) => {
-
-        const leafs = dc_string_arr_value.map((dc_single_value, dc_field_valueIndex) => {
-
-          return {
-            title: dc_single_value,
-            key: `0-${metadataIndex}-${dc_fieldIndex}-${dc_field_valueIndex}`
-          };
-
-        })
-
-        return {
-          title: `${dublinCoreValuesToLabelsTranslator[otherProps.language][dc_field_key]}`,
-          key: `0-${metadataIndex}-${dc_fieldIndex}`,
-          children: leafs,
-        };
-
-      })
-
-      return {
-        title: metadataItem.dublin_core_id ? metadataItem.dublin_core_id.join(' ') : 'unknown',
-        key: `0-${metadataIndex}`,
-        children: nodes
-      };
-
-    });
-
-    return [
-      {
-        title: `${texts.DESCRIPTIVE_METADATA}`,
-        key: `0`,
-        children: treeData
-      }
-    ];
-  }
-
-  const dublinCoreTreeData = buildDublinCoreTreeData(aip);
+  const metadataGroupIDs = aip.dublinCore.map((metadataGroup) => metadataGroup.dublin_core_id[0]);
 
   return (
     <div>
@@ -314,19 +273,36 @@ const Detail = ({
         </div>
       )}
 
-      <div className='auto-overflowX-visible-only-on-hover'>
-        <div className='h1-dialog'>
-          {texts.DESCRIPTIVE_METADATA}
+      {/* Descriptive Metadata Section */}
+      <div className='descriptive-metadata-section'>
+        <div
+          className='dm-title-container'
+          onClick={() => setIsMetadataDescriptionExpanded((prevValue) => !prevValue)}
+        >
+            <div className='dm-title'>
+              {texts.DESCRIPTIVE_METADATA}
+            </div>
+            <div className='dm-icon'>
+              <Icon type={isMetadataDescriptionExpanded ? 'up' : 'down'} />
+            </div>
         </div>
 
-        <Tree
-          treeData={dublinCoreTreeData}
-          showLine
-        />
+        {isMetadataDescriptionExpanded && (
+          <div>
+          {metadataGroupIDs.map((metadataGroupID, index) => (
+            <DublinCoreMetadataGroup
+              key={index}
+              metadataGroupID={metadataGroupID}
+              metadataGroupProps={aip.dublinCore[index]}
+              language={otherProps.language}
+            />
+          ))}
+        </div>
+        )}
       </div>
 
       {/* Close button */}
-      <div {...{ className: 'flex-row flex-right' }}>
+      <div {...{ className: 'flex-row flex-right margin-top' }}>
         <Button {...{ onClick: () => history.push('/aip-search') }}>{texts.CLOSE}</Button>
       </div>
 
@@ -336,6 +312,7 @@ const Detail = ({
 
 export default compose(
   connect(null, { getAipInfo, downloadAip, downloadXml }),
+  withState('isMetadataDescriptionExpanded', 'setIsMetadataDescriptionExpanded', true),
   withProps(({ aip }) => ({
     initialValues: {
       ...aip,

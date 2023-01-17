@@ -190,13 +190,13 @@ const App = ({ store, user, language, texts }) => {
                 },
 
                 {
-                  path: '/aip/:id',
-                  Component: Aip,
+                  path: '/aip/edit/:id',
+                  Component: AipEditor,
                   permission: Permission.AIP_RECORDS_READ,
                 },
                 {
-                  path: '/aip/edit/:id',
-                  Component: AipEditor,
+                  path: '/aip/:id',
+                  Component: Aip,
                   permission: Permission.AIP_RECORDS_READ,
                 },
                 {

@@ -71,21 +71,22 @@ const PackagesTable = ({
 
   const handleAllCheckboxHandler = (e) => {
     const allPageAipIDs = items.map((item) => item.id);
-
+    let newAipIDsChecked = [...aipIDsChecked];
     if (e.target.checked) {
       setAreAllCheckboxesChecked(true);
-
-      let newAipIDsChecked = [...aipIDsChecked];
       for (let pageAipID of allPageAipIDs) {
         if (!aipIDsChecked.includes(pageAipID)) {
           newAipIDsChecked.push(pageAipID);
         }
       }
-      updateCheckedAipIds(newAipIDsChecked);
     }
     else {
       setAreAllCheckboxesChecked(false);
-      const newAipIDsChecked = aipIDsChecked.filter((aipIDChecked) => !allPageAipIDs.includes(aipIDChecked));
+      newAipIDsChecked = aipIDsChecked.filter((aipIDChecked) => !allPageAipIDs.includes(aipIDChecked));
+    }
+    if(pileTable){
+      updatePileCheckedAipIds(newAipIDsChecked);
+    } else{
       updateCheckedAipIds(newAipIDsChecked);
     }
   }

@@ -117,7 +117,9 @@ const SearchQueryExportConfigNewUpd = (props) => {
     props.setIsMetadataSelectionSwitchChecked(true);
   }
 
-  if (!props.exportTemplates || !props.usersExportFolders) {
+  // NOTE: props.exportTemplates needs to be checked as well
+  if (!props.usersExportFolders) {
+    console.error('Failed to retrieve user export folders!');
     return null;
   }
 
@@ -235,36 +237,41 @@ const SearchQueryExportConfigNewUpd = (props) => {
 
         {isDataOrMetadataChecked && (
           <div>
+
             <div>
               <h1 className='h1-dialog'>
                 {props.texts.EXPORT_CONFIGURATION}
               </h1>
-
-              <Field
-                className='margin-top-small'
-                name='export_template_selection'
-                component={SelectField}
-                label=''
-                options={props.exportTemplates.map((exportTemplate) => ({
-                  label: exportTemplate.name,
-                  value: exportTemplate.id
-                }))}
-              />
             </div>
 
-            <ButtonComponent
-              className='margin-bottom-small'
-              onClick={loadTemplateOnClick}
-            >
-              {props.texts.LOAD_TEMPLATE}
-            </ButtonComponent>
+            {props.exportTemplates && (
+              <div>
+                <Field
+                  className='margin-top-small'
+                  name='export_template_selection'
+                  component={SelectField}
+                  label=''
+                  options={props.exportTemplates.map((exportTemplate) => ({
+                    label: exportTemplate.name,
+                    value: exportTemplate.id
+                  }))}
+                />
 
-            <ButtonComponent
-              className='margin-bottom-small margin-left-small'
-              onClick={clearExportConfigurationInputs}
-            >
-              {props.texts.CLEAR_CONFIGURATION_VALUES}
-            </ButtonComponent>
+                <ButtonComponent
+                  className='margin-bottom-small'
+                  onClick={loadTemplateOnClick}
+                >
+                  {props.texts.LOAD_TEMPLATE}
+                </ButtonComponent>
+
+                <ButtonComponent
+                  className='margin-bottom-small margin-left-small'
+                  onClick={clearExportConfigurationInputs}
+                >
+                  {props.texts.CLEAR_CONFIGURATION_VALUES}
+                </ButtonComponent>
+              </div>
+            )}
           </div>
         )}
 

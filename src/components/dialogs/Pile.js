@@ -10,6 +10,9 @@ import Pagination from '../Pagination';
 
 import { updatePileCheckedAipIds, resetPileCheckedAipIDs, savePileAipIDs, fetchPileAipIDs, fetchPileAips, setPileAipsToEmptyObject } from '../../actions/aipActions';
 import { openInfoOverlayDialog, setPager } from '../../actions/appActions';
+import { fetchExportTemplates } from '../../actions/exportTemplatesActions';
+import { hasPermission } from '../../utils';
+import { Permission } from '../../enums';
 
 
 const Pile = (props) => {
@@ -77,6 +80,10 @@ const Pile = (props) => {
   }
 
   const handleExportOnClick = (e) => {
+    if (hasPermission(Permission.EXPORT_TEMPLATES_READ)) {
+      props.fetchExportTemplates();
+    }
+
     props.setDialog('SearchQueryExportConfigNewUpd', {
       action: 'fromPile',  // clicked and redirected from here (Pile Dialog)
       aipQuery: null,
@@ -154,6 +161,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchPileAips: () => dispatch(fetchPileAips()),
   setPileAipsToEmptyObject: () => dispatch(setPileAipsToEmptyObject()),
   setPager: (pager) => dispatch(setPager(pager)),
+  fetchExportTemplates: () => dispatch(fetchExportTemplates()),
 })
 
 export default compose(
