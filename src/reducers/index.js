@@ -5,6 +5,7 @@ import aip from './aipReducer';
 import app from './appReducer';
 import batch from './batchReducer';
 import deletionRequest from './deletionRequestReducer';
+import aipBulkDeletion from  './aipBulkDeletionReducer';
 import format from './formatReducer';
 import incident from './incidentReducer';
 import issueDictionary from './issueDictionaryReducer';
@@ -33,6 +34,7 @@ export default combineReducers({
   app,
   batch,
   deletionRequest,
+  aipBulkDeletion,
   format,
   incident,
   issueDictionary,

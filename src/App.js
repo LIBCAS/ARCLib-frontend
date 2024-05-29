@@ -44,6 +44,7 @@ import Route from './components/routing/Route';
 import { getUser, keepAlive } from './actions/userActions';
 import { filterByPermission, getHomepage, hasPermissions } from './utils';
 import { Permission } from './enums';
+import AipBulkDeletionsContainer from './containers/aipBulkDeletion/AipBulkDeletionsContainer';
 
 
 const App = ({ store, user, language, texts }) => {
@@ -112,6 +113,11 @@ const App = ({ store, user, language, texts }) => {
                   path: '/deletion-requests',
                   Component: DeletionRequests,
                   permission: Permission.DELETION_REQUESTS_READ,
+                },
+                {
+                  path: '/aip-bulk-deletions',
+                  Component: AipBulkDeletionsContainer,
+                  permission: Permission.AIP_BULK_DELETIONS_READ,
                 },
                 {
                   path: '/search-queries',

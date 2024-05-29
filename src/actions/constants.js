@@ -13,6 +13,7 @@ export const LOADER = 'LOADER';
 
 export const BATCH = 'BATCH';
 export const DELETION_REQUESTS = 'DELETION_REQUESTS';
+export const AIP_BULK_DELETION = 'AIP_BULK_DELETION';
 export const FORMAT = 'FORMAT';
 export const INCIDENT = 'INCIDENT';
 export const ISSUE_DICTIONARY = 'ISSUE_DICTIONARY';

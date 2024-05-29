@@ -72,6 +72,11 @@ const PageWrapper = ({
       permission: Permission.DELETION_REQUESTS_READ,
     },
     {
+      url: '/aip-bulk-deletions',
+      label: texts.AIP_BULK_DELETIONS,
+      permission: Permission.AIP_BULK_DELETIONS_READ,
+    },
+    {
       url: '/search-queries',
       label: texts.SEARCH_QUERIES,
       permission: Permission.AIP_QUERY_RECORDS_READ,

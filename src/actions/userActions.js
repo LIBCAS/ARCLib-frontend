@@ -115,7 +115,9 @@ export const keepAlive = () => async () => {
 
       if (response.status === 200) {
         const token = response.headers.get('bearer');
-        storage.set('token', token);
+        if(token != null){
+          storage.set('token', token);
+        }
       }
 
       return response.status === 200;

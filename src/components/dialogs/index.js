@@ -52,6 +52,7 @@ import ExportTemplateNew from './ExportTemplateNew';
 import SearchQueryExportResults2 from './SearchQueryExportResults2';
 import SearchQueryExportConfigNewUpd from './SearchQueryExportConfigNewUpd';
 import Pile from './Pile';
+import AipBulkDeletionNew from './AipBulkDeletionNew';
 
 export { default as InfoOverlayDialog } from './InfoOverlayDialog';
 
@@ -101,6 +102,7 @@ export default [
   UserDelete,
   UserNew,
   RoleNew,
+  AipBulkDeletionNew,
   ValidationProfileDelete,
   ValidationProfileNew,
   WorkflowDefinitionDelete,

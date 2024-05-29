@@ -89,6 +89,11 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort, 
             type: filterTypes.BOOL,
           },
           {
+            label: texts.LATEST_DATA_VERSION,
+            field: 'latest_data',
+            type: filterTypes.BOOL,
+          },
+          {
             label: texts.AIP_STATE,
             field: 'aip_state',
             type: filterTypes.ENUM,
