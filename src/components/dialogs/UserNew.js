@@ -27,6 +27,7 @@ const UserNew = ({
   language,
   fail,
   actualForm,
+  serverConfig,
 }) => {
 
   if (!producers || !actualForm) {
@@ -55,6 +56,50 @@ const UserNew = ({
       }}
     >
       <form {...{ onSubmit: handleSubmit }}>
+        {serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && ([
+          <Field
+            {...{
+              id: 'first-name',
+              component: TextField,
+              label: texts.FIRST_NAME,
+              name: 'firstName',
+            }}
+          />,
+          <Field
+            {...{
+              id: 'last-name',
+              component: TextField,
+              label: texts.LAST_NAME,
+              name: 'lastName',
+            }}
+          />,
+          <Field
+            {...{
+              id: 'institution',
+              component: TextField,
+              label: texts.INSTITUTION,
+              name: 'institution',
+            }}
+          />,
+          <Field
+            {...{
+              id: 'email',
+              component: TextField,
+              label: texts.EMAIL,
+              name: 'email',
+              validate: [Validation.email[language]],
+            }}
+          />,
+          <Field
+            {...{
+              id: 'password',
+              component: TextField,
+              label: texts.PASSWORD,
+              name: 'newPassword',
+              validate: [Validation.required[language]],
+            }}
+          />
+        ])}
         {map(
           [
             {
@@ -70,15 +115,15 @@ const UserNew = ({
               validate: [Validation.required[language]],
               options: producersEnabled
                 ? map(producers, (producer) => ({
-                    label: producer.name,
-                    value: producer.id,
-                  }))
+                  label: producer.name,
+                  value: producer.id,
+                }))
                 : [
-                    {
-                      label: get(user, 'producer.name'),
-                      value: get(user, 'producer.id'),
-                    },
-                  ],
+                  {
+                    label: get(user, 'producer.name'),
+                    value: get(user, 'producer.id'),
+                  },
+                ],
               disabled: !producersEnabled,
             },
             {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 import { compose, withHandlers, lifecycle } from 'recompose';
@@ -22,8 +22,11 @@ const Detail = ({
   roles,
   producersEnabled,
   editEnabled,
-  user
+  user,
+  serverConfig
 }) => {
+
+  const [changePassword, setChangePassword] = useState(false);
 
   return (
     <div>
@@ -33,27 +36,33 @@ const Detail = ({
             [
               {
                 component: TextField,
-                label: texts.USERNAME,
-                name: 'username',
-                disabled: true,
+                label: texts.FIRST_NAME,
+                name: 'firstName',
+                disabled: !(serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled),
               },
               {
                 component: TextField,
-                label: texts.FULL_NAME,
-                name: 'fullName',
-                disabled: true,
+                label: texts.LAST_NAME,
+                name: 'lastName',
+                disabled: !(serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled),
               },
               {
                 component: TextField,
                 label: texts.INSTITUTION,
                 name: 'institution',
-                disabled: true,
+                disabled: !(serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled),
               },
               {
                 component: TextField,
                 label: texts.EMAIL,
                 name: 'email',
-                disabled: true,
+                disabled: !(serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled),
+              },
+              {
+                component: TextField,
+                label: texts.USERNAME,
+                name: 'username',
+                disabled: !(serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled),
               },
               {
                 component: TextField,
@@ -69,21 +78,21 @@ const Detail = ({
               },
               producersEnabled && editEnabled
                 ? {
-                    component: SelectField,
-                    label: texts.PRODUCER,
-                    name: 'producer',
-                    validate: [Validation.required[language]],
-                    options: map(producers, (producer) => ({
-                      value: producer.id,
-                      label: producer.name || '',
-                    })),
-                  }
+                  component: SelectField,
+                  label: texts.PRODUCER,
+                  name: 'producer',
+                  validate: [Validation.required[language]],
+                  options: map(producers, (producer) => ({
+                    value: producer.id,
+                    label: producer.name || '',
+                  })),
+                }
                 : {
-                    component: TextField,
-                    label: texts.PRODUCER,
-                    name: 'producer.name',
-                    disabled: true,
-                  },
+                  component: TextField,
+                  label: texts.PRODUCER,
+                  name: 'producer.name',
+                  disabled: true,
+                },
               {
                 component: SelectField,
                 label: texts.ROLES,
@@ -148,6 +157,27 @@ const Detail = ({
             )}
           </div>
 
+          {serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && editEnabled && (
+            <Button
+              {...{
+                size: "large",
+                onClick: () => setChangePassword(true),
+              }}
+            >
+              {texts.SET_PASSWORD}
+            </Button>)}
+
+          {changePassword && (
+            <Field
+              {...{
+                id: 'new-password',
+                component: TextField,
+                label: texts.PASSWORD_NEW,
+                name: 'newPassword',
+                validate: [Validation.required[language]],
+              }}
+            />)}
+
           <div {...{ className: 'flex-row flex-right' }}>
             <Button {...{ onClick: () => history.push('/users') }}>
               {editEnabled ? texts.STORNO : texts.CLOSE}
@@ -192,6 +222,12 @@ export default compose(
       if (
         await saveUser({
           ...user,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          institution: formData.institution,
+          email: formData.email,
+          username: formData.username,
+          newPassword: formData.newPassword,
           producer: find(producers, (item) => item.id === formData.producer),
           roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
           exportFolders: formData.exportFolders,

@@ -5,7 +5,7 @@ import { hasValue } from './';
 export const isValidDateTimeString = (dateTime) =>
   hasValue(dateTime) &&
   typeof dateTime === 'string' &&
-  dateTime.match(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d.*Z$/);
+  dateTime.match(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(Z|[+-]\d\d:\d\d)$/);
 
 export const isValidDateString = (date) => hasValue(date) && typeof date === 'string';
 

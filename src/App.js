@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { connect } from 'react-redux';
@@ -47,13 +47,31 @@ import { Permission } from './enums';
 import AipBulkDeletionsContainer from './containers/aipBulkDeletion/AipBulkDeletionsContainer';
 
 
+
 const App = ({ store, user, language, texts }) => {
+
+  const [serverConfig, setServerConfig] = useState(null);
+
+  useEffect(() => {
+    getServerConfig();
+  }, []);
+
+  const getServerConfig = async () => {
+    try {
+      const response = await fetch('/api/config');
+      const config = await response.json();
+      setServerConfig(config);
+    } catch (error) {
+      console.error('Error fetching server config:', error);
+    }
+  };
 
   // Every (new) page component will have these props by default + route props
   const containerProps = {
     user,
     language,
     texts,
+    serverConfig
   };
 
   return (

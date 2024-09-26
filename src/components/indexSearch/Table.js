@@ -130,10 +130,10 @@ const PackagesTable = ({
             showSortColumn && {
               label:
                 sort === 'updated' || sort === 'created'
-                  ? formatDateTime(get(item, `fields.${sort}[0]`))
-                  : get(item, `fields.${sort}[0]`, ''),
+                  ? formatDateTime(get(item, `fields.${sort}`))
+                  : get(item, `fields.${sort}`, ''),
             },
-            { label: get(item, 'fields.label[0]', '') },
+            { label: get(item, 'fields.label', '') },
             { label: get(item, 'authorialId', '') },
             {
               label: (
@@ -151,7 +151,7 @@ const PackagesTable = ({
               label: `${get(item, 'sipVersionNumber', '')}.${get(item, 'xmlVersionNumber', '')}`,
             },
             {
-              label: `${get(item, 'fields.aip_state[0]', '')}${
+              label: `${get(item, 'fields.aip_state', '')}${
                 get(item, 'debugMode') ? ' (debug)' : ''
               }`,
             },
