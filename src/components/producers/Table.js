@@ -11,18 +11,19 @@ const ProducersTable = ({ history, producers, setDialog, texts }) => {
   return (
     <Table
       {...{
+        tableId: 'producers',
         thCells: compact([
-          { label: texts.ID },
-          { label: texts.NAME },
-          { label: texts.TRANSFER_AREA_PATH },
-          deleteEnabled && { label: '' },
+          { label: texts.ID, field: 'id' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.TRANSFER_AREA_PATH, field: 'transferAreaPath' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(producers, (item) => ({
           onClick: () => history.push(`/producers/${item.id}`),
           items: compact([
-            { label: get(item, 'id', '') },
-            { label: get(item, 'name', '') },
-            { label: get(item, 'transferAreaPath', '') },
+            { label: get(item, 'id', ''), field: 'id' },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: get(item, 'transferAreaPath', ''), field: 'transferAreaPath' },
             deleteEnabled && {
               label: (
                 <Button
@@ -37,6 +38,7 @@ const ProducersTable = ({ history, producers, setDialog, texts }) => {
                 </Button>
               ),
               className: 'text-right',
+              field: 'delete',
             },
           ]),
         })),

@@ -1,7 +1,7 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { openErrorDialogIfRequestFailed } from '../actions/appActions';
-import { createSortOrderParams } from '../utils';
+import { createSorterParams } from '../utils';
 
 export const getIncidents = (batchId, clearBeforeGet = true, enableUrl) => async (
   dispatch,
@@ -18,7 +18,7 @@ export const getIncidents = (batchId, clearBeforeGet = true, enableUrl) => async
 
   try {
     const response = await fetch(`/api/incident/batch/${batchId}`, {
-      params: createSortOrderParams(getState),
+      params: createSorterParams(getState),
     });
 
     if (enableUrl && enableUrl !== window.location.pathname) {

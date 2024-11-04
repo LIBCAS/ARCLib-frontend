@@ -159,15 +159,16 @@ const UpdateWithLocalDefinition = ({
                   </Button>
                   <Table
                     {...{
+                      tablleId: 'updateWithLocalDefinition',
                       thCells: [
-                        { label: texts.IDENTIFIER },
-                        { label: texts.IDENTIFIER_TYPE },
-                        { label: '' },
+                        { label: texts.IDENTIFIER, field: 'identifier' },
+                        { label: texts.IDENTIFIER_TYPE, field: 'identifierType' },
+                        { label: '', field: 'actions' },
                       ],
                       items: map(get(formValues, 'identifiers'), (item) => ({
                         items: [
-                          { label: get(item, 'identifier', '') },
-                          { label: get(item, 'identifierType', '') },
+                          { label: get(item, 'identifier', ''), field: 'identifier' },
+                          { label: get(item, 'identifierType', ''), field: 'identifierType' },
                           {
                             label: (
                               <ConfirmButton
@@ -196,6 +197,7 @@ const UpdateWithLocalDefinition = ({
                                 }}
                               />
                             ),
+                            field: 'actions',
                             className: 'text-right',
                           },
                         ],
@@ -327,36 +329,38 @@ export default compose(
   withRouter,
   withState('fail', 'setFail', null),
   withHandlers({
-    onSubmit: ({
-      closeDialog,
-      updateWithLocalDefinition,
-      texts,
-      setFail,
-      data,
-      getFormatDefinitionByFormatId,
-      reset,
-    }) => async ({ preferred, ...formData }) => {
-      if (
-        await updateWithLocalDefinition({
-          ...removeStartEndWhiteSpaceInSelectedFields(formData, [
-            'formatVersion',
-            'nationalFormatGuarantor',
-          ]),
-          internalInformationFilled: !!(
-            formData.nationalFormatGuarantor || formData.preservationPlanDescription
-          ),
-          preferred: preferred === true,
-          id: undefined,
-        })
-      ) {
-        setFail(null);
-        getFormatDefinitionByFormatId(get(data, 'format.formatId'));
-        reset('UpdateWithLocalDefinitionDialogForm');
-        closeDialog();
-      } else {
-        setFail(texts.SAVE_FAILED);
-      }
-    },
+    onSubmit:
+      ({
+        closeDialog,
+        updateWithLocalDefinition,
+        texts,
+        setFail,
+        data,
+        getFormatDefinitionByFormatId,
+        reset,
+      }) =>
+      async ({ preferred, ...formData }) => {
+        if (
+          await updateWithLocalDefinition({
+            ...removeStartEndWhiteSpaceInSelectedFields(formData, [
+              'formatVersion',
+              'nationalFormatGuarantor',
+            ]),
+            internalInformationFilled: !!(
+              formData.nationalFormatGuarantor || formData.preservationPlanDescription
+            ),
+            preferred: preferred === true,
+            id: undefined,
+          })
+        ) {
+          setFail(null);
+          getFormatDefinitionByFormatId(get(data, 'format.formatId'));
+          reset('UpdateWithLocalDefinitionDialogForm');
+          closeDialog();
+        } else {
+          setFail(texts.SAVE_FAILED);
+        }
+      },
   }),
   reduxForm({
     form: 'UpdateWithLocalDefinitionDialogForm',

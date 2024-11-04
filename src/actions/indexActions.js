@@ -26,7 +26,4 @@ export const indexCore = () => async (dispatch) => dispatch(await index('core'))
 
 export const indexFormat = () => async (dispatch) => dispatch(await index('format'));
 
-export const indexFormatDefinition = () => async (dispatch) =>
-  dispatch(await index('format_definition'));
-
 export const indexArclibXML = () => async (dispatch) => dispatch(await index('arclib_xml'));

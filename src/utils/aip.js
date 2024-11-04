@@ -1,13 +1,13 @@
 import { filter as lodashFilter, forEach, find, findIndex } from 'lodash';
 
-import { createSortOrderParams, createPagerParams, getFilter, hasValue } from './index';
+import { createPagerParams, getFilter, hasValue, createSorterParams } from './index';
 
 export const createAipSearchParams = (getState) => {
   const { filter } = getFilter(getState);
 
   return {
     ...createPagerParams(getState),
-    ...createSortOrderParams(getState),
+    ...createSorterParams(getState),
     ...createAipSearchFilter(filter),
   };
 };
@@ -27,7 +27,7 @@ const createAipSearchFilter = (filterItemsUncleared) => {
     'creating_application',
     'premis_event',
     'arc_event',
-    'element'
+    'element',
   ];
   let i = 0;
   let filter = {};

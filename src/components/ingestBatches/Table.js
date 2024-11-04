@@ -30,19 +30,28 @@ const IngestBatchesTable = ({
 }) => (
   <Table
     {...{
+      handleUpdate,
+      tableId: 'ingestBatches',
+      exportButtons: true,
       thCells: [
-        { label: texts.ID },
-        { label: texts.PRODUCER },
-        { label: texts.TRANSFER_AREA_PATH },
-        { label: texts.CREATED },
-        { label: texts.UPDATED },
-        { label: texts.STATE },
-        { label: texts.PENDING_INCIDENTS },
-        { label: texts.PRODUCER_PROFILE },
-        { label: texts.SIP_PROFILE },
-        { label: texts.VALIDATION_PROFILE },
-        { label: texts.WORKFLOW_DEFINITION },
-        { label: '' },
+        { label: texts.ID, field: 'id' },
+        { label: texts.PRODUCER, field: 'producerName' },
+        { label: texts.TRANSFER_AREA_PATH, field: 'transferAreaPath' },
+        { label: texts.CREATED, field: 'created' },
+        { label: texts.UPDATED, field: 'updated' },
+        { label: texts.STATE, field: 'state' },
+        { label: texts.PENDING_INCIDENTS, field: 'pendingIncidents' },
+        { label: texts.PRODUCER_PROFILE, field: 'producerProfile' },
+        { label: texts.SIP_PROFILE, field: 'initialSipProfile' },
+        {
+          label: texts.VALIDATION_PROFILE,
+          field: 'initialValidationProfile',
+        },
+        {
+          label: texts.WORKFLOW_DEFINITION,
+          field: 'initialWorkflowDefinition',
+        },
+        { label: '', field: 'actions' },
       ],
       items: map(batches, (item) => ({
         onClick: () => history.push(`/ingest-batches/${item.id}`),
@@ -58,13 +67,15 @@ const IngestBatchesTable = ({
                 }}
               />
             ),
+            field: 'id',
           },
-          { label: get(item, 'producer.name', '') },
-          { label: get(item, 'transferAreaPath', '') },
-          { label: formatDateTime(item.created) },
-          { label: formatDateTime(item.updated) },
+          { label: get(item, 'producer.name', ''), field: 'producerName' },
+          { label: get(item, 'transferAreaPath', ''), field: 'transferAreaPath' },
+          { label: formatDateTime(item.created), field: 'created' },
+          { label: formatDateTime(item.updated), field: 'updated' },
           {
             label: get(ingestBatchStateTexts[language], get(item, 'state'), ''),
+            field: 'state',
           },
           {
             label: get(item, 'pendingIncidents') ? (
@@ -72,13 +83,20 @@ const IngestBatchesTable = ({
                 <strong>{texts.YES}</strong>
               </span>
             ) : (
-                texts.NO
-              ),
+              texts.NO
+            ),
+            field: 'pendingIncidents',
           },
-          { label: get(item, 'producerProfile.name', '') },
-          { label: get(item, 'initialSipProfile.name', '') },
-          { label: get(item, 'initialValidationProfile.name', '') },
-          { label: get(item, 'initialWorkflowDefinition.name', '') },
+          { label: get(item, 'producerProfile.name', ''), field: 'producerProfile' },
+          { label: get(item, 'initialSipProfile.name', ''), field: 'initialSipProfile' },
+          {
+            label: get(item, 'initialValidationProfile.name', ''),
+            field: 'initialValidationProfile',
+          },
+          {
+            label: get(item, 'initialWorkflowDefinition.name', ''),
+            field: 'initialWorkflowDefinition',
+          },
           {
             label: (
               <div {...{ className: 'flex-row-normal-nowrap flex-right' }}>
@@ -148,6 +166,7 @@ const IngestBatchesTable = ({
                 )}
               </div>
             ),
+            field: 'actions',
           },
         ],
       })),
@@ -163,7 +182,7 @@ const IngestBatchesTable = ({
           field: 'producerName',
           handleUpdate,
         },
-        null,
+        { field: 'transferAreaPath' },
         {
           type: filterTypes.DATETIME,
           field: 'created',
@@ -205,7 +224,25 @@ const IngestBatchesTable = ({
           field: 'initialWorkflowDefinition',
           handleUpdate,
         },
-        null,
+        { field: 'actions' },
+      ],
+      sortItems: [
+        { label: texts.ID, field: 'id' },
+        { label: texts.PRODUCER, field: 'producerName' },
+        { label: texts.CREATED, field: 'created' },
+        { label: texts.UPDATED, field: 'updated' },
+        { label: texts.STATE, field: 'state' },
+        { label: texts.PENDING_INCIDENTS, field: 'pendingIncidents' },
+        { label: texts.PRODUCER_PROFILE, field: 'producerProfile' },
+        { label: texts.SIP_PROFILE, field: 'initialSipProfile' },
+        {
+          label: texts.VALIDATION_PROFILE,
+          field: 'initialValidationProfile',
+        },
+        {
+          label: texts.WORKFLOW_DEFINITION,
+          field: 'initialWorkflowDefinition',
+        },
       ],
     }}
   />

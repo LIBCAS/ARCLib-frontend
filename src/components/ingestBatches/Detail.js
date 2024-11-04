@@ -6,7 +6,6 @@ import { reduxForm, Field } from 'redux-form';
 
 import IngestWorkflows from './IngestWorkflows';
 import Incidents from './Incidents';
-import SortOrder from '../filter/SortOrder';
 import Button from '../Button';
 import Tabs from '../Tabs';
 import { TextField } from '../form';
@@ -217,22 +216,6 @@ const Detail = ({
             title: texts.INCIDENTS,
             content: (
               <div {...{ className: 'flex-col' }}>
-                <SortOrder
-                  {...{
-                    className: 'margin-vertical-small',
-                    sortOptions: [
-                      {
-                        label: texts.CREATED,
-                        value: 'TIMESTAMP',
-                      },
-                      {
-                        label: texts.RESPONSIBLE_PERSON,
-                        value: 'RESPONSIBLE_PERSON',
-                      },
-                    ],
-                    handleUpdate: () => getIncidents(batch.id),
-                  }}
-                />
                 <Incidents {...{ batch, getIncidents, incidents, texts, language }} />
               </div>
             ),

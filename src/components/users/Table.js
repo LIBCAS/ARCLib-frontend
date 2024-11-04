@@ -9,26 +9,28 @@ import { formatDateTime } from '../../utils';
 const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
   <Table
     {...{
+      handleUpdate,
+      tableId: 'users',
       thCells: [
-        { label: texts.USERNAME },
-        { label: texts.FULL_NAME },
-        { label: texts.INSTITUTION },
-        { label: texts.EMAIL },
-        { label: texts.CREATED },
-        { label: texts.UPDATED },
-        { label: texts.PRODUCER },
-        { label: '' },
+        { label: texts.USERNAME, field: 'username' },
+        { label: texts.FULL_NAME, field: 'fullName' },
+        { label: texts.INSTITUTION, field: 'institution' },
+        { label: texts.EMAIL, field: 'email' },
+        { label: texts.CREATED, field: 'created' },
+        { label: texts.UPDATED, field: 'updated' },
+        { label: texts.PRODUCER, field: 'producerName' },
+        { label: '', field: 'delete' },
       ],
       items: map(users, (item) => ({
         onClick: () => history.push(`/users/${item.id}`),
         items: [
-          { label: get(item, 'username', '') },
-          { label: get(item, 'fullName', '') },
-          { label: get(item, 'institution', '') },
-          { label: get(item, 'email', '') },
-          { label: formatDateTime(item.created) },
-          { label: formatDateTime(item.updated) },
-          { label: get(item, 'producer.name', '') },
+          { label: get(item, 'username', ''), field: 'username' },
+          { label: get(item, 'fullName', ''), field: 'fullName' },
+          { label: get(item, 'institution', ''), field: 'institution' },
+          { label: get(item, 'email', ''), field: 'email' },
+          { label: formatDateTime(item.created), field: 'created' },
+          { label: formatDateTime(item.updated), field: 'updated' },
+          { label: get(item, 'producer.name', ''), field: 'producerName' },
           {
             label: (
               <Button
@@ -42,6 +44,7 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
                 {texts.DELETE}
               </Button>
             ),
+            field: 'delete',
             className: 'text-right',
           },
         ],
@@ -52,9 +55,10 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
           field: 'username',
           handleUpdate,
         },
-        null,
-        null,
-        null,
+        { field: 'fullName' },
+        { field: 'institution' },
+        { field: 'email' },
+
         {
           type: filterTypes.DATETIME,
           field: 'created',
@@ -70,8 +74,14 @@ const UsersTable = ({ history, users, handleUpdate, setDialog, texts }) => (
           field: 'producerName',
           handleUpdate,
         },
-        null,
+        { field: 'delete' },
       ],
+      sortItems:[
+        { label: texts.USERNAME, field: 'username' },
+        { label: texts.CREATED, field: 'created' },
+        { label: texts.UPDATED, field: 'updated' },
+        { label: texts.PRODUCER, field: 'producerName' },
+      ]
     }}
   />
 );

@@ -4,6 +4,10 @@ import { Provider } from 'react-redux';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
 import { map } from 'lodash';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { isMobile } from 'react-device-detect';
 
 import Authentication from './containers/Authentication';
 import Profile from './containers/profile/Profile';
@@ -45,11 +49,9 @@ import { getUser, keepAlive } from './actions/userActions';
 import { filterByPermission, getHomepage, hasPermissions } from './utils';
 import { Permission } from './enums';
 import AipBulkDeletionsContainer from './containers/aipBulkDeletion/AipBulkDeletionsContainer';
-
-
+import { getUserSettings } from './actions/userSettingsActions';
 
 const App = ({ store, user, language, texts }) => {
-
   const [serverConfig, setServerConfig] = useState(null);
 
   useEffect(() => {
@@ -71,190 +73,192 @@ const App = ({ store, user, language, texts }) => {
     user,
     language,
     texts,
-    serverConfig
+    serverConfig,
   };
 
   return (
-    <Provider {...{ store }}>
-      <Router>
-        <div>
-          <Dialogs {...containerProps} />
-          <Switch>
-            {map(
-              filterByPermission([
-                {
-                  path: '/',
-                  Component: Authentication,
-                  exact: true,
-                },
-                {
-                  path: '/profile',
-                  Component: Profile,
-                  exact: true,
-                },
-                {
-                  path: '/producer-profiles',
-                  Component: ProducerProfilesContainer,
-                  permission: Permission.PRODUCER_PROFILE_RECORDS_READ,
-                },
-                {
-                  path: '/ingest',
-                  Component: Ingest,
-                  permission: Permission.BATCH_PROCESSING_WRITE,
-                },
-                {
-                  path: '/ingest-routines',
-                  Component: IngestRoutinesContainer,
-                  permission: Permission.INGEST_ROUTINE_RECORDS_READ,
-                },
-                {
-                  path: '/ingest-batches',
-                  Component: IngestBatchesContainer,
-                  permission: Permission.BATCH_PROCESSING_READ,
-                },
-                {
-                  path: '/validation-profiles',
-                  Component: ValidationProfilesContainer,
-                  permission: Permission.VALIDATION_PROFILE_RECORDS_READ,
-                },
-                {
-                  path: '/sip-profiles',
-                  Component: SipProfilesContainer,
-                  permission: Permission.SIP_PROFILE_RECORDS_READ,
-                },
-                {
-                  path: '/workflow-definitions',
-                  Component: WorkflowDefinitionsContainer,
-                  permission: Permission.WORKFLOW_DEFINITION_RECORDS_READ,
-                },
-                {
-                  path: '/deletion-requests',
-                  Component: DeletionRequests,
-                  permission: Permission.DELETION_REQUESTS_READ,
-                },
-                {
-                  path: '/aip-bulk-deletions',
-                  Component: AipBulkDeletionsContainer,
-                  permission: Permission.AIP_BULK_DELETIONS_READ,
-                },
-                {
-                  path: '/search-queries',
-                  Component: SearchQueries,
-                  permission: Permission.AIP_QUERY_RECORDS_READ,
-                },
-                {
-                  path: '/aip-search',
-                  Component: IndexSearch,
-                  permission: Permission.AIP_RECORDS_READ,
-                },
-                {
-                  path: '/export-templates',
-                  Component: ExportTemplatesContainer,
-                  permission: Permission.EXPORT_TEMPLATES_READ,
-                },
-                {
-                  path: '/users',
-                  Component: UsersContainer,
-                  permission: Permission.USER_RECORDS_READ,
-                },
-                {
-                  path: '/roles',
-                  Component: RolesContainer,
-                  permission: Permission.USER_ROLE_RECORDS_READ,
-                },
-                {
-                  path: '/producers',
-                  Component: ProducersContainer,
-                  permission: Permission.PRODUCER_RECORDS_READ,
-                },
-                {
-                  path: '/archival-storage-administration',
-                  Component: ArchivalStorageAdministration,
-                  permission: Permission.SUPER_ADMIN_PRIVILEGE,
-                },
-                {
-                  path: '/logical-storage-administration',
-                  Component: StorageAdministration,
-                  permission: Permission.STORAGE_ADMINISTRATION_READ,
-                },
-                {
-                  path: '/index',
-                  Component: Index,
-                  permission: Permission.REINDEX_ELIGIBILITY,
-                },
-                {
-                  path: '/issue-dictionary',
-                  Component: IssueDictionaryContainer,
-                  permission: Permission.ISSUE_DEFINITIONS_READ,
-                },
-                {
-                  path: '/formats',
-                  Component: FormatsContainer,
-                  permission: Permission.FORMAT_RECORDS_READ,
-                },
-                {
-                  path: '/risks',
-                  Component: RisksContainer,
-                  permission: Permission.RISK_RECORDS_READ,
-                },
-                {
-                  path: '/tools',
-                  Component: ToolsContainer,
-                  permission: Permission.TOOL_RECORDS_READ,
-                },
-                {
-                  path: '/notifications',
-                  Component: NotificationsContainer,
-                  permission: Permission.NOTIFICATION_RECORDS_READ,
-                },
-                {
-                  path: '/reports',
-                  Component: ReportsContainer,
-                  permission: Permission.REPORT_TEMPLATE_RECORDS_READ,
-                },
+    <DndProvider backend={isMobile ? TouchBackend : HTML5Backend}>
+      <Provider {...{ store }}>
+        <Router>
+          <div>
+            <Dialogs {...containerProps} />
+            <Switch>
+              {map(
+                filterByPermission([
+                  {
+                    path: '/',
+                    Component: Authentication,
+                    exact: true,
+                  },
+                  {
+                    path: '/profile',
+                    Component: Profile,
+                    exact: true,
+                  },
+                  {
+                    path: '/producer-profiles',
+                    Component: ProducerProfilesContainer,
+                    permission: Permission.PRODUCER_PROFILE_RECORDS_READ,
+                  },
+                  {
+                    path: '/ingest',
+                    Component: Ingest,
+                    permission: Permission.BATCH_PROCESSING_WRITE,
+                  },
+                  {
+                    path: '/ingest-routines',
+                    Component: IngestRoutinesContainer,
+                    permission: Permission.INGEST_ROUTINE_RECORDS_READ,
+                  },
+                  {
+                    path: '/ingest-batches',
+                    Component: IngestBatchesContainer,
+                    permission: Permission.BATCH_PROCESSING_READ,
+                  },
+                  {
+                    path: '/validation-profiles',
+                    Component: ValidationProfilesContainer,
+                    permission: Permission.VALIDATION_PROFILE_RECORDS_READ,
+                  },
+                  {
+                    path: '/sip-profiles',
+                    Component: SipProfilesContainer,
+                    permission: Permission.SIP_PROFILE_RECORDS_READ,
+                  },
+                  {
+                    path: '/workflow-definitions',
+                    Component: WorkflowDefinitionsContainer,
+                    permission: Permission.WORKFLOW_DEFINITION_RECORDS_READ,
+                  },
+                  {
+                    path: '/deletion-requests',
+                    Component: DeletionRequests,
+                    permission: Permission.DELETION_REQUESTS_READ,
+                  },
+                  {
+                    path: '/aip-bulk-deletions',
+                    Component: AipBulkDeletionsContainer,
+                    permission: Permission.AIP_BULK_DELETIONS_READ,
+                  },
+                  {
+                    path: '/search-queries',
+                    Component: SearchQueries,
+                    permission: Permission.AIP_QUERY_RECORDS_READ,
+                  },
+                  {
+                    path: '/aip-search',
+                    Component: IndexSearch,
+                    permission: Permission.AIP_RECORDS_READ,
+                  },
+                  {
+                    path: '/export-templates',
+                    Component: ExportTemplatesContainer,
+                    permission: Permission.EXPORT_TEMPLATES_READ,
+                  },
+                  {
+                    path: '/users',
+                    Component: UsersContainer,
+                    permission: Permission.USER_RECORDS_READ,
+                  },
+                  {
+                    path: '/roles',
+                    Component: RolesContainer,
+                    permission: Permission.USER_ROLE_RECORDS_READ,
+                  },
+                  {
+                    path: '/producers',
+                    Component: ProducersContainer,
+                    permission: Permission.PRODUCER_RECORDS_READ,
+                  },
+                  {
+                    path: '/archival-storage-administration',
+                    Component: ArchivalStorageAdministration,
+                    permission: Permission.SUPER_ADMIN_PRIVILEGE,
+                  },
+                  {
+                    path: '/logical-storage-administration',
+                    Component: StorageAdministration,
+                    permission: Permission.STORAGE_ADMINISTRATION_READ,
+                  },
+                  {
+                    path: '/index',
+                    Component: Index,
+                    permission: Permission.REINDEX_ELIGIBILITY,
+                  },
+                  {
+                    path: '/issue-dictionary',
+                    Component: IssueDictionaryContainer,
+                    permission: Permission.ISSUE_DEFINITIONS_READ,
+                  },
+                  {
+                    path: '/formats',
+                    Component: FormatsContainer,
+                    permission: Permission.FORMAT_RECORDS_READ,
+                  },
+                  {
+                    path: '/risks',
+                    Component: RisksContainer,
+                    permission: Permission.RISK_RECORDS_READ,
+                  },
+                  {
+                    path: '/tools',
+                    Component: ToolsContainer,
+                    permission: Permission.TOOL_RECORDS_READ,
+                  },
+                  {
+                    path: '/notifications',
+                    Component: NotificationsContainer,
+                    permission: Permission.NOTIFICATION_RECORDS_READ,
+                  },
+                  {
+                    path: '/reports',
+                    Component: ReportsContainer,
+                    permission: Permission.REPORT_TEMPLATE_RECORDS_READ,
+                  },
 
-                {
-                  path: '/aip/edit/:id',
-                  Component: AipEditor,
-                  permission: Permission.AIP_RECORDS_READ,
-                },
-                {
-                  path: '/aip/:id',
-                  Component: Aip,
-                  permission: Permission.AIP_RECORDS_READ,
-                },
-                {
-                  path: '/ingest-workflows/:id',
-                  Component: IngestWorkflow,
-                  permission: Permission.BATCH_PROCESSING_READ,
-                },
-                {
-                  path: '/error',
-                  Component: ErrorPage,
-                },
-                {
-                  path: '/no-role',
-                  Component: NoRole,
-                },
-              ]),
-              ({ Component, path, permission, ...item }, key) => {
-                return (
-                  <Route
-                    {...{
-                      ...item,
-                      key,
-                      path,
-                      render: (props) => <Component {...{ ...containerProps, ...props }} />,
-                    }}
-                  />
-                );
-              }
-            )}
-            <Redirect to={getHomepage()} />
-          </Switch>
-        </div>
-      </Router>
-    </Provider>
+                  {
+                    path: '/aip/edit/:id',
+                    Component: AipEditor,
+                    permission: Permission.AIP_RECORDS_READ,
+                  },
+                  {
+                    path: '/aip/:id',
+                    Component: Aip,
+                    permission: Permission.AIP_RECORDS_READ,
+                  },
+                  {
+                    path: '/ingest-workflows/:id',
+                    Component: IngestWorkflow,
+                    permission: Permission.BATCH_PROCESSING_READ,
+                  },
+                  {
+                    path: '/error',
+                    Component: ErrorPage,
+                  },
+                  {
+                    path: '/no-role',
+                    Component: NoRole,
+                  },
+                ]),
+                ({ Component, path, permission, ...item }, key) => {
+                  return (
+                    <Route
+                      {...{
+                        ...item,
+                        key,
+                        path,
+                        render: (props) => <Component {...{ ...containerProps, ...props }} />,
+                      }}
+                    />
+                  );
+                }
+              )}
+              <Redirect to={getHomepage()} />
+            </Switch>
+          </div>
+        </Router>
+      </Provider>
+    </DndProvider>
   );
 };
 
@@ -262,10 +266,11 @@ export default compose(
   connect(({ app: { user, texts, language } }) => ({ user, texts, language }), {
     getUser,
     keepAlive,
+    getUserSettings,
   }),
   lifecycle({
     componentWillMount() {
-      const { getUser, keepAlive } = this.props;
+      const { getUser, keepAlive, getUserSettings } = this.props;
 
       window.interval = setInterval(keepAlive, 270000);
 
@@ -275,6 +280,7 @@ export default compose(
         window.location.pathname !== '/no-role'
       ) {
         getUser();
+        getUserSettings();
       }
     },
     componentWillUnmount() {

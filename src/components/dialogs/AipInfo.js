@@ -125,31 +125,32 @@ const AipInfo = ({ handleSubmit, texts, aipId, storageName, xmlStates }) => (
       <Col {...{ span: 24 }}>
         <Table
           {...{
+            tableId: 'aipInfoXmlStates',
             thCells: [
-              { label: texts.VERSION },
-              { label: texts.CONTENT_CONSISTENCY },
-              { label: texts.METADATA_CONSISTENCY },
+              { label: texts.VERSION, field: 'version' },
+              { label: texts.CONTENT_CONSISTENCY, field: 'contentConsistent' },
+              { label: texts.METADATA_CONSISTENCY, field: 'metadataConsistent' },
               {
-                label: texts.CHECKSUM_TYPE,
+                label: texts.CHECKSUM_TYPE, field: 'databaseChecksum.type',
               },
               {
-                label: texts.STORAGE_CHECKSUM,
+                label: texts.STORAGE_CHECKSUM, field: 'storageChecksum.value',
               },
               {
-                label: texts.DATABASE_CHECKSUM,
+                label: texts.DATABASE_CHECKSUM, field: 'databaseChecksum.value',
               },
             ],
             items: map(xmlStates, (item) => ({
               items: [
-                { label: get(item, 'version', '') },
+                { label: get(item, 'version', ''), field: 'version' },
                 {
-                  label: get(item, 'contentConsistent') ? texts.YES : texts.NO,
+                  label: get(item, 'contentConsistent') ? texts.YES : texts.NO, field: 'contentConsistent',
                 },
                 {
-                  label: get(item, 'metadataConsistent') ? texts.YES : texts.NO,
+                  label: get(item, 'metadataConsistent') ? texts.YES : texts.NO, field: 'metadataConsistent',
                 },
                 {
-                  label: get(item, 'databaseChecksum.type', texts.UNKNOWN),
+                  label: get(item, 'databaseChecksum.type', texts.UNKNOWN), field: 'databaseChecksum.type',
                 },
                 {
                   label: get(item, 'storageChecksum.value') ? (
@@ -164,6 +165,7 @@ const AipInfo = ({ handleSubmit, texts, aipId, storageName, xmlStates }) => (
                   ) : (
                     texts.UNKNOWN
                   ),
+                  field: 'storageChecksum.value',
                 },
                 {
                   label: get(item, 'databaseChecksum.value') ? (
@@ -178,6 +180,7 @@ const AipInfo = ({ handleSubmit, texts, aipId, storageName, xmlStates }) => (
                   ) : (
                     texts.UNKNOWN
                   ),
+                  field: 'databaseChecksum.value',
                 },
               ],
             })),

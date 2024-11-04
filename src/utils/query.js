@@ -24,6 +24,27 @@ export const createFilter = (filterItemsUncleared) => {
   return filter;
 };
 
+export const createSorting = (sortingItemsUncleared) => {
+  const sortingItems = lodashFilter(
+    sortingItemsUncleared,
+    (param) => hasValue(param.sort) && hasValue(param.order)
+  );
+
+  let sorting = {};
+
+  forEach(sortingItems, (item, i) => {
+    const { sort, order } = item;
+
+    sorting = {
+      ...sorting,
+      [`sorting[${i}].sort`]: sort,
+      [`sorting[${i}].order`]: order,
+    };
+  });
+
+  return sorting;
+};
+
 export const createSortOrderParams = (getState) => {
   const { sort, order } = getFilter(getState);
 
@@ -41,6 +62,14 @@ export const createSortOrderParams = (getState) => {
         order,
       }
     : {};
+};
+
+export const createSorterParams = (getState) => {
+  const { sorting } = getSorter(getState);
+
+  return {
+    ...createSorting(sorting),
+  };
 };
 
 export const createPagerParams = (getState) => {
@@ -68,6 +97,18 @@ export const createFilterPagerParams = (getState) => {
   };
 };
 
+export const createFilterPagerSorterParams = (getState) => {
+  const { filter } = getFilter(getState);
+
+  return {
+    ...createPagerParams(getState),
+    ...createSorterParams(getState),
+    ...createFilter(filter),
+  };
+};
+
 export const getFilter = (getState) => getState().app.filter;
 
 export const getPager = (getState) => getState().app.pager;
+
+export const getSorter = (getState) => getState().app.sorter;

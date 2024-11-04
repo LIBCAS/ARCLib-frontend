@@ -14,16 +14,17 @@ const RolesTable = ({ history, roles, texts, deleteRole, getRoles }) => {
   return (
     <Table
       {...{
+        tableId: 'roles',
         thCells: compact([
-          { label: texts.NAME },
-          { label: texts.DESCRIPTION },
-          deleteEnabled && { label: '' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.DESCRIPTION, field: 'description' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(roles, (item) => ({
           onClick: () => history.push(`/roles/${item.id}`),
           items: compact([
-            { label: get(item, 'name', '') },
-            { label: get(item, 'description', '') },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: get(item, 'description', ''), field: 'description' },
             deleteEnabled && {
               label: (
                 <ConfirmButton
@@ -38,6 +39,7 @@ const RolesTable = ({ history, roles, texts, deleteRole, getRoles }) => {
                   }}
                 />
               ),
+              field: 'delete',
               className: 'text-right',
             },
           ]),

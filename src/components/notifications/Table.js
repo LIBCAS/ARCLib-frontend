@@ -23,23 +23,24 @@ const NotificationsTable = ({
   return (
     <Table
       {...{
+        tableId: 'notifications',
         thCells: compact([
-          { label: texts.TYPE },
-          { label: texts.CREATOR },
-          { label: texts.CRON_EXPRESSION },
-          { label: texts.SUBJECT },
-          { label: texts.MESSAGE },
-          { label: texts.PARAMS },
-          deleteEnabled && { label: '' },
+          { label: texts.TYPE, field: 'type' },
+          { label: texts.CREATOR, field: 'creator' },
+          { label: texts.CRON_EXPRESSION, field: 'cron' },
+          { label: texts.SUBJECT, field: 'subject' },
+          { label: texts.MESSAGE, field: 'message' },
+          { label: texts.PARAMS, field: 'params' },
+          deleteEnabled && { label: '', field: 'actions' },
         ]),
         items: map(notifications, (item) => ({
           onClick: () => history.push(`/notifications/${item.id}`),
           items: compact([
-            { label: get(texts, get(item, 'type'), get(item, 'type')) },
-            { label: get(item, 'creator.fullName', '') },
-            { label: get(item, 'cron', '') },
-            { label: get(item, 'subject', '') },
-            { label: get(item, 'message', '') },
+            { label: get(texts, get(item, 'type'), get(item, 'type')), field: 'type' },
+            { label: get(item, 'creator.fullName', ''), field: 'creator' },
+            { label: get(item, 'cron', ''), field: 'cron' },
+            { label: get(item, 'subject', ''), field: 'subject' },
+            { label: get(item, 'message', ''), field: 'message' },
             {
               label: (
                 <PrettyJSONTableCell
@@ -48,6 +49,7 @@ const NotificationsTable = ({
                   }}
                 />
               ),
+              field: 'params',
             },
             deleteEnabled && {
               label: (
@@ -65,6 +67,7 @@ const NotificationsTable = ({
                   }}
                 />
               ),
+              field: 'actions',
               className: 'text-right',
             },
           ]),

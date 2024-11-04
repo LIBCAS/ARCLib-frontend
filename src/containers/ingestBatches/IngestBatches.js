@@ -5,7 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { get, filter as lodashFilter } from 'lodash';
 
 import PageWrapper from '../../components/PageWrapper';
-import SortOrder from '../../components/filter/SortOrder';
 import Table from '../../components/ingestBatches/Table';
 import Pagination from '../../components/Pagination';
 import SelectField from '../../components/SelectField';
@@ -41,19 +40,6 @@ const IngestBatches = ({
       {users ? (
         <div>
           <div className="flex-row flex-centered">
-            <SortOrder
-              {...{
-                fullWidth: false,
-                className: 'margin-bottom-small',
-                sortOptions: [
-                  { label: texts.UPDATED, value: 'updated' },
-                  { label: texts.CREATED, value: 'created' },
-                  { label: texts.PRODUCER, value: 'producerName' },
-                  { label: texts.STATE, value: 'state' },
-                ],
-                handleUpdate,
-              }}
-            />
             <SelectField
               {...{
                 key: `${selectKey}`,

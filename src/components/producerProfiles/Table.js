@@ -13,28 +13,55 @@ const ProducerProfilesTable = ({ history, producerProfiles, setDialog, handleUpd
   return (
     <Table
       {...{
+        handleUpdate,
+        tableId: 'producerProfiles', 
+        exportButtons: true, //controls if export buttons are shown
         thCells: compact([
-          { label: texts.EXTERNAL_ID },
-          { label: texts.NAME },
-          { label: texts.CREATED },
-          { label: texts.UPDATED },
-          { label: texts.PRODUCER },
-          { label: texts.SIP_PROFILE },
-          { label: texts.VALIDATION_PROFILE },
-          { label: texts.WORKFLOW_DEFINITION },
-          deleteEnabled && { label: '' },
+          {
+            label: texts.EXTERNAL_ID,
+            field: 'externalId',
+          },
+          {
+            label: texts.NAME,
+            field: 'name',
+          },
+          {
+            label: texts.CREATED,
+            field: 'created',
+          },
+          {
+            label: texts.UPDATED,
+            field: 'updated',
+          },
+          {
+            label: texts.PRODUCER,
+            field: 'producerName',
+          },
+          {
+            label: texts.SIP_PROFILE,
+            field: 'sipProfileName',
+          },
+          {
+            label: texts.VALIDATION_PROFILE,
+            field: 'validationProfileName',
+          },
+          {
+            label: texts.WORKFLOW_DEFINITION,
+            field: 'workflowDefinitionName',
+          },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(producerProfiles, (item, i) => ({
           onClick: () => history.push(`/producer-profiles/${item.id}`),
           items: compact([
-            { label: get(item, 'externalId', '') },
-            { label: get(item, 'name', '') },
-            { label: formatDateTime(item.created) },
-            { label: formatDateTime(item.updated) },
-            { label: get(item, 'producer.name', '') },
-            { label: get(item, 'sipProfileName', '') },
-            { label: get(item, 'validationProfileName', '') },
-            { label: get(item, 'workflowDefinitionName', '') },
+            { label: get(item, 'externalId', ''), field: 'externalId' },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: formatDateTime(item.created), field: 'created' },
+            { label: formatDateTime(item.updated), field: 'updated' },
+            { label: get(item, 'producer.name', ''), field: 'producerName' },
+            { label: get(item, 'sipProfileName', ''), field: 'sipProfileName' },
+            { label: get(item, 'validationProfileName', ''), field: 'validationProfileName' },
+            { label: get(item, 'workflowDefinitionName', ''), field: 'workflowDefinitionName' },
             deleteEnabled && {
               label: (
                 <Button
@@ -51,6 +78,7 @@ const ProducerProfilesTable = ({ history, producerProfiles, setDialog, handleUpd
                   {texts.DELETE}
                 </Button>
               ),
+              field: 'delete',
               className: 'text-right',
             },
           ]),
@@ -96,7 +124,17 @@ const ProducerProfilesTable = ({ history, producerProfiles, setDialog, handleUpd
             field: 'workflowDefinitionName',
             handleUpdate,
           },
-          null,
+          { field: 'delete' },
+        ],
+        sortItems: [
+          { label: texts.EXTERNAL_ID, field: 'externalId' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.UPDATED, field: 'updated' },
+          { label: texts.PRODUCER, field: 'producerName' },
+          { label: texts.SIP_PROFILE, field: 'sipProfileName' },
+          { label: texts.VALIDATION_PROFILE, field: 'validationProfileName' },
+          { label: texts.WORKFLOW_DEFINITION, field: 'workflowDefinitionName' },
         ],
       }}
     />

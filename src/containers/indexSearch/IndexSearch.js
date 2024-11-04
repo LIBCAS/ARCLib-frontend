@@ -29,7 +29,6 @@ IndexSearch as Page Component, which consists of 4 another main components:
 */
 
 const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort, storeFilters, numberOfDublinCoreFields, setNumberOfDublinCoreFields }) => {
-
   let index = -1;
 
   const isSuperAdmin = hasPermission(Permission.SUPER_ADMIN_PRIVILEGE);
@@ -568,6 +567,7 @@ const IndexSearch = ({ history, aips, query, texts, language, getAipList, sort, 
               sort,
               sortOptions,
               displayCheckboxes: true,
+              handleUpdate: getAipList,
             }}
           />
           <Pagination

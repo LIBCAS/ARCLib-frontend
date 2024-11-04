@@ -11,39 +11,39 @@ const RisksTable = ({ history, risks, texts, setDialog }) => {
   return (
     <Table
       {...{
+        tableId: 'risks',
         thCells: compact([
-          { label: texts.CREATED },
-          { label: texts.UPDATED },
-          { label: texts.NAME },
-          { label: texts.DESCRIPTION },
-          deleteEnabled ? { label: '' } : null,
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.UPDATED, field: 'updated' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.DESCRIPTION, field: 'description' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(risks, (item) => ({
           onClick: () => history.push(`/risks/${item.id}`),
           items: compact([
-            { label: formatDateTime(get(item, 'created')) },
-            { label: formatDateTime(get(item, 'updated')) },
-            { label: get(item, 'name', '') },
-            { label: get(item, 'description', '') },
-            deleteEnabled
-              ? {
-                  label: (
-                    <Button
-                      {...{
-                        onClick: (e) => {
-                          e.stopPropagation();
-                          setDialog('RiskDelete', {
-                            id: item.id,
-                          });
-                        },
-                      }}
-                    >
-                      {texts.DELETE}
-                    </Button>
-                  ),
-                  className: 'text-right',
-                }
-              : null,
+            { label: formatDateTime(get(item, 'created')), field: 'created' },
+            { label: formatDateTime(get(item, 'updated')), field: 'updated' },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: get(item, 'description', ''), field: 'description' },
+            deleteEnabled && {
+              label: (
+                <Button
+                  {...{
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setDialog('RiskDelete', {
+                        id: item.id,
+                      });
+                    },
+                  }}
+                >
+                  {texts.DELETE}
+                </Button>
+              ),
+              field: 'delete',
+              className: 'text-right',
+            },
           ]),
         })),
       }}

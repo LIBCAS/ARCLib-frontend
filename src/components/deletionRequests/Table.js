@@ -22,11 +22,12 @@ const DeletionRequestsTable = ({ deletionRequests, texts, setDialog, user }) => 
   return (
     <Table
       {...{
+        tableId: 'deletionRequests',
         thCells: compact([
-          { label: texts.AIP_ID },
-          { label: texts.REQUESTER },
-          { label: texts.STATE },
-          deleteEnabled && { label: '' },
+          { label: texts.AIP_ID, field: 'aipId' },
+          { label: texts.REQUESTER, field: 'requester' },
+          { label: texts.STATE, field: 'state' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(deletionRequests, (item) => {
           const state =
@@ -43,9 +44,9 @@ const DeletionRequestsTable = ({ deletionRequests, texts, setDialog, user }) => 
               : null;
           return {
             items: compact([
-              { label: get(item, 'aipId', '') },
-              { label: get(item, 'requester.username', '') },
-              { label: get(texts, state) || '' },
+              { label: get(item, 'aipId', ''), field: 'aipId' },
+              { label: get(item, 'requester.username', ''), field: 'requester' },
+              { label: get(texts, state) || '', field: 'state' },
               deleteEnabled && {
                 label:
                   get(user, 'id') !== get(item, 'requester.id') &&
@@ -81,6 +82,7 @@ const DeletionRequestsTable = ({ deletionRequests, texts, setDialog, user }) => 
                   ) : (
                     <div />
                   ),
+                field: 'delete',
                 className: 'text-right',
               },
             ]),

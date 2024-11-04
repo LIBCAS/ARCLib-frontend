@@ -15,42 +15,41 @@ import { fetchExportTemplates, deleteExportTemplate } from '../../actions/export
 import { getProducers } from '../../actions/producerActions';
 import { setDialog } from '../../actions/appActions';
 
-
 const ExportTemplates = (props) => {
-
   const canWriteExportTemplates = hasPermission(Permission.EXPORT_TEMPLATES_WRITE);
 
   const tableHeaders = compact([
     {
       label: props.texts.NAME,
+      field: 'name',
     },
     {
       label: props.texts.DESCRIPTION,
+      field: 'description',
     },
     {
       label: props.texts.CREATED,
+      field: 'created',
     },
     {
       label: props.texts.UPDATED,
+      field: 'updated',
     },
-    canWriteExportTemplates &&
-    {
-      label: ''
-    }
+    canWriteExportTemplates && {
+      label: '',
+      field: 'actions',
+    },
   ]);
 
   let tableRows = undefined;
   if (props.exportTemplates) {
-
     tableRows = props.exportTemplates.map((exportTemplate) => {
-
       const tableRow = compact([
-        { label: get(exportTemplate, 'name', '') },
-        { label: get(exportTemplate, 'description', '') },
-        { label: formatDateTime(get(exportTemplate, 'created', '')) },
-        { label: formatDateTime(get(exportTemplate, 'updated', '')) },
-        canWriteExportTemplates &&
-        {
+        { label: get(exportTemplate, 'name', ''), field: 'name' },
+        { label: get(exportTemplate, 'description', ''), field: 'description' },
+        { label: formatDateTime(get(exportTemplate, 'created', '')), field: 'created' },
+        { label: formatDateTime(get(exportTemplate, 'updated', '')), field: 'updated' },
+        canWriteExportTemplates && {
           label: (
             <ConfirmButton
               label={props.texts.DELETE}
@@ -63,24 +62,24 @@ const ExportTemplates = (props) => {
               }}
             />
           ),
-          className: 'text-right'
-        }
-      ])
+          field: 'actions',
+          className: 'text-right',
+        },
+      ]);
 
       return {
         onClick: () => props.history.push(`/export-templates/${exportTemplate.id}`),
-        items: tableRow
-      }
-    })
+        items: tableRow,
+      };
+    });
   }
 
   return (
-    <PageWrapper breadcrumb={[{ label: props.texts.EXPORT_TEMPLATES }]} >
-
+    <PageWrapper breadcrumb={[{ label: props.texts.EXPORT_TEMPLATES }]}>
       {canWriteExportTemplates && (
         <Button
           primary={true}
-          className='margin-bottom-small'
+          className="margin-bottom-small"
           onClick={() => {
             if (hasPermission(Permission.SUPER_ADMIN_PRIVILEGE)) {
               props.getProducers();
@@ -93,16 +92,14 @@ const ExportTemplates = (props) => {
       )}
 
       {props.exportTemplates && (
-        <Table thCells={tableHeaders} items={tableRows} />
+        <Table tableId="exportTemplates" thCells={tableHeaders} items={tableRows} />
       )}
-
     </PageWrapper>
   );
-}
-
+};
 
 // Merge this part of store to the component props + subscribe to the changes
-const mapStateToProps = (store) => ({ exportTemplates: store.exportTemplates.exportTemplates })
+const mapStateToProps = (store) => ({ exportTemplates: store.exportTemplates.exportTemplates });
 
 // Merge the redux dispatched actions to the component props
 const mapDispatchToProps = (dispatch) => {
@@ -111,8 +108,8 @@ const mapDispatchToProps = (dispatch) => {
     deleteExportTemplate: (id) => dispatch(deleteExportTemplate(id)),
     setDialog: (name, data) => dispatch(setDialog(name, data)),
     getProducers: () => dispatch(getProducers()),
-  }
-}
+  };
+};
 
 export default compose(
   withRouter,
@@ -120,6 +117,6 @@ export default compose(
   lifecycle({
     componentDidMount() {
       this.props.fetchExportTemplates();
-    }
+    },
   })
 )(ExportTemplates);

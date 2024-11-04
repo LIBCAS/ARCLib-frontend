@@ -403,13 +403,11 @@ export const filterOptionAll = {
 };
 
 export const filterBoolOptionsCZ = [
-  filterOptionAllCZ,
   { label: CZ.YES, value: 'true' },
   { label: CZ.NO, value: 'false' },
 ];
 
 export const filterBoolOptionsEN = [
-  filterOptionAllEN,
   { label: EN.YES, value: 'true' },
   { label: EN.NO, value: 'false' },
 ];

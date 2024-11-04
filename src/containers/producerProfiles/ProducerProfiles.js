@@ -6,7 +6,6 @@ import { get } from 'lodash';
 
 import Button from '../../components/Button';
 import PageWrapper from '../../components/PageWrapper';
-import SortOrder from '../../components/filter/SortOrder';
 import Table from '../../components/producerProfiles/Table';
 import Pagination from '../../components/Pagination';
 import { setDialog, setPager } from '../../actions/appActions';
@@ -32,10 +31,12 @@ const ProducerProfiles = ({
   pager,
   setPager,
 }) => {
-  const handleUpdate = () => getProducerProfiles();
+  const handleUpdate = () => {
+    getProducerProfiles();
+  };
   const onFilterUpdate = () => {
     setPager({ ...pager, page: 0 });
-    setTimeout(handleUpdate);
+    setTimeout(handleUpdate());
   };
 
   return (
@@ -59,24 +60,6 @@ const ProducerProfiles = ({
           {texts.NEW}
         </Button>
       )}
-      <SortOrder
-        {...{
-          className: 'margin-bottom',
-          sortOptions: [
-            { label: texts.UPDATED, value: 'updated' },
-            { label: texts.CREATED, value: 'created' },
-            { label: texts.NAME, value: 'name' },
-            { label: texts.PRODUCER, value: 'producerName' },
-            { label: texts.SIP_PROFILE, value: 'sipProfileName' },
-            { label: texts.VALIDATION_PROFILE, value: 'validationProfileName' },
-            {
-              label: texts.WORKFLOW_DEFINITION,
-              value: 'workflowDefinitionName',
-            },
-          ],
-          handleUpdate,
-        }}
-      />
       <Table
         {...{
           history,
@@ -100,7 +83,10 @@ const ProducerProfiles = ({
 export default compose(
   withRouter,
   connect(
-    ({ app: { pager }, producerProfile: { producerProfiles } }) => ({ pager, producerProfiles }),
+    ({ app: { pager }, producerProfile: { producerProfiles } }) => ({
+      pager,
+      producerProfiles,
+    }),
     {
       getProducers,
       getProducerProfiles,

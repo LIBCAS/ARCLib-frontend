@@ -85,6 +85,7 @@ export const CZ = {
   CLOSE: 'Zavřít',
   CODE: 'Kód',
   COLLAPSE_ALL: 'Vše srolovat',
+  COLUMN_SETTINGS: 'Nastavení sloupců',
   COMPUTED_WORKFLOW_CONFIGURATION: 'Vypočítaná konfigurace workflow',
   CONFIGURATION_FILE: 'Konfigurační soubor',
   CONFIGURATION_FILE_LOCAL: 'Lokální konfigurační soubor',
@@ -350,6 +351,7 @@ export const CZ = {
   PRESERVATION_PLAN_DESCRIPTION: 'Popis plánování dlouhodobé ochrany',
   PRESERVATION_PLAN_FILE: 'Soubor plánování dlouhodobé ochrany',
   PRESERVATION_PLANNING: 'Plánování dlouhodobé ochrany',
+  RESET_TABLE: 'Resetovat tabulku',
   PRIORITY: 'Priorita',
   PROCESS_VARIABLE: 'Procesní proměnná',
   PROCESS_VARIABLES: 'Procesní proměnné',
@@ -397,7 +399,6 @@ export const CZ = {
     'Opravdu chcete spustit kompletní reindex všech ARCLib XML uložených v systému? Jedná se o časově náročnou operaci - všechna XML musí být vytažena z Archival Storage.',
   REINDEX_CORE: 'Reindexovat jádro',
   REINDEX_FORMAT: 'Reindexovat formát',
-  REINDEX_FORMAT_DEFINITION: 'Reindexovat definici formátu',
   REINDEX_STARTED: 'Reindex zahájen',
   REJECTED: 'Odmítnuto',
   RELATED_ENTITIES: 'Související entity',
@@ -607,7 +608,8 @@ export const CZ = {
   XSL_TRANSFORMATION: 'XSL transformace',
   YES: 'Ano',
   YOU_HAVE_NO_ROLE_MESSAGE: 'Nemáte žádnou roli, vyčkejte na přidělení role administrátorem.',
-
+  EXPORT_CSV: 'Exportovat do CSV',
+  EXPORT_XLSX: 'Exportovat do XLSX',
   EXPORT_TEMPLATES: 'Exportní šablony',
   EXPORT_TEMPLATE_DELETE: 'Smazat exportní šablonu',
   EXPORT_TEMPLATE_DELETE_TEXT: 'Opravdu chcete smazat vybranou exportní šablonu?',
@@ -652,7 +654,8 @@ export const CZ = {
   UPLOAD_LIST_OF_IDENTIFIERS: 'Nahrát identifikátory',
   CLEAR_LIST_OF_IDENTIFIERS: 'Odebrat identifikátory',
   FILE_SIZE_LIMIT_EXCEEDED: 'Překročen limit velikosti souboru',
-  FILE_SIZE_LIMIT_EXCEEDED_MESSAGE: 'Soubor, který jste nahráli, překračuje povolený limit velikosti souboru (1 MB).',
+  FILE_SIZE_LIMIT_EXCEEDED_MESSAGE:
+    'Soubor, který jste nahráli, překračuje povolený limit velikosti souboru (1 MB).',
   EXPORT_TEMPLATE_NEW_FAILED: 'Nepodařilo se vytvořit novou exportní šablonu',
   CLEAR_EXPORT_TEMPLATE: 'Vymazat šablonu exportu',
   POSTPONE_SELECTED: 'Odložit vybrané',
@@ -668,7 +671,8 @@ export const CZ = {
   SUCCESS_TO_REMOVE_RECORD_FROM_PILE: 'Odstranění vybraných záznamů z hromádky bylo úspěšné.',
   EMPTY_PILE_MESSAGE: 'Vaše hromádka je momentálně prázdná.',
   DESCRIPTIVE_METADATA_SEARCH: 'Vyhledávání v popisných metadatech',
-  AT_LEAST_ONE_EXPORT_SCOPE_CHECKBOX_ERROR: 'Alespoň jeden checkbox z rozsahu exportu musí být zakliknut.',
+  AT_LEAST_ONE_EXPORT_SCOPE_CHECKBOX_ERROR:
+    'Alespoň jeden checkbox z rozsahu exportu musí být zakliknut.',
 
   DC_LABEL_ID: 'Specifikátor',
   DC_LABEL_VALUE: 'Fulltext',

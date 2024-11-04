@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerParams } from '../utils';
+import { createFilterPagerSorterParams } from '../utils';
 
 export const getBatches = (clearBeforeGet = true, enableUrl) => async (dispatch, getState) => {
   if (clearBeforeGet) {
@@ -17,7 +17,7 @@ export const getBatches = (clearBeforeGet = true, enableUrl) => async (dispatch,
 
   try {
     const response = await fetch('/api/batch/list_dtos', {
-      params: createFilterPagerParams(getState),
+      params: createFilterPagerSorterParams(getState),
     });
 
     if (enableUrl && enableUrl !== window.location.pathname) {

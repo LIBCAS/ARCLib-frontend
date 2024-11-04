@@ -25,18 +25,28 @@ const Incidents = ({
   incidents,
   texts,
   language,
+  getIncidents,
+  batch,
 }) => {
+  const handleUpdate = () => {
+    getIncidents(batch.id);
+  };
+
   const editEnabled = hasPermission(Permission.INCIDENT_RECORDS_WRITE);
   return (
     <div {...{ className: 'flex-col' }}>
       <Table
         {...{
+          handleUpdate,
+          tableId: 'incidents',
+          exportButtons: true,
+          withSort: true,
           thCells: compact([
-            editEnabled && { label: '' },
-            { label: texts.CREATED },
-            { label: texts.INGEST_WORKFLOW_ID },
-            { label: texts.BPM_TASK_ID },
-            { label: texts.RESPONSIBLE_PERSON },
+            editEnabled && { label: '', field: 'checkbox' },
+            { label: texts.CREATED, field: 'created' },
+            { label: texts.INGEST_WORKFLOW_ID, field: 'externalId' },
+            { label: texts.BPM_TASK_ID, field: 'activityId' },
+            { label: texts.RESPONSIBLE_PERSON, field: 'responsiblePerson' },
           ]),
           items: map(incidents, (item) => ({
             onClick: () => setDialog('IncidentDetail', { incident: item }),
@@ -59,14 +69,19 @@ const Incidents = ({
                     }}
                   />
                 ),
+                field: 'checkbox',
                 className: 'td-checkbox',
               },
-              { label: formatDateTime(item.created) },
-              { label: get(item, 'externalId', '') },
-              { label: get(item, 'activityId', '') },
-              { label: get(item, 'responsiblePerson.username', '') },
+              { label: formatDateTime(item.created), field: 'created' },
+              { label: get(item, 'externalId', ''), field: 'externalId' },
+              { label: get(item, 'activityId', ''), field: 'activityId' },
+              { label: get(item, 'responsiblePerson.username', ''), field: 'responsiblePerson' },
             ]),
           })),
+          sortItems: [
+            { label: texts.CREATED, field: 'created' },
+            { label: texts.RESPONSIBLE_PERSON, field: 'responsiblePerson' },
+          ],
         }}
       />
       {!isEmpty(selected) && editEnabled && (
@@ -133,39 +148,33 @@ export default compose(
     },
   }),
   withHandlers({
-    onSubmit: ({
-      selected,
-      setSelected,
-      getIncidents,
-      batch,
-      solveIncidents,
-      cancelIncidents,
-      texts,
-    }) => async ({ operation, text }) => {
-      const body = { ids: selected };
+    onSubmit:
+      ({ selected, setSelected, getIncidents, batch, solveIncidents, cancelIncidents, texts }) =>
+      async ({ operation, text }) => {
+        const body = { ids: selected };
 
-      set(body, operation === operations.SOLVE ? 'config' : 'reason', text);
+        set(body, operation === operations.SOLVE ? 'config' : 'reason', text);
 
-      if (operation === operations.SOLVE) {
-        if (await solveIncidents(body)) {
-          setSelected([]);
-          getIncidents(batch.id);
+        if (operation === operations.SOLVE) {
+          if (await solveIncidents(body)) {
+            setSelected([]);
+            getIncidents(batch.id);
+          } else {
+            throw new SubmissionError({
+              text: texts.INCIDENTS_SOLVE_FAILED,
+            });
+          }
         } else {
-          throw new SubmissionError({
-            text: texts.INCIDENTS_SOLVE_FAILED,
-          });
+          if (await cancelIncidents(body)) {
+            setSelected([]);
+            getIncidents(batch.id);
+          } else {
+            throw new SubmissionError({
+              text: texts.INCIDENTS_CANCEL_FAILED,
+            });
+          }
         }
-      } else {
-        if (await cancelIncidents(body)) {
-          setSelected([]);
-          getIncidents(batch.id);
-        } else {
-          throw new SubmissionError({
-            text: texts.INCIDENTS_CANCEL_FAILED,
-          });
-        }
-      }
-    },
+      },
   }),
   reduxForm({
     form: 'incidents-table',

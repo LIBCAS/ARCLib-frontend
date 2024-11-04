@@ -9,8 +9,6 @@ import { Icon } from 'antd';
 
 import Button from '../Button';
 import TextField from '../TextField';
-import Sort from '../filter/Sort';
-import Order from '../filter/Order';
 import TextFilter from '../filter/TextFilter';
 import TextContainsFilter from '../filter/TextContainsFilter';
 import TextEQFilter from '../filter/TextEQFilter';
@@ -45,7 +43,6 @@ const Form = ({
   className,
   // Props directly passed from the IndexSearch component
   fields,
-  sortOptions,
   texts,
   language,
   numberOfDublinCoreFields,
@@ -140,28 +137,8 @@ const Form = ({
   return (
     <form {...{ onSubmit: handleSubmit, className }}>
 
-      {/* Sort input field with sort icon */}
-      <div {...{ className: 'form-row sort' }}>
-        <ControlLabel>{texts.SORT}</ControlLabel>
-        <div
-          {...{
-            className: 'flex-row flex-top margin-bottom-small',
-          }}
-        >
-          <Sort
-            {...{
-              options: sortOptions,
-              className: 'sort',
-            }}
-          />
-          <div {...{ className: 'flex-row order' }}>
-            <Order />
-          </div>
-        </div>
-      </div>
-
       {/* From here, form starts with Producer Name filter input field */}
-      <div {...{ className: 'flex-col padding-top-small divider-top' }}>
+      <div {...{ className: 'flex-col padding-top-small' }}>
         {map(fields, ({ title, subtitle, filters, id }, key) =>
 
           // 1. Generate the 'fields' object with title purpose! (header)

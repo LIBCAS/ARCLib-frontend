@@ -9,10 +9,11 @@ import { storageTypes } from '../../enums';
 const StorageAdministrationTable = ({ history, storages, texts }) => (
   <Table
     {...{
+      tableId: 'storageAdministration',
       thCells: [
-        { label: texts.NAME },
-        { label: texts.HOST },
-        { label: texts.PORT },
+        { label: texts.NAME, field: 'name' },
+        { label: texts.HOST, field: 'host' },
+        { label: texts.PORT, field: 'port' },
         {
           label: (
             <Tooltip
@@ -22,19 +23,20 @@ const StorageAdministrationTable = ({ history, storages, texts }) => (
               }}
             />
           ),
+          field: 'priority',
         },
-        { label: texts.STORAGE_TYPE },
-        { label: texts.CONFIGURATION_FILE },
-        { label: texts.REACHABLE },
+        { label: texts.STORAGE_TYPE, field: 'storageType' },
+        { label: texts.CONFIGURATION_FILE, field: 'config' },
+        { label: texts.REACHABLE, field: 'reachable' },
       ],
       items: map(storages, (item, i) => ({
         onClick: () => history.push(`/logical-storage-administration/${item.id}`),
         items: [
-          { label: get(item, 'name', '') },
-          { label: get(item, 'host', '') },
-          { label: get(item, 'port', '') },
-          { label: get(item, 'priority', '') },
-          { label: get(storageTypes, get(item, 'storageType'), '') },
+          { label: get(item, 'name', ''), field: 'name' },
+          { label: get(item, 'host', ''), field: 'host' },
+          { label: get(item, 'port', ''), field: 'port' },
+          { label: get(item, 'priority', ''), field: 'priority' },
+          { label: get(storageTypes, get(item, 'storageType'), ''), field: 'storageType' },
           {
             label: (
               <PrettyJSONTableCell
@@ -43,8 +45,9 @@ const StorageAdministrationTable = ({ history, storages, texts }) => (
                 }}
               />
             ),
+            field: 'config',
           },
-          { label: get(item, 'reachable') ? texts.YES : texts.NO },
+          { label: get(item, 'reachable') ? texts.YES : texts.NO, field: 'reachable' },
         ],
       })),
     }}

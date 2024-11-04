@@ -11,6 +11,7 @@ const TableWithFilter = ({ initialized, filterItems, items, className, ...props 
   initialized ? (
     <Table
       {...{
+        filterItems,
         className: `table-with-filter${className ? ` ${className}` : ''}`,
         items: [
           {
@@ -31,6 +32,8 @@ const TableWithFilter = ({ initialized, filterItems, items, className, ...props 
           ...items,
         ],
         withFilter: true,
+        withPager: true,
+        withSort: true,
         ...props,
       }}
     />

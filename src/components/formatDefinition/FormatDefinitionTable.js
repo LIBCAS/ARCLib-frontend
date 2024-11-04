@@ -26,13 +26,14 @@ const FormatDefinitionTable = ({
 }) => (
   <Table
     {...{
+      tableId: 'formatDefinitions',
       thCells: [
-        { label: texts.FORMAT_VERSION },
-        { label: texts.INTERNAL_VERSION_NUMBER },
-        { label: texts.LOCAL_DEFINITION },
-        { label: texts.PREFERRED },
-        { label: texts.INTERNAL_INFORMATION_FILLED },
-        { label: '' },
+        { label: texts.FORMAT_VERSION, field: 'formatVersion' },
+        { label: texts.INTERNAL_VERSION_NUMBER, field: 'internalVersionNumber' },
+        { label: texts.LOCAL_DEFINITION, field: 'localDefinition' },
+        { label: texts.PREFERRED, field: 'preferred' },
+        { label: texts.INTERNAL_INFORMATION_FILLED, field: 'internalInformationFilled' },
+        { label: '', field: 'actions' },
       ],
       items: map(formatDefinitions, (item) => ({
         onClick: () =>
@@ -40,9 +41,9 @@ const FormatDefinitionTable = ({
             `/formats/${get(item, 'format.formatId')}/format-definition/${get(item, 'id')}`
           ),
         items: [
-          { label: get(item, 'formatVersion', '') },
-          { label: get(item, 'internalVersionNumber', '') },
-          { label: get(item, 'localDefinition') ? texts.YES : texts.NO },
+          { label: get(item, 'formatVersion', ''), field: 'formatVersion' },
+          { label: get(item, 'internalVersionNumber', ''), field: 'internalVersionNumber' },
+          { label: get(item, 'localDefinition') ? texts.YES : texts.NO, field: 'localDefinition' },
           {
             label: hasPermission(Permission.FORMAT_RECORDS_WRITE) ? (
               <div {...{ onClick: (e) => e.stopPropagation() }}>
@@ -68,9 +69,10 @@ const FormatDefinitionTable = ({
             ) : (
               texts.NO
             ),
+            field: 'preferred',
           },
           {
-            label: get(item, 'internalInformationFilled') ? texts.YES : texts.NO,
+            label: get(item, 'internalInformationFilled') ? texts.YES : texts.NO, field: 'internalInformationFilled',
           },
           {
             label: (
@@ -115,6 +117,7 @@ const FormatDefinitionTable = ({
                 />
               </div>
             ),
+            field: 'actions',
           },
         ],
       })),

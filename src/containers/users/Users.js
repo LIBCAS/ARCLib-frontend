@@ -6,7 +6,6 @@ import { get } from 'lodash';
 
 import Button from '../../components/Button';
 import PageWrapper from '../../components/PageWrapper';
-import SortOrder from '../../components/filter/SortOrder';
 import Table from '../../components/users/Table';
 import Pagination from '../../components/Pagination';
 import { getUsers } from '../../actions/usersActions';
@@ -54,18 +53,6 @@ const Users = ({
           {texts.NEW}
         </Button>
       )}
-      <SortOrder
-        {...{
-          className: 'margin-bottom',
-          sortOptions: [
-            { label: texts.UPDATED, value: 'updated' },
-            { label: texts.CREATED, value: 'created' },
-            { label: texts.USERNAME, value: 'username' },
-            { label: texts.PRODUCER, value: 'producerName' },
-          ],
-          handleUpdate,
-        }}
-      />
       <Table
         {...{
           history,

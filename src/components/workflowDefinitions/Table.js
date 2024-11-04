@@ -13,40 +13,40 @@ const WorkflowDefinitionTable = ({ history, workflowDefinitions, setDialog, text
   return (
     <Table
       {...{
+        tableId: 'workflowDefinitions',
         thCells: compact([
-          { label: texts.EXTERNAL_ID },
-          { label: texts.NAME },
-          { label: texts.CREATED },
-          { label: texts.EDITED },
-          deleteEnabled ? { label: '' } : null,
+          { label: texts.EXTERNAL_ID, field: 'externalId' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.EDITED, field: 'updated' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(workflowDefinitions, (item) => ({
           onClick: () => history.push(`/workflow-definitions/${item.id}`),
           items: compact([
-            { label: get(item, 'externalId', '') },
-            { label: get(item, 'name', '') },
-            { label: formatDateTime(get(item, 'created')) },
-            { label: formatDateTime(get(item, 'updated')) },
-            deleteEnabled
-              ? {
-                  label: (
-                    <Button
-                      {...{
-                        onClick: (e) => {
-                          e.stopPropagation();
-                          setDialog('WorkflowDefinitionDelete', {
-                            id: item.id,
-                            name: item.name,
-                          });
-                        },
-                      }}
-                    >
-                      {texts.DELETE}
-                    </Button>
-                  ),
-                  className: 'text-right',
-                }
-              : null,
+            { label: get(item, 'externalId', ''), field: 'externalId' },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: formatDateTime(get(item, 'created')), field: 'created' },
+            { label: formatDateTime(get(item, 'updated')), field: 'updated' },
+            deleteEnabled && {
+              label: (
+                <Button
+                  {...{
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setDialog('WorkflowDefinitionDelete', {
+                        id: item.id,
+                        name: item.name,
+                      });
+                    },
+                  }}
+                >
+                  {texts.DELETE}
+                </Button>
+              ),
+              field: 'delete',
+              className: 'text-right',
+            },
           ]),
         })),
       }}

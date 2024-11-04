@@ -4,10 +4,10 @@ import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
 import { downloadBlob } from '../utils';
 
 // Refactored API /api/aip/saved_query_dtos -> /api/saved_query
-export const getSavedQueries= () => async (dispatch) => {
+export const getSavedQueries = () => async (dispatch) => {
   dispatch(showLoader());
 
-  dispatch({type: c.QUERY, payload: { queries: null } });
+  dispatch({ type: c.QUERY, payload: { queries: null } });
 
   try {
     const response = await fetch('/api/saved_query');
@@ -15,7 +15,7 @@ export const getSavedQueries= () => async (dispatch) => {
     if (response.status === 200) {
       const queries = await response.json();
 
-      dispatch({type: c.QUERY, payload: { queries: queries } })
+      dispatch({ type: c.QUERY, payload: { queries: queries } });
 
       dispatch(showLoader(false));
       return queries;
@@ -80,11 +80,11 @@ export const deleteQuery = (id) => async (dispatch) => {
   }
 };
 
-export const downloadQuery = (queryId, submitObject) => async (dispatch) => {
+export const downloadQueryFavorites = (submitObject) => async (dispatch) => {
   dispatch(showLoader());
 
   try {
-    const response = await fetch(`/api/saved_query/${queryId}/download`, {
+    const response = await fetch(`/api/favorites/download`, {
       method: 'POST',
       body: JSON.stringify(submitObject),
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -95,12 +95,12 @@ export const downloadQuery = (queryId, submitObject) => async (dispatch) => {
 
       const headerValue = response.headers.get('content-disposition');
       if (headerValue) {
-        fileName = headerValue.split('=')[1]
+        fileName = headerValue.split('=')[1];
       }
 
       const blob = await response.blob();
       dispatch(showLoader(false));
-      downloadBlob(blob, fileName ? fileName : `${queryId}.zip`);
+      downloadBlob(blob, fileName ? fileName : `.zip`);
       return true;
     }
 
@@ -115,11 +115,11 @@ export const downloadQuery = (queryId, submitObject) => async (dispatch) => {
   }
 };
 
-export const exportQuery = (queryId, submitObject) => async (dispatch) => {
+export const exportQueryFavorites = (submitObject) => async (dispatch) => {
   dispatch(showLoader());
 
   try {
-    const response = await fetch(`/api/saved_query/${queryId}/export`, {
+    const response = await fetch(`/api/favorites/export`, {
       method: 'POST',
       body: JSON.stringify(submitObject),
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -136,4 +136,4 @@ export const exportQuery = (queryId, submitObject) => async (dispatch) => {
     dispatch(await openErrorDialogIfRequestFailed(error));
     return null;
   }
-}
+};

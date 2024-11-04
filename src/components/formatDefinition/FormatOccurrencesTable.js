@@ -6,11 +6,15 @@ import Table from '../table/Table';
 const FormatOccurrencesTable = ({ formatOccurrences, texts }) => (
   <Table
     {...{
-      thCells: [{ label: texts.OCCURRENCES }, { label: texts.PRODUCER_PROFILE }],
+      tableId: 'formatOccurrences',
+      thCells: [
+        { label: texts.OCCURRENCES, field: 'occurrences' },
+        { label: texts.PRODUCER_PROFILE, field: 'producerProfile' },
+      ],
       items: map(formatOccurrences, (item) => ({
         items: [
-          { label: get(item, 'occurrences', '') },
-          { label: get(item, 'producerProfile.name', '') },
+          { label: get(item, 'occurrences', ''), field: 'occurrences' },
+          { label: get(item, 'producerProfile.name', ''), field: 'producerProfile' },
         ],
       })),
     }}

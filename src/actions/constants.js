@@ -8,8 +8,10 @@ export const APP = 'APP';
 export const DIALOG = 'DIALOG';
 export const DIALOG_INFO = 'DIALOG_INFO';
 export const FILTER = 'FILTER';
+export const SORT = 'SORT';
 export const PAGER = 'PAGER';
 export const LOADER = 'LOADER';
+export const USER_SETTINGS = 'USER_SETTINGS';
 
 export const BATCH = 'BATCH';
 export const DELETION_REQUESTS = 'DELETION_REQUESTS';

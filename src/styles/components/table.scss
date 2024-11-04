@@ -12,6 +12,35 @@
     min-height: 350px;
   }
 
+  thead {
+    tr {
+      th {
+        cursor: pointer;
+
+        &:hover {
+          background-color: $c-grey-light;
+        }
+
+        &.no-hover:hover {
+          background-color: $c-white;
+          cursor: auto;
+        }
+
+        .indicator {
+          background-color: #1890ff;
+          color: $c-white;
+          font-size: 1rem;
+          font-weight: lighter;
+          width: 1.5rem;
+          height: 1.5rem;
+          display: flex;
+          justify-content: center;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
   tbody {
     tr {
       cursor: pointer;
@@ -47,4 +76,25 @@
   .table-responsive {
     margin: 0;
   }
+}
+
+.dragable-column {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  gap: 1rem;
+  border-radius: 6px;
+  background-color: $c-grey-light;
+
+  label,
+  input {
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+}
+
+.handle {
+  cursor: move;
 }

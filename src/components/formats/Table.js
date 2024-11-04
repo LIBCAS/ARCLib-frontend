@@ -7,13 +7,19 @@ import { filterTypes } from '../../enums';
 const FormatsTable = ({ history, formats, handleUpdate, texts }) => (
   <Table
     {...{
-      thCells: [{ label: texts.PUID }, { label: texts.FORMAT_ID }, { label: texts.FORMAT_NAME }],
+      tableId: 'formats',
+      handleUpdate,
+      thCells: [
+        { label: texts.PUID, field: 'puid' },
+        { label: texts.FORMAT_ID, field: 'formatId' },
+        { label: texts.FORMAT_NAME, field: 'formatName' },
+      ],
       items: map(formats, (item) => ({
         onClick: () => history.push(`/formats/${item.formatId}`),
         items: [
-          { label: get(item, 'puid', '') },
-          { label: get(item, 'formatId', '') },
-          { label: get(item, 'formatName', '') },
+          { label: get(item, 'puid', ''), field: 'puid' },
+          { label: get(item, 'formatId', ''), field: 'formatId' },
+          { label: get(item, 'formatName', ''), field: 'formatName' },
         ],
       })),
       filterItems: [
@@ -32,6 +38,11 @@ const FormatsTable = ({ history, formats, handleUpdate, texts }) => (
           field: 'formatName',
           handleUpdate,
         },
+      ],
+      sortItems: [
+        { label: texts.PUID, field: 'puid' },
+        { label: texts.FORMAT_ID, field: 'formatId' },
+        { label: texts.FORMAT_NAME, field: 'formatName' },
       ],
     }}
   />

@@ -8,7 +8,6 @@ import { setDialog } from '../../actions/appActions';
 import {
   indexCore,
   indexFormat,
-  indexFormatDefinition,
   indexArclibXML,
 } from '../../actions/indexActions';
 
@@ -17,7 +16,6 @@ const Form = ({
   setDialog,
   indexCore,
   indexFormat,
-  indexFormatDefinition,
   indexArclibXML,
 }) => {
   const onClick = async (callback) => {
@@ -42,7 +40,6 @@ const Form = ({
       {[
         { label: texts.REINDEX_CORE, onClick: () => onClick(indexCore) },
         { label: texts.REINDEX_FORMAT, onClick: () => onClick(indexFormat) },
-        { label: texts.REINDEX_FORMAT_DEFINITION, onClick: () => onClick(indexFormatDefinition) },
       ].map(({ label, ...button }) => (
         <Button
           {...{
@@ -71,7 +68,6 @@ export default compose(
     setDialog,
     indexCore,
     indexFormat,
-    indexFormatDefinition,
     indexArclibXML,
   })
 )(Form);

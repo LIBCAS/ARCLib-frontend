@@ -13,42 +13,42 @@ const IngestRoutineTable = ({ history, routines, setDialog, texts, user }) => {
   return (
     <Table
       {...{
+        tableId: 'ingestRoutines',
         thCells: compact([
-          { label: texts.NAME },
-          { label: texts.PRODUCER_PROFILE },
-          { label: texts.TRANSFER_AREA_PATH },
-          { label: texts.CRON_EXPRESSION },
-          { label: texts.ACTIVE },
-          deleteEnabled ? { label: '' } : null,
+          { label: texts.NAME, field: 'name' },
+          { label: texts.PRODUCER_PROFILE, field: 'producerProfileName' },
+          { label: texts.TRANSFER_AREA_PATH, field: 'transferAreaPath' },
+          { label: texts.CRON_EXPRESSION, field: 'cronExpression' },
+          { label: texts.ACTIVE, field: 'active' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(routines, (item) => ({
           onClick: () => history.push(`/ingest-routines/${item.id}`),
           items: compact([
-            { label: get(item, 'name', '') },
-            { label: get(item, 'producerProfileName', '') },
-            { label: get(item, 'transferAreaPath', '') },
-            { label: get(item, 'cronExpression', '') },
-            { label: get(item, 'active') ? texts.YES : texts.NO },
-            deleteEnabled
-              ? {
-                  label: (
-                    <Button
-                      {...{
-                        onClick: (e) => {
-                          e.stopPropagation();
-                          setDialog('IngestRoutineDelete', {
-                            id: item.id,
-                            name: item.name,
-                          });
-                        },
-                      }}
-                    >
-                      {texts.DELETE}
-                    </Button>
-                  ),
-                  className: 'text-right',
-                }
-              : null,
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: get(item, 'producerProfileName', ''), field: 'producerProfileName' },
+            { label: get(item, 'transferAreaPath', ''), field: 'transferAreaPath' },
+            { label: get(item, 'cronExpression', ''), field: 'cronExpression' },
+            { label: get(item, 'active') ? texts.YES : texts.NO, field: 'active' },
+            deleteEnabled && {
+              label: (
+                <Button
+                  {...{
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setDialog('IngestRoutineDelete', {
+                        id: item.id,
+                        name: item.name,
+                      });
+                    },
+                  }}
+                >
+                  {texts.DELETE}
+                </Button>
+              ),
+              field: 'delete',
+              className: 'text-right',
+            },
           ]),
         })),
       }}

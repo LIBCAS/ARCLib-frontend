@@ -1,7 +1,7 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerParams } from '../utils';
+import { createFilterPagerSorterParams } from '../utils';
 
 export const getFormats = () => async (dispatch, getState) => {
   dispatch({
@@ -13,7 +13,7 @@ export const getFormats = () => async (dispatch, getState) => {
 
   try {
     const response = await fetch('/api/search/format_library/format', {
-      params: createFilterPagerParams(getState),
+      params: createFilterPagerSorterParams(getState),
     });
 
     if (response.status === 200) {
@@ -178,13 +178,7 @@ export const updateWithLocalDefinition = (body) => async (dispatch) => {
 
 export const getFormatDefinitionByFormatId = (formatId) => async (dispatch) => {
   try {
-    const response = await fetch('/api/search/format_library/format_definition', {
-      params: {
-        'filter[0].field': 'formatId',
-        'filter[0].operation': 'EQ',
-        'filter[0].value': formatId,
-      },
-    });
+    const response = await fetch(`/api/search/format_library/format/${formatId}/definition`);
 
     if (response.status === 200) {
       const formatDefinitions = await response.json();

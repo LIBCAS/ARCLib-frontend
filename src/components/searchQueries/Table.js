@@ -16,15 +16,16 @@ const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user
   return (
     <Table
       {...{
+        tableId: 'searchQueries',
         thCells: [
-          { label: texts.NAME, style: { minWidth: 150 } },
-          { label: texts.UPDATED, style: { minWidth: 150 } },
-          { label: '' },
+          { label: texts.NAME, style: { minWidth: 150 }, field: 'name' },
+          { label: texts.UPDATED, style: { minWidth: 150 }, field: 'updated' },
+          { label: '', field: 'actions' },
         ],
         items: map(queries, (item) => ({
           items: [
-            { label: get(item, 'name') },
-            { label: formatDateTime(item.updated) },
+            { label: get(item, 'name'), field: 'name' },
+            { label: formatDateTime(item.updated), field: 'updated' },
             {
               label: (
                 <div
@@ -116,6 +117,7 @@ const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user
                   )}
                 </div>
               ),
+              field: 'actions',
               className: 'text-right',
             },
           ],

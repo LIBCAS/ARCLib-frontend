@@ -11,7 +11,7 @@ const ProcessVariables = ({ processVariables, texts }) => {
     if (key !== 'metadataExtractionResult') {
       items.push({
         items: [
-          { label: key },
+          { label: key, field: 'key' },
           {
             label:
               typeof value === 'object'
@@ -23,6 +23,7 @@ const ProcessVariables = ({ processVariables, texts }) => {
                 : typeof value === 'string' && hasValue(formatDateTime(value))
                 ? formatDateTime(value)
                 : value,
+            field: 'value',
           },
         ],
       });
@@ -32,7 +33,12 @@ const ProcessVariables = ({ processVariables, texts }) => {
   return (
     <Table
       {...{
-        thCells: [{ label: texts.PROCESS_VARIABLE }, { label: texts.VALUE }],
+        tableId: 'processVariables',
+        exportButtons: true,
+        thCells: [
+          { label: texts.PROCESS_VARIABLE, field: 'key' },
+          { label: texts.VALUE, field: 'value' },
+        ],
         items,
       }}
     />

@@ -55,6 +55,16 @@ export const setPager = (pager) => ({
   payload: pager,
 });
 
+export const setSorter = (sorter) => ({
+  type: c.SORT,
+  payload: sorter,
+});
+
+export const setUserSettings = (userSettings) => ({
+  type: c.USER_SETTINGS,
+  payload: userSettings,
+});
+
 export const changeLanguage = () => (dispatch, getState) => {
   const language = getState().app.language;
   const newLanguage = language === languages.CZ ? languages.EN : languages.CZ;

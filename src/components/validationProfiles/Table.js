@@ -13,40 +13,40 @@ const ValidationProfileTable = ({ history, validationProfiles, setDialog, texts 
   return (
     <Table
       {...{
+        tableId: 'validationProfiles',
         thCells: compact([
-          { label: texts.EXTERNAL_ID },
-          { label: texts.NAME },
-          { label: texts.CREATED },
-          { label: texts.EDITED },
-          deleteEnabled ? { label: '' } : null,
+          { label: texts.EXTERNAL_ID, field: 'externalId' },
+          { label: texts.NAME, field: 'name' },
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.EDITED, field: 'updated' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(validationProfiles, (item) => ({
           onClick: () => history.push(`/validation-profiles/${item.id}`),
           items: compact([
-            { label: get(item, 'externalId', '') },
-            { label: get(item, 'name', '') },
-            { label: formatDateTime(get(item, 'created')) },
-            { label: formatDateTime(get(item, 'updated')) },
-            deleteEnabled
-              ? {
-                  label: (
-                    <Button
-                      {...{
-                        onClick: (e) => {
-                          e.stopPropagation();
-                          setDialog('ValidationProfileDelete', {
-                            id: item.id,
-                            name: item.name,
-                          });
-                        },
-                      }}
-                    >
-                      {texts.DELETE}
-                    </Button>
-                  ),
-                  className: 'text-right',
-                }
-              : null,
+            { label: get(item, 'externalId', ''), field: 'externalId' },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: formatDateTime(get(item, 'created')), field: 'created' },
+            { label: formatDateTime(get(item, 'updated')), field: 'updated' },
+            deleteEnabled && {
+              label: (
+                <Button
+                  {...{
+                    onClick: (e) => {
+                      e.stopPropagation();
+                      setDialog('ValidationProfileDelete', {
+                        id: item.id,
+                        name: item.name,
+                      });
+                    },
+                  }}
+                >
+                  {texts.DELETE}
+                </Button>
+              ),
+              className: 'text-right',
+              field: 'delete',
+            },
           ]),
         })),
       }}

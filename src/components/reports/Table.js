@@ -14,8 +14,9 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
   return (
     <Table
       {...{
+        tableId: 'reports',
         thCells: compact([
-          { label: texts.NAME },
+          { label: texts.NAME, field: 'name' },
           {
             label: (
               <Tooltip
@@ -25,18 +26,19 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
                 }}
               />
             ),
+            field: 'arclibXmlDs',
           },
-          { label: texts.CREATED },
-          { label: texts.UPDATED },
-          deleteEnabled && { label: '' },
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.UPDATED, field: 'updated' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(reports, (item, i) => ({
           onClick: () => history.push(`/reports/${item.id}`),
           items: compact([
-            { label: get(item, 'name', '') },
-            { label: get(item, 'arclibXmlDs') ? 'Ano' : 'Ne' },
-            { label: formatDateTime(item.created) },
-            { label: formatDateTime(item.updated) },
+            { label: get(item, 'name', ''), field: 'name' },
+            { label: get(item, 'arclibXmlDs') ? 'Ano' : 'Ne', field: 'arclibXmlDs' },
+            { label: formatDateTime(item.created), field: 'created' },
+            { label: formatDateTime(item.updated), field: 'updated' },
             deleteEnabled && {
               label: (
                 <Button
@@ -53,6 +55,7 @@ const ReportsTable = ({ history, reports, setDialog, texts }) => {
                   {texts.DELETE}
                 </Button>
               ),
+              field: 'delete',
               className: 'text-right',
             },
           ]),

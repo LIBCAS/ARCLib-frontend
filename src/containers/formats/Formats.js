@@ -8,7 +8,6 @@ import { message } from 'antd';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import PageWrapper from '../../components/PageWrapper';
-import SortOrder from '../../components/filter/SortOrder';
 import Table from '../../components/formats/Table';
 import Pagination from '../../components/Pagination';
 import DropDown from '../../components/DropDown';
@@ -261,17 +260,6 @@ const Formats = ({
           }}
         />
       </div>
-      <SortOrder
-        {...{
-          className: 'margin-bottom',
-          sortOptions: [
-            { label: texts.PUID, value: 'puid' },
-            { label: texts.FORMAT_ID, value: 'formatId' },
-            { label: texts.FORMAT_NAME, value: 'formatName' },
-          ],
-          handleUpdate,
-        }}
-      />
       <Table
         {...{
           history,

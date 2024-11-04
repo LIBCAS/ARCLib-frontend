@@ -92,6 +92,28 @@ body {
   }
 }
 
+/* GAP */
+
+.gap {
+  gap: 2rem;
+
+  &-none {
+    gap: 0;
+  }
+
+  &-mini {
+    gap: 0.25rem;
+  }
+
+  &-very-small {
+    gap: 0.5rem;
+  }
+
+  &-small {
+    gap: 1rem;
+  }
+}
+
 /* WIDTH */
 
 .width {
@@ -228,6 +250,14 @@ body {
 .padding {
   padding: 2em;
 
+  &-small {
+    padding: 1em;
+  }
+
+  &-very-small {
+    padding: 0.5em;
+  }
+
   &-top {
     padding-top: 2em;
 
@@ -257,7 +287,6 @@ body {
   }
 
   &-horizontal {
-
     &-small {
       padding-left: 1em;
       padding-right: 1em;

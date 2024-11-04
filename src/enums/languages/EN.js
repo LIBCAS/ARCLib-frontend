@@ -84,6 +84,7 @@ export const EN = {
   CLOSE: 'Close',
   CODE: 'Code',
   COLLAPSE_ALL: 'Collapse All',
+  COLUMN_SETTINGS: 'Column settings',
   COMPUTED_WORKFLOW_CONFIGURATION: 'Computed workflow configuration',
   CONFIGURATION_FILE: 'Configuration file',
   CONFIGURATION_FILE_LOCAL: 'Local configuration file',
@@ -344,6 +345,7 @@ export const EN = {
   PRESERVATION_PLAN_DESCRIPTION: 'Preservation plan description',
   PRESERVATION_PLAN_FILE: 'Preservation plan file',
   PRESERVATION_PLANNING: 'Preservation Planning',
+  RESET_TABLE: 'Reset table',
   PRIORITY: 'Priority',
   PROCESS_VARIABLE: 'Process variable',
   PROCESS_VARIABLES: 'Process variables',
@@ -392,7 +394,6 @@ export const EN = {
     'Do you realy want to run reindex for all ARCLib XML stored in the system? The operation is time-consuming - all XMLs are downloaded from Archival Storage.',
   REINDEX_CORE: 'Reindex core',
   REINDEX_FORMAT: 'Reindex format',
-  REINDEX_FORMAT_DEFINITION: 'Reindex format definition',
   REINDEX_STARTED: 'Reindex started',
   RELATED_ENTITIES: 'Related entities',
   RELATED_ERROR: 'Related error',
@@ -604,7 +605,8 @@ export const EN = {
   YES: 'Yes',
   YOU_HAVE_NO_ROLE_MESSAGE:
     'You do not have a role, wait for the administrator to assign the role.',
-
+  EXPORT_CSV: 'Export to CSV',
+  EXPORT_XLSX: 'Export to XLSX',
   EXPORT_TEMPLATES: 'Export templates',
   EXPORT_TEMPLATE_DELETE: 'Delete export template',
   EXPORT_TEMPLATE_DELETE_TEXT: 'Are you sure you want to delete this export template?',
@@ -649,7 +651,8 @@ export const EN = {
   UPLOAD_LIST_OF_IDENTIFIERS: 'Upload list of identifiers',
   CLEAR_LIST_OF_IDENTIFIERS: 'Clear list of identifiers',
   FILE_SIZE_LIMIT_EXCEEDED: 'File size limit exceeded',
-  FILE_SIZE_LIMIT_EXCEEDED_MESSAGE: 'The file you have uploaded exceeds the permitted file size limit (1MB).',
+  FILE_SIZE_LIMIT_EXCEEDED_MESSAGE:
+    'The file you have uploaded exceeds the permitted file size limit (1MB).',
   EXPORT_TEMPLATE_NEW_FAILED: 'Failed to create new export template.',
   CLEAR_EXPORT_TEMPLATE: 'Clear export template',
   POSTPONE_SELECTED: 'Add selected to my pile.',
@@ -662,10 +665,12 @@ export const EN = {
   OPERATION_FAILED: 'Operation failed!',
   OPERATION_SUCCESS: 'Operation was successful.',
   FAILED_TO_REMOVE_RECORD_FROM_PILE: 'Failed to remove the selected records from the pile.',
-  SUCCESS_TO_REMOVE_RECORD_FROM_PILE: 'Removal of the selected records from the pile was successful.',
+  SUCCESS_TO_REMOVE_RECORD_FROM_PILE:
+    'Removal of the selected records from the pile was successful.',
   EMPTY_PILE_MESSAGE: 'Your pile is currently empty.',
   DESCRIPTIVE_METADATA_SEARCH: 'Searching in descriptive metadata',
-  AT_LEAST_ONE_EXPORT_SCOPE_CHECKBOX_ERROR: 'At least one checkbox from the export range must be checked.',
+  AT_LEAST_ONE_EXPORT_SCOPE_CHECKBOX_ERROR:
+    'At least one checkbox from the export range must be checked.',
 
   DC_LABEL_ID: 'Specifier',
   DC_LABEL_VALUE: 'Fulltext',

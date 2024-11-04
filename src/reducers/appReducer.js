@@ -14,6 +14,8 @@ const initialState = {
   dialog: { name: null, data: null },
   infoOverlayDialog: { open: false, data: null },
   filter: { sort: '', order: orderTypes.DESC, filter: [] },
+  sorter: { sort: '', order: '', sorting: [] },
+  userSettings: { userSettings: { info: '', tables: [] } },
   pager: { page: 0, pageSize: 10 },
   language: storedLanguage === languages.EN ? languages.EN : languages.CZ,
   texts: storedLanguage === languages.EN ? EN : CZ,
@@ -29,8 +31,12 @@ const reducer = (state = initialState, action) => {
       return { ...state, infoOverlayDialog: action.payload };
     case c.FILTER:
       return { ...state, filter: { ...state.filter, ...action.payload } };
+    case c.SORT:
+      return { ...state, sorter: { ...state.sorter, ...action.payload } };
     case c.PAGER:
       return { ...state, pager: { ...state.pager, ...action.payload } };
+    case c.USER_SETTINGS:
+      return { ...state, userSettings: { ...state.userSettings, ...action.payload } };
     case c.LOADER:
       return {
         ...state,

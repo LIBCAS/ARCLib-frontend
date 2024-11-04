@@ -6,7 +6,18 @@ import ErrorBlock from '../ErrorBlock';
 
 import { Switch } from 'antd';
 
-const SelectField = ({ meta: { touched, error }, input, label, id, className, fieldWithSwitch = false, switchSetter, switchChecked, ...props }) => (
+const SelectField = ({
+  meta: { touched, error },
+  input,
+  label,
+  id,
+  className,
+  fieldWithSwitch = false,
+  switchSetter,
+  switchChecked,
+  disabled,
+  ...props
+}) => (
   <div>
     <FormGroup {...{ controlId: id || 'selectfield', className }}>
       {label && (
@@ -14,20 +25,22 @@ const SelectField = ({ meta: { touched, error }, input, label, id, className, fi
           <ControlLabel>{label}</ControlLabel>
           {fieldWithSwitch && (
             <Switch
-              size='small'
+              size="small"
               checked={switchChecked}
-              className='margin-left-small'
+              className="margin-left-small"
               onChange={(isChecked) => switchSetter && switchSetter(isChecked)}
             />
           )}
         </div>
       )}
-      <SelectComponent
-        {...{
-          ...props,
-          ...input,
-        }}
-      />
+      {!disabled && (
+        <SelectComponent
+          {...{
+            ...props,
+            ...input,
+          }}
+        />
+      )}
     </FormGroup>
     {touched && <ErrorBlock {...{ label: error }} />}
   </div>

@@ -8,7 +8,12 @@ import { Checkbox } from 'antd';
 import Button from '../Button';
 import Tooltip from '../Tooltip';
 import Table from '../table/Table';
-import { downloadAip, downloadXml, updateCheckedAipIds, updatePileCheckedAipIds } from '../../actions/aipActions';
+import {
+  downloadAip,
+  downloadXml,
+  updateCheckedAipIds,
+  updatePileCheckedAipIds,
+} from '../../actions/aipActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 import * as storage from '../../utils/storage';
@@ -17,6 +22,7 @@ const columns = ['authorial_id', 'sip_id', 'sip_version_number', 'xml_version_nu
 
 const PackagesTable = ({
   // Passed from parent IndexSearch component (or other)
+  handleUpdate,
   history,
   texts,
   items,
@@ -35,8 +41,8 @@ const PackagesTable = ({
   // withState HOC
   areAllCheckboxesChecked,
   setAreAllCheckboxesChecked,
+  isTableInDialog = false,
 }) => {
-
   const sortItems = [];
 
   forEach(sortOptions, (option) => {
@@ -56,18 +62,16 @@ const PackagesTable = ({
     // Checked as true, else unchecked
     if (e.target.checked) {
       updatedList = [...sourceCheckedList, aipItemId];
-    }
-    else {
+    } else {
       updatedList = sourceCheckedList.filter((actualAipItemId) => actualAipItemId !== aipItemId);
     }
 
     if (pileTable) {
       updatePileCheckedAipIds(updatedList);
-    }
-    else {
+    } else {
       updateCheckedAipIds(updatedList);
     }
-  }
+  };
 
   const handleAllCheckboxHandler = (e) => {
     const allPageAipIDs = items.map((item) => item.id);
@@ -79,46 +83,54 @@ const PackagesTable = ({
           newAipIDsChecked.push(pageAipID);
         }
       }
-    }
-    else {
+    } else {
       setAreAllCheckboxesChecked(false);
-      newAipIDsChecked = aipIDsChecked.filter((aipIDChecked) => !allPageAipIDs.includes(aipIDChecked));
+      newAipIDsChecked = aipIDsChecked.filter(
+        (aipIDChecked) => !allPageAipIDs.includes(aipIDChecked)
+      );
     }
-    if(pileTable){
+    if (pileTable) {
       updatePileCheckedAipIds(newAipIDsChecked);
-    } else{
+    } else {
       updateCheckedAipIds(newAipIDsChecked);
     }
-  }
+  };
 
   return (
     <Table
       {...{
+        isTableInDialog,
+        handleUpdate,
+        tableId: pileTable ? 'pileTable' : 'indexSearch',
+        exportButtons: true,
+        withSort: !pileTable && true,
+        withPager: !pileTable && true,
         thCells: compact([
           showSortColumn && {
             label: get(
               find(sortItems, (item) => item.value === sort),
               'label'
             ),
+            field: 'updated',
           },
-          { label: texts.LABEL },
-          { label: texts.AUTHORIAL_ID },
-          { label: texts.AIP_ID },
-          { label: texts.VERSION },
-          { label: texts.AIP_STATE },
-          displayCheckboxes &&
-          { label:
-            <div className='padding-horizontal-small flex-col flex-centered'>
-              <div>
-                {texts.ALL}
+          { label: texts.LABEL, field: 'label' },
+          { label: texts.AUTHORIAL_ID, field: 'authorial_id' },
+          { label: texts.AIP_ID, field: 'sip_id' },
+          { label: texts.VERSION, field: 'xml_version_number' },
+          { label: texts.AIP_STATE, field: 'aip_state' },
+          displayCheckboxes && {
+            label: (
+              <div className="padding-horizontal-small flex-col flex-centered">
+                <div>{texts.ALL}</div>
+                <Checkbox
+                  onChange={(e) => handleAllCheckboxHandler(e)}
+                  checked={areAllCheckboxesChecked}
+                />
               </div>
-              <Checkbox
-                onChange={(e) => handleAllCheckboxHandler(e)}
-                checked={areAllCheckboxesChecked}
-              />
-            </div>
-          },             // checkbox column
-          { label: '' }, // download AIP and download XML buttons on the same column
+            ),
+            field: 'checkbox',
+          }, // checkbox column
+          { label: '', field: 'actions' }, // download AIP and download XML buttons on the same column
         ]),
         items: map(items, (item) => ({
           onClick: () => {
@@ -132,9 +144,10 @@ const PackagesTable = ({
                 sort === 'updated' || sort === 'created'
                   ? formatDateTime(get(item, `fields.${sort}`))
                   : get(item, `fields.${sort}`, ''),
+              field: 'updated',
             },
-            { label: get(item, 'fields.label', '') },
-            { label: get(item, 'authorialId', '') },
+            { label: get(item, 'fields.label', ''), field: 'label' },
+            { label: get(item, 'authorialId', ''), field: 'authorial_id' },
             {
               label: (
                 <Tooltip
@@ -146,26 +159,34 @@ const PackagesTable = ({
                   }}
                 />
               ),
+              field: 'sip_id',
             },
             {
               label: `${get(item, 'sipVersionNumber', '')}.${get(item, 'xmlVersionNumber', '')}`,
+              field: 'xml_version_number',
             },
             {
               label: `${get(item, 'fields.aip_state', '')}${
                 get(item, 'debugMode') ? ' (debug)' : ''
               }`,
+              field: 'aip_state',
             },
             displayCheckboxes && {
               onClick: (e) => e.stopPropagation(),
               label: (
-                <div className='flex-row flex-centered'>
+                <div className="flex-row flex-centered">
                   <Checkbox
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => handleCheckboxOnChange(e, item.id)}
-                    checked={pileTable ? pileAipIDsChecked.includes(item.id) : aipIDsChecked.includes(item.id)}
-                    />
+                    checked={
+                      pileTable
+                        ? pileAipIDsChecked.includes(item.id)
+                        : aipIDsChecked.includes(item.id)
+                    }
+                  />
                 </div>
-              )
+              ),
+              field: 'checkbox',
             },
             {
               label:
@@ -205,9 +226,18 @@ const PackagesTable = ({
                 ) : (
                   ''
                 ),
+              field: 'actions',
             },
           ]),
         })),
+        sortItems: !pileTable && [
+          { label: texts.UPDATED, field: 'updated' },
+          { label: texts.LABEL, value: 'lable' },
+          { label: texts.AUTHORIAL_ID, field: 'authorial_id' },
+          { label: texts.AIP_ID, field: 'sip_id' },
+          { label: texts.VERSION, field: 'xml_version_number' },
+          { label: texts.AIP_STATE, field: 'aip_state' },
+        ],
       }}
     />
   );
@@ -216,15 +246,20 @@ const PackagesTable = ({
 const mapStateToProps = (store) => ({
   aipIDsChecked: store.aip.aipIDsChecked,
   pileAipIDsChecked: store.aip.pileAipIDsChecked,
-})
+});
 
 export default compose(
-  connect(mapStateToProps, { downloadAip, downloadXml, updateCheckedAipIds, updatePileCheckedAipIds }),
+  connect(mapStateToProps, {
+    downloadAip,
+    downloadXml,
+    updateCheckedAipIds,
+    updatePileCheckedAipIds,
+  }),
   withState('areAllCheckboxesChecked', 'setAreAllCheckboxesChecked', false),
   withHandlers({
     saveAipIDsCheckedToLocalStorage: (props) => () => {
       storage.set('aipIDsChecked', JSON.stringify(props.aipIDsChecked));
-    }
+    },
   }),
   lifecycle({
     componentDidMount() {
@@ -246,7 +281,10 @@ export default compose(
       }
 
       // 2.) On every aipIDsChecked update or pagination - check whether the all checkbox should not be checked!
-      if (!isEqual(prevProps.aipIDsChecked, this.props.aipIDsChecked) || !isEqual(prevProps.items, this.props.items)) {
+      if (
+        !isEqual(prevProps.aipIDsChecked, this.props.aipIDsChecked) ||
+        !isEqual(prevProps.items, this.props.items)
+      ) {
         if (!this.props.items) {
           return;
         }

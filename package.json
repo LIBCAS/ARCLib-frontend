@@ -8,6 +8,7 @@
     "base-64": "^0.1.0",
     "classnames": "^2.2.5",
     "date-fns": "^1.28.5",
+    "http-proxy-middleware": "^3.0.3",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
@@ -18,6 +19,10 @@
     "react-bootstrap": "^0.32.1",
     "react-codemirror": "^1.0.0",
     "react-datetime": "^2.14.0",
+    "react-device-detect": "^2.2.3",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^16.12.0",
     "react-dropzone": "^4.2.13",
     "react-loader-spinner": "^2.0.0",
@@ -41,14 +46,7 @@
     "node-sass-chokidar": "^2.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.1.2",
-    "react-scripts": "^1.0.5"
-  },
-  "proxy": {
-    "/api": {
-      "target": "http://34.76.18.45:8080",
-      "secure": false,
-      "changeOrigin": true
-    }
+    "react-scripts": "^2.1.8"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/styles/style.scss -o src/styles/",
@@ -60,5 +58,17 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "pretty": "npx prettier --write \"./src/**/*.js\""
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

@@ -1,42 +1,46 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerParams } from '../utils';
+import { createFilterPagerSorterParams } from '../utils';
 
-export const getProducerProfiles = (withFilter = true) => async (dispatch, getState) => {
-  dispatch({
-    type: c.PRODUCER_PROFILE,
-    payload: {
-      producerProfiles: null,
-    },
-  });
+export const getProducerProfiles =
+  (withFilter = true) =>
+  async (dispatch, getState) => {
+    dispatch({
+      type: c.PRODUCER_PROFILE,
+      payload: {
+        producerProfiles: null,
+      },
+    });
 
-  try {
-    const response = withFilter ? await fetch('/api/producer_profile/list_dtos', {
-      params: createFilterPagerParams(getState),
-    }): await fetch('/api/producer_profile/list_dtos/all');
+    try {
+      const response = withFilter
+        ? await fetch('/api/producer_profile/list_dtos', {
+            params: createFilterPagerSorterParams(getState),
+          })
+        : await fetch('/api/producer_profile/list_dtos/all');
 
-    if (response.status === 200) {
-      const producerProfiles = await response.json();
+      if (response.status === 200) {
+        const producerProfiles = await response.json();
 
-      dispatch({
-        type: c.PRODUCER_PROFILE,
-        payload: {
-          producerProfiles,
-        },
-      });
+        dispatch({
+          type: c.PRODUCER_PROFILE,
+          payload: {
+            producerProfiles,
+          },
+        });
 
-      return producerProfiles;
+        return producerProfiles;
+      }
+
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
     }
-
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
+  };
 
 export const getProducerProfile = (id) => async (dispatch) => {
   dispatch(showLoader());

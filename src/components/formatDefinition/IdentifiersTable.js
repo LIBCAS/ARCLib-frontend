@@ -6,9 +6,10 @@ import Table from '../table/Table';
 const IdentifiersTable = ({ identifiers, texts }) => (
   <Table
     {...{
-      thCells: [{ label: texts.IDENTIFIER }, { label: texts.IDENTIFIER_TYPE }],
+      tableId: 'identifiers',
+      thCells: [{ label: texts.IDENTIFIER, field: 'identifier' }, { label: texts.IDENTIFIER_TYPE, field: 'identifierType' }],
       items: map(identifiers, (item) => ({
-        items: [{ label: get(item, 'identifier', '') }, { label: get(item, 'identifierType', '') }],
+        items: [{ label: get(item, 'identifier', ''), field: 'identifier' }, { label: get(item, 'identifierType', ''), field: 'identifierType' }],
       })),
     }}
   />

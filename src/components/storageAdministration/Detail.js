@@ -385,12 +385,17 @@ const Detail = ({
                         {...{
                           withHover: false,
                           oddEvenRows: false,
-                          thCells: [{ label: texts.KEY }, { label: texts.VALUE }],
+                          tableId: 'storage-detail-zfs-dataset',
+                          thCells: [
+                            { label: texts.KEY, field: 'key' },
+                            { label: texts.VALUE, field: 'value' },
+                          ],
                           items: map(['name', 'used', 'available'], (label) => ({
                             items: [
-                              { label: label },
+                              { label: label, field: 'key' },
                               {
                                 label: get(storageStateData, `dataset.${label}`),
+                                field: 'value',
                               },
                             ],
                           })),
@@ -401,13 +406,18 @@ const Detail = ({
                         {...{
                           withHover: false,
                           oddEvenRows: false,
-                          thCells: [{ label: texts.KEY }, { label: texts.VALUE }],
+                          tableId: 'storage-detail-zfs-pool',
+                          thCells: [
+                            { label: texts.KEY, field: 'key' },
+                            { label: texts.VALUE, field: 'value' },
+                          ],
                           items: compact([
                             ...map(sortedFieldsZFSPool, (label) => ({
                               items: [
-                                { label: label },
+                                { label: label, field: 'key' },
                                 {
                                   label: get(storageStateData, `pool.${label}`),
+                                  field: 'value',
                                 },
                               ],
                             })),
@@ -434,7 +444,11 @@ const Detail = ({
                       {...{
                         withHover: false,
                         oddEvenRows: false,
-                        thCells: [{ label: texts.KEY }, { label: texts.VALUE }],
+                        tableId: 'storage-detail-state',
+                        thCells: [
+                          { label: texts.KEY, field: 'key' },
+                          { label: texts.VALUE, field: 'value' },
+                        ],
                         items: map(
                           compact([
                             ...map(sortedFieldsCEPH, (sortedField) =>
@@ -460,7 +474,7 @@ const Detail = ({
                             hasValue(value) &&
                             hasValue(label) && {
                               items: [
-                                { label: <strong>{label}</strong> },
+                                { label: <strong>{label}</strong>, field: 'key' },
                                 {
                                   label:
                                     label === 'buckets' ? (
@@ -475,31 +489,37 @@ const Detail = ({
                                             style: { margin: 0 },
                                             withHover: false,
                                             oddEvenRows: false,
+                                            tableId: 'storage-detail-buckets',
                                             thCells: [
-                                              { label: 'name' },
-                                              { label: 'created' },
-                                              { label: 'usedBytes' },
-                                              { label: 'objectsCount' },
-                                              { label: 'accountPermissions' },
+                                              { label: 'name', field: 'name' },
+                                              { label: 'created', field: 'created' },
+                                              { label: 'usedBytes', field: 'usedBytes' },
+                                              { label: 'objectsCount', field: 'objectsCount' },
+                                              { label: 'accountPermissions', field: 'accountPermissions' },
                                             ],
                                             items: map(value, (item) => ({
                                               items: [
                                                 {
                                                   label: get(item, 'name', ''),
+                                                  field: 'name',
                                                 },
                                                 {
                                                   label: formatDateTime(get(item, 'created')),
+                                                  field: 'created',
                                                 },
                                                 {
                                                   label: get(item, 'usedBytes', ''),
+                                                  field: 'usedBytes',
                                                 },
                                                 {
                                                   label: get(item, 'objectsCount', ''),
+                                                  field: 'objectsCount',
                                                 },
                                                 {
                                                   label: !isEmpty(get(item, 'accountPermissions'))
                                                     ? get(item, 'accountPermissions').join(', ')
                                                     : '',
+                                                  field: 'accountPermissions',
                                                 },
                                               ],
                                             })),
@@ -575,6 +595,7 @@ const Detail = ({
                                     ) : (
                                       value
                                     ),
+                                  field: 'value',
                                 },
                               ],
                             }
@@ -599,26 +620,24 @@ export default compose(
     setDialog,
   }),
   withHandlers({
-    onSubmit: ({ history, updateStorage, storage: { id }, texts }) => async ({
-      name,
-      priority,
-      note,
-    }) => {
-      if (
-        await updateStorage({
-          id,
-          ...removeStartEndWhiteSpaceInSelectedFields({ name }, ['name']),
-          priority,
-          note,
-        })
-      ) {
-        history.push('/logical-storage-administration');
-      } else {
-        throw new SubmissionError({
-          reachable: texts.SAVE_FAILED,
-        });
-      }
-    },
+    onSubmit:
+      ({ history, updateStorage, storage: { id }, texts }) =>
+      async ({ name, priority, note }) => {
+        if (
+          await updateStorage({
+            id,
+            ...removeStartEndWhiteSpaceInSelectedFields({ name }, ['name']),
+            priority,
+            note,
+          })
+        ) {
+          history.push('/logical-storage-administration');
+        } else {
+          throw new SubmissionError({
+            reachable: texts.SAVE_FAILED,
+          });
+        }
+      },
   }),
   reduxForm({
     form: 'storage-detail',

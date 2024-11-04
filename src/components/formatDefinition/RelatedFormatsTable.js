@@ -6,12 +6,16 @@ import Table from '../table/Table';
 const RelatedFormatsTable = ({ history, relatedFormats, texts }) => (
   <Table
     {...{
-      thCells: [{ label: texts.FORMAT_ID }, { label: texts.RELATIONSHIP_TYPE }],
+      tableId: 'relatedFormats',
+      thCells: [
+        { label: texts.FORMAT_ID, field: 'relatedFormatId' },
+        { label: texts.RELATIONSHIP_TYPE, field: 'relationshipType' },
+      ],
       items: map(relatedFormats, (item) => ({
         onClick: () => history.push(`/formats/${get(item, 'relatedFormatId')}`),
         items: [
-          { label: get(item, 'relatedFormatId', '') },
-          { label: get(item, 'relationshipType', '') },
+          { label: get(item, 'relatedFormatId', ''), field: 'relatedFormatId' },
+          { label: get(item, 'relationshipType', ''), field: 'relationshipType' },
         ],
       })),
     }}

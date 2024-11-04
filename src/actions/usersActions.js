@@ -1,7 +1,7 @@
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerParams } from '../utils';
+import { createFilterPagerSorterParams } from '../utils';
 
 export const getUsers = (params) => async (dispatch, getState) => {
   const useDispatch = !params;
@@ -17,7 +17,7 @@ export const getUsers = (params) => async (dispatch, getState) => {
 
   try {
     const response = await fetch('/api/user', {
-      params: params || createFilterPagerParams(getState),
+      params: params || createFilterPagerSorterParams(getState),
     });
 
     let users = null;

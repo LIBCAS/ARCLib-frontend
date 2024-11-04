@@ -8,21 +8,25 @@ import Table from '../indexSearch/Table';
 import ButtonComponent from '../Button';
 import Pagination from '../Pagination';
 
-import { updatePileCheckedAipIds, resetPileCheckedAipIDs, savePileAipIDs, fetchPileAipIDs, fetchPileAips, setPileAipsToEmptyObject } from '../../actions/aipActions';
+import {
+  updatePileCheckedAipIds,
+  resetPileCheckedAipIDs,
+  savePileAipIDs,
+  fetchPileAipIDs,
+  fetchPileAips,
+  setPileAipsToEmptyObject,
+} from '../../actions/aipActions';
 import { openInfoOverlayDialog, setPager } from '../../actions/appActions';
 import { fetchExportTemplates } from '../../actions/exportTemplatesActions';
 import { hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
-
 const Pile = (props) => {
-
   if (!props.pileAips) {
     return null;
   }
 
   const handleRemoveFromPileOnClick = async () => {
-
     if (!props.pileAipIDs) {
       console.error('Failed to retrieve current AipIDs from Pile!');
       return;
@@ -45,8 +49,8 @@ const Pile = (props) => {
 
     if (!savePileAipIDsResult) {
       props.openInfoOverlayDialog({
-        title: <div className='invalid'>{props.texts.OPERATION_FAILED}</div>,
-        content: <div>{props.texts.FAILED_TO_REMOVE_RECORD_FROM_PILE}</div>
+        title: <div className="invalid">{props.texts.OPERATION_FAILED}</div>,
+        content: <div>{props.texts.FAILED_TO_REMOVE_RECORD_FROM_PILE}</div>,
       });
       return;
     }
@@ -62,22 +66,21 @@ const Pile = (props) => {
     // If we fetch from BE.. BE will return not empty structure but error 400 status response
     let fetchPileAipsResult = undefined;
     if (newPileAipIDs.length !== 0) {
-      fetchPileAipsResult = await props.fetchPileAips();  // not true, but pileAips array object
+      fetchPileAipsResult = await props.fetchPileAips(); // not true, but pileAips array object
       if (!fetchPileAipsResult) {
         console.error('Failed to update pileAips locally after successful POST!');
       }
-    }
-    else {
+    } else {
       props.setPileAipsToEmptyObject();
     }
 
     props.resetPileCheckedAipIDs();
 
     props.openInfoOverlayDialog({
-      title: <div className='success'>{props.texts.OPERATION_SUCCESS}</div>,
-      content: <div>{props.texts.SUCCESS_TO_REMOVE_RECORD_FROM_PILE}</div>
+      title: <div className="success">{props.texts.OPERATION_SUCCESS}</div>,
+      content: <div>{props.texts.SUCCESS_TO_REMOVE_RECORD_FROM_PILE}</div>,
     });
-  }
+  };
 
   const handleExportOnClick = (e) => {
     if (hasPermission(Permission.EXPORT_TEMPLATES_READ)) {
@@ -85,21 +88,21 @@ const Pile = (props) => {
     }
 
     props.setDialog('SearchQueryExportConfigNewUpd', {
-      action: 'fromPile',  // clicked and redirected from here (Pile Dialog)
+      action: 'fromPile', // clicked and redirected from here (Pile Dialog)
       aipQuery: null,
-    })
-  }
+      aipIDs: props.pileAipIDsChecked, // checked aipIDs from Pile
+    });
+  };
 
   return (
     <DialogContainer
       title={props.texts.MY_PILE}
-      name='Pile'
-      handleSubmit={props.onSubmit}  // does not have reduxForm, had to add explicitly
+      name="Pile"
+      handleSubmit={props.onSubmit} // does not have reduxForm, had to add explicitly
       submitLabel={props.texts.CLOSE}
       noCloseButton
       large
     >
-
       {props.pileAips.items.length !== 0 && (
         <div>
           <Table
@@ -108,6 +111,7 @@ const Pile = (props) => {
             texts={props.texts}
             displayCheckboxes
             pileTable
+            isTableInDialog
           />
 
           <Pagination
@@ -117,15 +121,11 @@ const Pile = (props) => {
             isPaginationInDialog
           />
 
-          <div style={{display: 'flex', justifyContent: 'flex-end'}} className='margin-top'>
-            <ButtonComponent
-              onClick={handleExportOnClick}
-            >
-              {props.texts.EXPORT}
-            </ButtonComponent>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }} className="margin-top">
+            <ButtonComponent onClick={handleExportOnClick}>{props.texts.EXPORT}</ButtonComponent>
 
             <ButtonComponent
-              className='margin-left-small margin-right-small'
+              className="margin-left-small margin-right-small"
               onClick={handleRemoveFromPileOnClick}
             >
               {props.texts.REMOVE_FROM_PILE}
@@ -134,23 +134,17 @@ const Pile = (props) => {
         </div>
       )}
 
-      {props.pileAips.items.length === 0 && (
-        <div>
-          {props.texts.EMPTY_PILE_MESSAGE}
-        </div>
-      )}
-
+      {props.pileAips.items.length === 0 && <div>{props.texts.EMPTY_PILE_MESSAGE}</div>}
     </DialogContainer>
   );
 };
-
 
 const mapStateToProps = (store) => ({
   pileAipIDsChecked: store.aip.pileAipIDsChecked,
   pileAips: store.aip.pileAips,
   pileAipIDs: store.aip.pileAipIDs,
   appPager: store.app.pager,
-})
+});
 
 const mapDispatchToProps = (dispatch) => ({
   openInfoOverlayDialog: (data) => dispatch(openInfoOverlayDialog(data)),
@@ -162,7 +156,7 @@ const mapDispatchToProps = (dispatch) => ({
   setPileAipsToEmptyObject: () => dispatch(setPileAipsToEmptyObject()),
   setPager: (pager) => dispatch(setPager(pager)),
   fetchExportTemplates: () => dispatch(fetchExportTemplates()),
-})
+});
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
@@ -170,6 +164,6 @@ export default compose(
   withHandlers({
     onSubmit: (props) => async () => {
       props.closeDialog();
-    }
+    },
   })
 )(Pile);

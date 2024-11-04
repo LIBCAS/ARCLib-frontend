@@ -11,19 +11,20 @@ const RelatedRisksTable = ({ texts, setDialog, formatDefinitionId, format }) => 
   return (
     <Table
       {...{
+        tableId: 'relatedRisks',
         thCells: compact([
-          { label: texts.CREATED },
-          { label: texts.UPDATED },
-          { label: texts.DESCRIPTION },
-          deleteEnabled && { label: '' },
+          { label: texts.CREATED, field: 'created' },
+          { label: texts.UPDATED, field: 'updated' },
+          { label: texts.DESCRIPTION, field: 'description' },
+          deleteEnabled && { label: '', field: 'delete' },
         ]),
         items: map(
           filter(get(format, 'relatedRisks'), ({ deleted }) => !deleted),
           (item) => ({
             items: compact([
-              { label: formatDateTime(get(item, 'created')) },
-              { label: formatDateTime(get(item, 'updated')) },
-              { label: get(item, 'description', '') },
+              { label: formatDateTime(get(item, 'created')), field: 'created' },
+              { label: formatDateTime(get(item, 'updated')), field: 'updated' },
+              { label: get(item, 'description', ''), field: 'description' },
               deleteEnabled && {
                 label: (
                   <Button
@@ -41,6 +42,7 @@ const RelatedRisksTable = ({ texts, setDialog, formatDefinitionId, format }) => 
                     {texts.DELETE}
                   </Button>
                 ),
+                field: 'delete',
                 className: 'text-right',
               },
             ]),

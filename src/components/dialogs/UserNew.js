@@ -29,7 +29,6 @@ const UserNew = ({
   actualForm,
   serverConfig,
 }) => {
-
   if (!producers || !actualForm) {
     return null;
   }
@@ -39,7 +38,9 @@ const UserNew = ({
   // Otherwise, producer of the actual user is selected (with no other options!)
   const actualSelectedProducerId = actualForm.values.producer;
 
-  const actualSelectedProducerObj = producers.find((producer) => producer.id === actualSelectedProducerId);
+  const actualSelectedProducerObj = producers.find(
+    (producer) => producer.id === actualSelectedProducerId
+  );
 
   // NOTE: Should never happen!!
   if (!actualSelectedProducerObj) {
@@ -56,50 +57,56 @@ const UserNew = ({
       }}
     >
       <form {...{ onSubmit: handleSubmit }}>
-        {serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && ([
-          <Field
-            {...{
-              id: 'first-name',
-              component: TextField,
-              label: texts.FIRST_NAME,
-              name: 'firstName',
-            }}
-          />,
-          <Field
-            {...{
-              id: 'last-name',
-              component: TextField,
-              label: texts.LAST_NAME,
-              name: 'lastName',
-            }}
-          />,
-          <Field
-            {...{
-              id: 'institution',
-              component: TextField,
-              label: texts.INSTITUTION,
-              name: 'institution',
-            }}
-          />,
-          <Field
-            {...{
-              id: 'email',
-              component: TextField,
-              label: texts.EMAIL,
-              name: 'email',
-              validate: [Validation.email[language]],
-            }}
-          />,
-          <Field
-            {...{
-              id: 'password',
-              component: TextField,
-              label: texts.PASSWORD,
-              name: 'newPassword',
-              validate: [Validation.required[language]],
-            }}
-          />
-        ])}
+        {serverConfig != null && serverConfig.AUTHENTICATION === 'LOCAL' && (
+          <React.Fragment>
+            <Field
+              {...{
+                id: 'first-name',
+                component: TextField,
+                label: texts.FIRST_NAME,
+                name: 'firstName',
+              }}
+            />
+            ,
+            <Field
+              {...{
+                id: 'last-name',
+                component: TextField,
+                label: texts.LAST_NAME,
+                name: 'lastName',
+              }}
+            />
+            ,
+            <Field
+              {...{
+                id: 'institution',
+                component: TextField,
+                label: texts.INSTITUTION,
+                name: 'institution',
+              }}
+            />
+            ,
+            <Field
+              {...{
+                id: 'email',
+                component: TextField,
+                label: texts.EMAIL,
+                name: 'email',
+                validate: [Validation.email[language]],
+              }}
+            />
+            ,
+            <Field
+              {...{
+                id: 'password',
+                component: TextField,
+                label: texts.PASSWORD,
+                name: 'newPassword',
+                validate: [Validation.required[language]],
+              }}
+            />
+          </React.Fragment>
+        )}
         {map(
           [
             {
@@ -115,15 +122,15 @@ const UserNew = ({
               validate: [Validation.required[language]],
               options: producersEnabled
                 ? map(producers, (producer) => ({
-                  label: producer.name,
-                  value: producer.id,
-                }))
+                    label: producer.name,
+                    value: producer.id,
+                  }))
                 : [
-                  {
-                    label: get(user, 'producer.name'),
-                    value: get(user, 'producer.id'),
-                  },
-                ],
+                    {
+                      label: get(user, 'producer.name'),
+                      value: get(user, 'producer.id'),
+                    },
+                  ],
               disabled: !producersEnabled,
             },
             {
@@ -144,37 +151,37 @@ const UserNew = ({
         )}
 
         <div>
-          <h1 className='h1-dialog'>{texts.EXPORT_FOLDERS}</h1>
+          <h1 className="h1-dialog">{texts.EXPORT_FOLDERS}</h1>
 
-          <h2 className='h2-dialog'>
-            {texts.USERS_PRODUCER_EXPORT_FOLDERS}
-          </h2>
+          <h2 className="h2-dialog">{texts.USERS_PRODUCER_EXPORT_FOLDERS}</h2>
 
           <div>
             <ul>
               {actualSelectedProducerObj.exportFolders.map((exportFolder, index) => (
-                <li key={index}>
-                  {exportFolder}
-                </li>
+                <li key={index}>{exportFolder}</li>
               ))}
             </ul>
           </div>
 
           <Field
-            name='exportFolders'
+            name="exportFolders"
             component={TagsField}
             label={texts.USERS_EXPORT_FOLDERS}
-            validate={[(values) => Validation.validateUsersExportFolders(values, actualSelectedProducerObj.exportFolders, language)]}
+            validate={[
+              (values) =>
+                Validation.validateUsersExportFolders(
+                  values,
+                  actualSelectedProducerObj.exportFolders,
+                  language
+                ),
+            ]}
           />
         </div>
-
       </form>
       <ErrorBlock {...{ label: fail }} />
     </DialogContainer>
   );
-}
-
-
+};
 
 export default compose(
   connect(
@@ -205,40 +212,39 @@ export default compose(
   withRouter,
   withState('fail', 'setFail', null),
   withHandlers({
-    onSubmit: ({
-      producersEnabled,
-      closeDialog,
-      saveUser,
-      getUsers,
-      producers,
-      roles,
-      user,
-      texts,
-      setFail,
-      reset,
-    }) => async ({ producer, ...formData }) => {
+    onSubmit:
+      ({
+        producersEnabled,
+        closeDialog,
+        saveUser,
+        getUsers,
+        producers,
+        roles,
+        user,
+        texts,
+        setFail,
+        reset,
+      }) =>
+      async ({ producer, ...formData }) => {
+        const submitObject = {
+          id: uuidv1(),
+          ...removeStartEndWhiteSpaceInSelectedFields(formData, ['username']),
+          producer: producersEnabled
+            ? find(producers, (item) => item.id === producer)
+            : get(user, 'producer'),
+          roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
+          exportFolders: formData.exportFolders,
+        };
 
-      const submitObject = {
-        id: uuidv1(),
-        ...removeStartEndWhiteSpaceInSelectedFields(formData, ['username']),
-        producer: producersEnabled
-          ? find(producers, (item) => item.id === producer)
-          : get(user, 'producer'),
-        roles: (formData.roles || []).map((id) => find(roles, (r) => r.id === id)),
-        exportFolders: formData.exportFolders,
-      }
-
-      if (
-        await saveUser(submitObject)
-      ) {
-        getUsers();
-        reset('UserNewDialogForm');
-        closeDialog();
-        setFail(null);
-      } else {
-        setFail(texts.USER_NEW_FAILED);
-      }
-    },
+        if (await saveUser(submitObject)) {
+          getUsers();
+          reset('UserNewDialogForm');
+          closeDialog();
+          setFail(null);
+        } else {
+          setFail(texts.USER_NEW_FAILED);
+        }
+      },
   }),
   reduxForm({
     form: 'UserNewDialogForm',
