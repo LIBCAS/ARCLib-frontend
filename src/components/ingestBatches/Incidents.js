@@ -9,7 +9,11 @@ import Button from '../Button';
 import { TextField, SelectField, Validation } from '../form';
 import Table from '../table/Table';
 import { setDialog } from '../../actions/appActions';
-import { solveIncidents, cancelIncidents } from '../../actions/incidentActions';
+import {
+  solveIncidents,
+  cancelIncidents,
+  exportBatchIncidents,
+} from '../../actions/incidentActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
@@ -27,9 +31,20 @@ const Incidents = ({
   language,
   getIncidents,
   batch,
+  exportBatchIncidents,
 }) => {
   const handleUpdate = () => {
     getIncidents(batch.id);
+  };
+
+  const handleExport = (format, columns, header) => {
+    const submitObject = {
+      format,
+      name: texts.INCIDENTS,
+      columns,
+      header,
+    };
+    exportBatchIncidents(batch.id, submitObject);
   };
 
   const editEnabled = hasPermission(Permission.INCIDENT_RECORDS_WRITE);
@@ -37,9 +52,9 @@ const Incidents = ({
     <div {...{ className: 'flex-col' }}>
       <Table
         {...{
+          handleExport,
           handleUpdate,
           tableId: 'incidents',
-          exportButtons: true,
           withSort: true,
           thCells: compact([
             editEnabled && { label: '', field: 'checkbox' },
@@ -134,6 +149,7 @@ const Incidents = ({
 };
 export default compose(
   connect(() => ({ initialValues: { operation: operations.SOLVE, text: '' } }), {
+    exportBatchIncidents,
     solveIncidents,
     cancelIncidents,
     setDialog,

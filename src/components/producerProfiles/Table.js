@@ -14,8 +14,7 @@ const ProducerProfilesTable = ({ history, producerProfiles, setDialog, handleUpd
     <Table
       {...{
         handleUpdate,
-        tableId: 'producerProfiles', 
-        exportButtons: true, //controls if export buttons are shown
+        tableId: 'producerProfiles',
         thCells: compact([
           {
             label: texts.EXTERNAL_ID,

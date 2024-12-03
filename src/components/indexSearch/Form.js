@@ -20,7 +20,17 @@ import SelectUploadButtonFilter from '../filter/SelectUploadButtonFilter';
 import DublinCoreFilter from '../filter/DublinCoreFilter';
 
 import { setFilter, setDialog, openInfoOverlayDialog, setPager } from '../../actions/appActions';
-import { getAipList, saveAndgetAipList, setAipList, resetCheckedAipIDs, fetchPileAipIDs, savePileAipIDs, fetchPileAips, resetPileCheckedAipIDs, setPileAipsToEmptyObject } from '../../actions/aipActions';
+import {
+  getAipList,
+  saveAndgetAipList,
+  setAipList,
+  resetCheckedAipIDs,
+  fetchPileAipIDs,
+  savePileAipIDs,
+  fetchPileAips,
+  resetPileCheckedAipIDs,
+  setPileAipsToEmptyObject,
+} from '../../actions/aipActions';
 import { setQuery } from '../../actions/queryActions';
 import {
   orderTypes,
@@ -74,9 +84,7 @@ const Form = ({
   updateCollapsed,
   collapseAll,
 }) => {
-
   const handlePostponeButtonOnClick = async () => {
-
     if (pileAipIDs === null) {
       console.error('Failed to fetch current data in Pile!');
       return;
@@ -99,8 +107,8 @@ const Form = ({
 
     if (!savePileAipIDsResult) {
       openInfoOverlayDialog({
-        title: <div className='invalid'>{texts.OPERATION_FAILED}</div>,
-        content: <div>{texts.FAILED_TO_ADD_RECORD_TO_PILE}</div>
+        title: <div className="invalid">{texts.OPERATION_FAILED}</div>,
+        content: <div>{texts.FAILED_TO_ADD_RECORD_TO_PILE}</div>,
       });
       return;
     }
@@ -113,10 +121,10 @@ const Form = ({
     resetCheckedAipIDs();
 
     openInfoOverlayDialog({
-      title: <div className='success'>{texts.OPERATION_SUCCESS}</div>,
-      content: <div>{texts.SUCCESS_TO_ADD_RECORD_TO_PILE}</div>
+      title: <div className="success">{texts.OPERATION_SUCCESS}</div>,
+      content: <div>{texts.SUCCESS_TO_ADD_RECORD_TO_PILE}</div>,
     });
-  }
+  };
 
   const handlePileButtonOnClick = async () => {
     setPager({ page: 0, pageSize: 10 }); // must be first
@@ -125,22 +133,19 @@ const Form = ({
     // NOTE: If subscribed pileAipIDs is empty array.. means no pileAips are in Pile
     // In that case, BE will return not empty structure, but 400 error status
     if (pileAipIDs !== null && pileAipIDs.length !== 0) {
-      await fetchPileAips();  // result is true or false
-    }
-    else {
+      await fetchPileAips(); // result is true or false
+    } else {
       setPileAipsToEmptyObject();
     }
 
     setDialog('Pile');
-  }
+  };
 
   return (
     <form {...{ onSubmit: handleSubmit, className }}>
-
       {/* From here, form starts with Producer Name filter input field */}
       <div {...{ className: 'flex-col padding-top-small' }}>
         {map(fields, ({ title, subtitle, filters, id }, key) =>
-
           // 1. Generate the 'fields' object with title purpose! (header)
           title ? (
             <div key={key}>
@@ -168,11 +173,13 @@ const Form = ({
               </div>
 
               {id === 'DESCRIPTIVE_METADATA' && (
-                <div className={classNames('margin-bottom-small', {
-                  hidden: !!get(collapsed, id),
-                })}>
+                <div
+                  className={classNames('margin-bottom-small', {
+                    hidden: !!get(collapsed, id),
+                  })}
+                >
                   <Button
-                    className='margin-right-small'
+                    className="margin-right-small"
                     onClick={() => {
                       if (numberOfDublinCoreFields <= 1) {
                         return;
@@ -180,7 +187,7 @@ const Form = ({
                       setNumberOfDublinCoreFields(numberOfDublinCoreFields - 1);
                     }}
                   >
-                    <Icon type='minus'/>
+                    <Icon type="minus" />
                   </Button>
                   <Button
                     onClick={() => {
@@ -190,13 +197,12 @@ const Form = ({
                       setNumberOfDublinCoreFields(numberOfDublinCoreFields + 1);
                     }}
                   >
-                    <Icon type='plus'/>
+                    <Icon type="plus" />
                   </Button>
                 </div>
               )}
             </div>
-          ) :
-          // 2. Generate the 'fields' object with subtitle purpose! (header)
+          ) : // 2. Generate the 'fields' object with subtitle purpose! (header)
           subtitle ? (
             <div {...{ key, className: 'subtitle-container' }}>
               <h4
@@ -211,23 +217,21 @@ const Form = ({
                 {subtitle}
               </h4>
             </div>
-          ) :
-          // 3. If not title or subtitle, generate the 'filters' input fields
-          // Each filter input is assigned with index property and then field props
-          (
+          ) : (
+            // 3. If not title or subtitle, generate the 'filters' input fields
+            // Each filter input is assigned with index property and then field props
             <div
               {...{
                 key,
                 className: classNames(
-                  {'flex-row': id !== 'DESCRIPTIVE_METADATA'},
-                  {'flex-top': id !== 'DESCRIPTIVE_METADATA'},
-                  {'flex-col': id === 'DESCRIPTIVE_METADATA'},
-                  {hidden: !!get(collapsed, id)}
-                )
+                  { 'flex-row': id !== 'DESCRIPTIVE_METADATA' },
+                  { 'flex-top': id !== 'DESCRIPTIVE_METADATA' },
+                  { 'flex-col': id === 'DESCRIPTIVE_METADATA' },
+                  { hidden: !!get(collapsed, id) }
+                ),
               }}
             >
               {map(filters, ({ index, ...field }, i) =>
-
                 field.type === filterTypes.SELECT_UPLOAD ? (
                   <div key={`${key}-${i}`} className={'form-row margin-bottom-small'}>
                     <ControlLabel>{field.label}</ControlLabel>
@@ -239,23 +243,21 @@ const Form = ({
                       selectOptions={[
                         {
                           value: 'id',
-                          label: 'XML ID'
+                          label: 'XML ID',
                         },
                         {
                           value: 'authorial_id',
-                          label: texts.AUTHORIAL_ID
+                          label: texts.AUTHORIAL_ID,
                         },
                         {
                           value: 'sip_id',
-                          label: 'AIP ID'
+                          label: 'AIP ID',
                         },
                       ]}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.DUBLIN_CORE_FILTER ? (
-                  <div key={`${key}-${i}`} >
+                ) : field.type === filterTypes.DUBLIN_CORE_FILTER ? (
+                  <div key={`${key}-${i}`}>
                     <ControlLabel>{field.label}</ControlLabel>
                     <DublinCoreFilter
                       index={index}
@@ -267,9 +269,7 @@ const Form = ({
                       handleUpdate={() => saveQuery()}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.TEXT ? (
+                ) : field.type === filterTypes.TEXT ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -287,9 +287,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.TEXT_EQ_NEQ ? (
+                ) : field.type === filterTypes.TEXT_EQ_NEQ ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -311,9 +309,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.TEXT_CONTAINS ? (
+                ) : field.type === filterTypes.TEXT_CONTAINS ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -330,9 +326,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.TEXT_EQ ? (
+                ) : field.type === filterTypes.TEXT_EQ ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -348,9 +342,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH ? (
+                ) : field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -375,9 +367,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.ENUM ? (
+                ) : field.type === filterTypes.ENUM ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -395,9 +385,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.BOOL ? (
+                ) : field.type === filterTypes.BOOL ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -416,9 +404,7 @@ const Form = ({
                       }}
                     />
                   </div>
-                ) :
-
-                field.type === filterTypes.NUMBER ? (
+                ) : field.type === filterTypes.NUMBER ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -451,9 +437,7 @@ const Form = ({
                       />
                     </div>
                   </div>
-                ) :
-
-                field.type === filterTypes.DATE || field.type === filterTypes.DATETIME ? (
+                ) : field.type === filterTypes.DATE || field.type === filterTypes.DATETIME ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -527,9 +511,7 @@ const Form = ({
                       />
                     </div>
                   </div>
-                ) :
-
-                field.type === 'TEXT_FIELD' ? (
+                ) : field.type === 'TEXT_FIELD' ? (
                   <div
                     {...{
                       key: `${key}-${i}`,
@@ -558,9 +540,7 @@ const Form = ({
                     />
                     <div />
                   </div>
-                ) :
-
-                (
+                ) : (
                   <div {...{ key: `${key}-${i}` }} />
                 )
               )}
@@ -638,7 +618,7 @@ const Form = ({
         {hasPermission(Permission.AIP_RECORDS_READ) && (
           <Button
             primary={false}
-            className='index-search-form-button not-primary margin-left-small'
+            className="index-search-form-button not-primary margin-left-small"
             onClick={handlePostponeButtonOnClick}
           >
             {texts.POSTPONE_SELECTED}
@@ -648,25 +628,23 @@ const Form = ({
         {hasPermission(Permission.AIP_RECORDS_READ) && (
           <Button
             primary={false}
-            className='index-search-form-button not-primary margin-left-small'
+            className="index-search-form-button not-primary margin-left-small"
             onClick={handlePileButtonOnClick}
           >
             {texts.PILE}
           </Button>
         )}
-
       </div>
     </form>
-  )
-}
-
+  );
+};
 
 export default compose(
   connect(
     ({ app: { filter }, aip: { aips, aipIDsChecked, pileAipIDs } }) => ({
       filter,
       aips,
-      aipIDsChecked,  // register to checked aip item ids
+      aipIDsChecked, // register to checked aip item ids
       pileAipIDs,
     }),
     {
@@ -691,462 +669,484 @@ export default compose(
   withState('queryName', 'setQueryName', ''),
   withState('collapsed', 'setCollapsed', {}),
   withHandlers({
-    updateCollapsed: ({ collapsed, setCollapsed }) => (newCollapsed) =>
-      setCollapsed({ ...collapsed, ...newCollapsed }),
+    updateCollapsed:
+      ({ collapsed, setCollapsed }) =>
+      (newCollapsed) =>
+        setCollapsed({ ...collapsed, ...newCollapsed }),
 
     // NOTE: actual redux store.app.filter with store.aip.aips (for AIP table) is saved into Local Storage
     // used in DidMount and DidUpdate to persist data between reloads
-    saveQuery: ({ filter, aips }) => () => {
-      storage.set('query', JSON.stringify({ query: filter, result: { items: aips } }))
-    },
+    saveQuery:
+      ({ filter, aips }) =>
+      () => {
+        storage.set('query', JSON.stringify({ query: filter, result: { items: aips } }));
+      },
 
     // NOTE: clearForm is handler responsible for clearing filled inputs and AIP search table to default empty state
     // - used in reset button in bottom sticky panel, when Reset button is pressed
-    clearForm: ({ setFilter, filters, setAipList }) => () => {
-      setAipList([]);
-      setFilter({
-        filter: [
+    clearForm:
+      ({ setFilter, filters, setAipList }) =>
+      () => {
+        setAipList([]);
+        setFilter({
+          filter: [
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.SELECT_UPLOAD
+                  ? {
+                      index,
+                      internalSUIndex: field.internalSUIndex,
+                      field: '',
+                      operation: filterOperationsTypes.IN,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
 
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.SELECT_UPLOAD
-                ? {
-                    index,
-                    internalSUIndex: field.internalSUIndex,
-                    field: '',
-                    operation: filterOperationsTypes.IN,
-                    value: ''
-                  }
-                : null
-            })
-          ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.DUBLIN_CORE_FILTER
+                  ? {
+                      index,
+                      internalDCIndex: field.internalDCIndex,
+                      field: '',
+                      operation: filterOperationsTypes.EQ,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
 
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.DUBLIN_CORE_FILTER
-              ? {
-                  index,
-                  internalDCIndex: field.internalDCIndex,
-                  field: '',
-                  operation: filterOperationsTypes.EQ,
-                  value: ''
-                }
-              : null
-            })
-          ),
-
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.CONTAINS,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.ENUM
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.BOOL
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_EQ_NEQ
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_CONTAINS
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.CONTAINS,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_EQ
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.CONTAINS,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.NUMBER ||
-                field.type === filterTypes.DATE ||
-                field.type === filterTypes.DATETIME
-                ? {
-                    index,
-                    number: 0,
-                    field: field.field,
-                    operation: filterOperationsTypes.GTE,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.NUMBER ||
-                field.type === filterTypes.DATE ||
-                field.type === filterTypes.DATETIME
-                ? {
-                    index,
-                    number: 1,
-                    field: field.field,
-                    operation: filterOperationsTypes.LTE,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === 'TEXT_FIELD'
-                ? {
-                    index,
-                    field: field.field,
-                    operation: field.operation,
-                    value: '',
-                  }
-                : null;
-            })
-          ),
-        ],
-      });
-    },
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.CONTAINS,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.ENUM
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.BOOL
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_EQ_NEQ
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_CONTAINS
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.CONTAINS,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_EQ
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.CONTAINS,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.NUMBER ||
+                  field.type === filterTypes.DATE ||
+                  field.type === filterTypes.DATETIME
+                  ? {
+                      index,
+                      number: 0,
+                      field: field.field,
+                      operation: filterOperationsTypes.GTE,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.NUMBER ||
+                  field.type === filterTypes.DATE ||
+                  field.type === filterTypes.DATETIME
+                  ? {
+                      index,
+                      number: 1,
+                      field: field.field,
+                      operation: filterOperationsTypes.LTE,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === 'TEXT_FIELD'
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: field.operation,
+                      value: '',
+                    }
+                  : null;
+              })
+            ),
+          ],
+        });
+      },
   }),
   withHandlers({
-    collapseAll: ({ fields, updateCollapsed }) => () => {
-      const collapsed = {};
+    collapseAll:
+      ({ fields, updateCollapsed }) =>
+      () => {
+        const collapsed = {};
 
-      forEach(fields, ({ title, id }) => {
-        if (title && id) {
-          set(collapsed, id, true);
+        forEach(fields, ({ title, id }) => {
+          if (title && id) {
+            set(collapsed, id, true);
+          }
+        });
+
+        updateCollapsed(collapsed);
+      },
+    onSubmit:
+      ({ getAipList, setQuery, saveQuery }) =>
+      async () => {
+        if (await getAipList()) {
+          setQuery(null);
         }
-      });
-
-      updateCollapsed(collapsed);
-    },
-    onSubmit: ({ getAipList, setQuery, saveQuery }) => async () => {
-      if (await getAipList()) {
-        setQuery(null);
-      }
-      saveQuery();
-    },
+        saveQuery();
+      },
     // NOTE: called in lifecycle functions DidMount and DidUpdate
     // - iterate through dynamic props.filters, reflect them into redux store.app.filter
     // and then reflected new redux filter save into Local Storage
-    setFilterOnMountOnUpdate: ({ setFilter, filters }) => (savedQuery) => {
-      const savedQuerySort = get(savedQuery, 'query.sort');
-      const savedQueryOrder = get(savedQuery, 'query.order');
-      const savedQueryFilters = get(savedQuery, 'query.filter');
+    setFilterOnMountOnUpdate:
+      ({ setFilter, filters }) =>
+      (savedQuery) => {
+        const savedQuerySort = get(savedQuery, 'query.sort');
+        const savedQueryOrder = get(savedQuery, 'query.order');
+        const savedQueryFilters = get(savedQuery, 'query.filter');
 
-      setFilter({
-        sort: hasValue(savedQuerySort) ? savedQuerySort : 'updated',
-        order: hasValue(savedQueryOrder) ? savedQueryOrder : orderTypes.ASC,
-        filter: [
+        setFilter({
+          sort: hasValue(savedQuerySort) ? savedQuerySort : 'updated',
+          order: hasValue(savedQueryOrder) ? savedQueryOrder : orderTypes.ASC,
+          filter: [
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.SELECT_UPLOAD
+                  ? {
+                      index: index,
+                      internalSUIndex: field.internalSUIndex,
+                      field: get(
+                        find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
+                        'field',
+                        ''
+                      ),
+                      operation: get(
+                        find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
+                        'operation',
+                        filterOperationsTypes.IN
+                      ),
+                      value: get(
+                        find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
 
-          ...compact(map(filters, (field, index) => {
-            return field.type === filterTypes.SELECT_UPLOAD  ?
-            {
-              index: index,
-              internalSUIndex: field.internalSUIndex,
-              field: get(
-                find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
-                'field',
-                ''
-               ),
-               operation: get(
-                find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
-                'operation',
-                filterOperationsTypes.IN
-              ),
-              value: get(
-                find(savedQueryFilters, (f) => f.internalSUIndex === field.internalSUIndex),
-                'value',
-                ''
-              )
-            } : null
-          })),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.DUBLIN_CORE_FILTER
+                  ? {
+                      index: index,
+                      internalDCIndex: field.internalDCIndex,
+                      field: get(
+                        find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
+                        'field',
+                        ''
+                      ),
+                      operation: get(
+                        find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
+                        'operation',
+                        filterOperationsTypes.EQ
+                      ),
+                      value: get(
+                        find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
 
-          ...compact(map(filters, (field, index) => {
-            return field.type === filterTypes.DUBLIN_CORE_FILTER ?
-            {
-              index: index,
-              internalDCIndex: field.internalDCIndex,
-              field: get(
-                find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
-                'field',
-                ''
-              ),
-              operation: get(
-                find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
-                'operation',
-                filterOperationsTypes.EQ
-              ),
-              value: get(
-                find(savedQueryFilters, (f) => f.internalDCIndex === field.internalDCIndex),
-                'value',
-                ''
-              )
-            } : null
-          })),
-
-          // NOTE: extra check on internalSUIndex is needed
-          // - possibility to have two authorial_id fields
-          // - if check omitted, the first authorial_id from SELECT_UPLOAD Filter will be used
-          // - first would be found in savedQueryFilters from Local Storage and set to redux filter
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT
-                ? {
-                    index,
-                    field: field.field,
-                    operation: get(
-                      find(savedQueryFilters, (f) => f.field === field.field && f.internalSUIndex === undefined),
-                      'operation',
-                      filterOperationsTypes.CONTAINS
-                    ),
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-
-          // NOTE: extra check on internalSUIndex is needed
-          // - possibility to have two 'sip_id' or 'id' fields
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_EQ_NEQ
-                ? {
-                    index,
-                    field: field.field,
-                    operation: get(
-                      find(savedQueryFilters, (f) => f.field === field.field && f.internalSUIndex === undefined),
-                      'operation',
-                      filterOperationsTypes.EQ
-                    ),
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_CONTAINS
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.CONTAINS,
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_EQ
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
-                ? {
-                    index,
-                    field: field.field,
-                    operation: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'operation',
-                      filterOperationsTypes.CONTAINS
-                    ),
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.ENUM
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value:
-                      get(
+            // NOTE: extra check on internalSUIndex is needed
+            // - possibility to have two authorial_id fields
+            // - if check omitted, the first authorial_id from SELECT_UPLOAD Filter will be used
+            // - first would be found in savedQueryFilters from Local Storage and set to redux filter
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: get(
+                        find(
+                          savedQueryFilters,
+                          (f) => f.field === field.field && f.internalSUIndex === undefined
+                        ),
+                        'operation',
+                        filterOperationsTypes.CONTAINS
+                      ),
+                      value: get(
                         find(savedQueryFilters, (f) => f.field === field.field),
-                        'operation'
-                      ) === filterOperationsTypes.EQ
-                        ? get(
-                            find(savedQueryFilters, (f) => f.field === field.field),
-                            'value',
-                            ''
-                          )
-                        : '',
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.BOOL
-                ? {
-                    index,
-                    field: field.field,
-                    operation: filterOperationsTypes.EQ,
-                    value: get(
-                      find(savedQueryFilters, (f) => f.field === field.field),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.NUMBER ||
-                field.type === filterTypes.DATE ||
-                field.type === filterTypes.DATETIME
-                ? {
-                    index,
-                    number: 0,
-                    field: field.field,
-                    operation: filterOperationsTypes.GTE,
-                    value: get(
-                      find(
-                        savedQueryFilters,
-                        (f) =>
-                          f.field === field.field && f.operation === filterOperationsTypes.GTE
+                        'value',
+                        ''
                       ),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === filterTypes.NUMBER ||
-                field.type === filterTypes.DATE ||
-                field.type === filterTypes.DATETIME
-                ? {
-                    index,
-                    number: 1,
-                    field: field.field,
-                    operation: filterOperationsTypes.LTE,
-                    value: get(
-                      find(
-                        savedQueryFilters,
-                        (f) =>
-                          f.field === field.field && f.operation === filterOperationsTypes.LTE
+                    }
+                  : null;
+              })
+            ),
+
+            // NOTE: extra check on internalSUIndex is needed
+            // - possibility to have two 'sip_id' or 'id' fields
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_EQ_NEQ
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: get(
+                        find(
+                          savedQueryFilters,
+                          (f) => f.field === field.field && f.internalSUIndex === undefined
+                        ),
+                        'operation',
+                        filterOperationsTypes.EQ
                       ),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-          ...compact(
-            map(filters, (field, index) => {
-              return field.type === 'TEXT_FIELD'
-                ? {
-                    index,
-                    field: field.field,
-                    operation: field.operation,
-                    value: get(
-                      find(
-                        savedQueryFilters,
-                        (f) => f.field === field.field && f.operation === field.operation
+                      value: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'value',
+                        ''
                       ),
-                      'value',
-                      ''
-                    ),
-                  }
-                : null;
-            })
-          ),
-        ],
-      });
-    },
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_CONTAINS
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.CONTAINS,
+                      value: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_EQ
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.TEXT_CONTAINS_STARTWITH_ENDWITH
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'operation',
+                        filterOperationsTypes.CONTAINS
+                      ),
+                      value: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.ENUM
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value:
+                        get(
+                          find(savedQueryFilters, (f) => f.field === field.field),
+                          'operation'
+                        ) === filterOperationsTypes.EQ
+                          ? get(
+                              find(savedQueryFilters, (f) => f.field === field.field),
+                              'value',
+                              ''
+                            )
+                          : '',
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.BOOL
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: filterOperationsTypes.EQ,
+                      value: get(
+                        find(savedQueryFilters, (f) => f.field === field.field),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.NUMBER ||
+                  field.type === filterTypes.DATE ||
+                  field.type === filterTypes.DATETIME
+                  ? {
+                      index,
+                      number: 0,
+                      field: field.field,
+                      operation: filterOperationsTypes.GTE,
+                      value: get(
+                        find(
+                          savedQueryFilters,
+                          (f) =>
+                            f.field === field.field && f.operation === filterOperationsTypes.GTE
+                        ),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === filterTypes.NUMBER ||
+                  field.type === filterTypes.DATE ||
+                  field.type === filterTypes.DATETIME
+                  ? {
+                      index,
+                      number: 1,
+                      field: field.field,
+                      operation: filterOperationsTypes.LTE,
+                      value: get(
+                        find(
+                          savedQueryFilters,
+                          (f) =>
+                            f.field === field.field && f.operation === filterOperationsTypes.LTE
+                        ),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+            ...compact(
+              map(filters, (field, index) => {
+                return field.type === 'TEXT_FIELD'
+                  ? {
+                      index,
+                      field: field.field,
+                      operation: field.operation,
+                      value: get(
+                        find(
+                          savedQueryFilters,
+                          (f) => f.field === field.field && f.operation === field.operation
+                        ),
+                        'value',
+                        ''
+                      ),
+                    }
+                  : null;
+              })
+            ),
+          ],
+        });
+      },
   }),
   reduxForm({
     form: 'index-search-form',
@@ -1175,7 +1175,6 @@ export default compose(
         setQuery,
         onDidMount,
         setAipList,
-        saveQuery,
         clearForm,
         fetchPileAipIDs,
         setFilterOnMountOnUpdate,
@@ -1205,8 +1204,6 @@ export default compose(
           }
         }
 
-        saveQuery();
-
         onDidMount(true);
       } else {
         clearForm();
@@ -1227,7 +1224,7 @@ export default compose(
 
       if (prevNumberOfDublinCoreFields !== actualNumberOfDublinCoreFields) {
         // 1.) Save the new number of DC fields to the local storage
-        storage.set('numberOfDublinCoreFields', actualNumberOfDublinCoreFields)
+        storage.set('numberOfDublinCoreFields', actualNumberOfDublinCoreFields);
 
         // 2.) New number of DC fields will change the props.fields and props.filters
         // props received from IndexSearch.js component
@@ -1243,6 +1240,6 @@ export default compose(
       if (!isEqual(prevProps.filter, this.props.filter)) {
         saveQuery();
       }
-    }
+    },
   })
 )(Form);

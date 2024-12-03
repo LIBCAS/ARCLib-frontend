@@ -82,7 +82,6 @@ export const createFilterParams = (getState) => {
   const { filter } = getFilter(getState);
 
   return {
-    ...createSortOrderParams(getState),
     ...createFilter(filter),
   };
 };

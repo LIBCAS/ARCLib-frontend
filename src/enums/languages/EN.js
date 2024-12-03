@@ -167,6 +167,7 @@ export const EN = {
   EXCEPTION_MESSAGE: 'Exception message',
   EXCEPTION_STACKTRACE: 'Exception StackTrace',
   EXPORT_AREA_PATH: 'Export area path',
+  EXPORT_CURRENT_PAGE: 'Export current page',
   EXPORT_FAILED: 'Export failed!',
   EXPORT_FORMAT_DEFINITION: 'Export format definition',
   EXPORT_FORMAT_DEFINITIONS: 'Export format definitions',

@@ -11,6 +11,8 @@ import Table from '../table/Table';
 import {
   downloadAip,
   downloadXml,
+  exportAips,
+  exportFavorites,
   updateCheckedAipIds,
   updatePileCheckedAipIds,
 } from '../../actions/aipActions';
@@ -22,6 +24,8 @@ const columns = ['authorial_id', 'sip_id', 'sip_version_number', 'xml_version_nu
 
 const PackagesTable = ({
   // Passed from parent IndexSearch component (or other)
+  exportAips,
+  exportFavorites,
   handleUpdate,
   history,
   texts,
@@ -42,6 +46,7 @@ const PackagesTable = ({
   areAllCheckboxesChecked,
   setAreAllCheckboxesChecked,
   isTableInDialog = false,
+  tableDialogId,
 }) => {
   const sortItems = [];
 
@@ -96,15 +101,27 @@ const PackagesTable = ({
     }
   };
 
+  const handleExport = (format, columns, header, ignorePagination) => {
+    const submitObject = {
+      format,
+      name: !isTableInDialog ? texts.AIP_SEARCH : pileTable && texts.MY_PILE,
+      columns,
+      header,
+      ignorePagination: !isTableInDialog && ignorePagination,
+    };
+    !isTableInDialog ? exportAips(submitObject) : pileTable && exportFavorites(submitObject);
+  };
+
   return (
     <Table
       {...{
         isTableInDialog,
+        ...(isTableInDialog && pileTable ? { handleExport } : {}),
+        ...(!isTableInDialog ? { handleExport } : {}),
         handleUpdate,
-        tableId: pileTable ? 'pileTable' : 'indexSearch',
-        exportButtons: true,
-        withSort: !pileTable && true,
-        withPager: !pileTable && true,
+        tableId: tableDialogId ? `indexSearch-${tableDialogId}` : 'indexSearch',
+        withSort: !isTableInDialog && true,
+        withPager: !isTableInDialog ? true : pileTable && true,
         thCells: compact([
           showSortColumn && {
             label: get(
@@ -230,7 +247,7 @@ const PackagesTable = ({
             },
           ]),
         })),
-        sortItems: !pileTable && [
+        sortItems: !isTableInDialog && [
           { label: texts.UPDATED, field: 'updated' },
           { label: texts.LABEL, value: 'lable' },
           { label: texts.AUTHORIAL_ID, field: 'authorial_id' },
@@ -252,6 +269,8 @@ export default compose(
   connect(mapStateToProps, {
     downloadAip,
     downloadXml,
+    exportAips,
+    exportFavorites,
     updateCheckedAipIds,
     updatePileCheckedAipIds,
   }),

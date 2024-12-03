@@ -112,6 +112,8 @@ const Pile = (props) => {
             displayCheckboxes
             pileTable
             isTableInDialog
+            tableDialogId="pile"
+            handleUpdate={props.fetchPileAips}
           />
 
           <Pagination

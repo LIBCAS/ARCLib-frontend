@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { compose, defaultProps, lifecycle } from 'recompose';
-import _ from 'lodash';
+import map from 'lodash/map';
 import { Table } from 'react-bootstrap';
 import { setPager, setSorter, setFilter, setUserSettings } from '../../actions/appActions';
 import { putUserSettings } from '../../actions/userSettingsActions';
@@ -11,8 +11,9 @@ import useTableInfoSave from './hooks/useTableInfoSave';
 import useResetConfig from './hooks/useResetConfig';
 import useTableSort from './hooks/useTableSort';
 import TableColumnSettings from './tableColumnSettings/TableColumnSettings';
-import ButtonComponent from '../Button';
+import TableButtons from './TableButtons';
 import { getTableSettings } from './utils/getTableSettings';
+import useTableStatesSynch from './hooks/useTableStatesSynch';
 
 const TableContainer = ({
   texts,
@@ -20,6 +21,7 @@ const TableContainer = ({
   oddEvenRows,
   withHover,
   style,
+  handleExport,
   handleUpdate,
   thCells,
   items,
@@ -38,7 +40,6 @@ const TableContainer = ({
   withFilter, //controls if table is filterable, this one is set in TableWithFilter
   withPager, //controls if table is paginated
   withSort, //controls if table is sortable
-  exportButtons, //controls if export buttons are shown, needs to be set to true in the parent table component
 }) => {
   if (!tableId) {
     console.error('TableId is not defined');
@@ -52,12 +53,8 @@ const TableContainer = ({
 
     return tableSettings
       ? tableSettings.columns
-      : _.map(thCells, (cell, id) => ({ ...cell, visible: true, order: id }));
+      : map(thCells, (cell, id) => ({ ...cell, visible: true, order: id }));
   });
-
-  const [localFilter, setLocalFilter] = useState(filter);
-  const [localSorter, setLocalSorter] = useState(sorter);
-  const [localPager, setLocalPager] = useState(pager);
 
   const tableInfoSave = useTableInfoSave({
     thCells: expandedThCells,
@@ -93,111 +90,36 @@ const TableContainer = ({
     handleUpdate,
   });
 
-  useEffect(() => {
-    if (
-      userSettings &&
-      userSettings.userSettings &&
-      userSettings.userSettings.tables &&
-      userSettings.userSettings.tables.length !== 0
-    ) {
-      putUserSettings(userSettings.userSettings);
-    }
-  }, [userSettings]);
-
-  useEffect(() => {
-    const tableSettings = getTableSettings(userSettings, tableId);
-
-    if (tableSettings && !_.isEqual(tableSettings.columns, expandedThCells)) {
-      setExpandedThCells(tableSettings.columns);
-    }
-  }, [userSettings]);
-
-  useEffect(() => {
-    tableInfoSave();
-  }, [filter, sorter, pager, expandedThCells]);
-
-  useEffect(() => {
-    const tableSettings = getTableSettings(userSettings, tableId);
-
-    if (tableSettings) {
-      withFilter &&
-        setLocalFilter((prev) =>
-          _.isEqual(prev, tableSettings.filter) ? prev : tableSettings.filter
-        );
-
-      withSort &&
-        setLocalSorter((prev) =>
-          _.isEqual(prev, tableSettings.sorting) ? prev : tableSettings.sorting
-        );
-
-      withPager &&
-        setLocalPager((prev) =>
-          _.isEqual(prev, tableSettings.pager) ? prev : tableSettings.pager
-        );
-    }
-  }, [userSettings]);
-
-  useEffect(() => {
-    let update = false;
-
-    if (withFilter && !_.isEqual(localFilter, filter)) {
-      setFilter(localFilter);
-      update = true;
-    }
-    if (withSort && !_.isEqual(localSorter, sorter)) {
-      setSorter(localSorter);
-      update = true;
-    }
-    if (withPager && !_.isEqual(localPager, pager)) {
-      setPager(localPager);
-      update = true;
-    }
-
-    update && handleUpdate();
-  }, [localFilter, localPager, localSorter]);
+  useTableStatesSynch({
+    filter,
+    setFilter,
+    sorter,
+    setSorter,
+    pager,
+    setPager,
+    withFilter,
+    withSort,
+    withPager,
+    tableId,
+    expandedThCells,
+    setExpandedThCells,
+    tableInfoSave,
+    userSettings,
+    putUserSettings,
+    handleUpdate,
+  });
 
   return (
     <div>
-      <ButtonComponent onClick={() => setOpen((prev) => !prev)} className="margin-bottom-small">
-        {texts.COLUMN_SETTINGS}
-      </ButtonComponent>
-
-      <ButtonComponent
-        onClick={() => {
-          resetConfig();
-        }}
-        className="margin-left-small margin-bottom-small"
-      >
-        {texts.RESET_TABLE}
-      </ButtonComponent>
-
-      {exportButtons && (
-        <React.Fragment>
-          <ButtonComponent
-            onClick={() => {
-              const tableSettings = getTableSettings(userSettings, tableId);
-              if (tableSettings) {
-                console.log('export CSV', tableSettings);
-              }
-            }}
-            className="margin-left-small margin-bottom-small"
-          >
-            {texts.EXPORT_CSV}
-          </ButtonComponent>
-
-          <ButtonComponent
-            onClick={() => {
-              const tableSettings = getTableSettings(userSettings, tableId);
-              if (tableSettings) {
-                console.log('export CSV', tableSettings);
-              }
-            }}
-            className="margin-left-small margin-bottom-small"
-          >
-            {texts.EXPORT_XLSX}
-          </ButtonComponent>
-        </React.Fragment>
-      )}
+      <TableButtons
+        texts={texts}
+        resetConfig={resetConfig}
+        isColumnSettingsOpen={() => setOpen((prev) => !prev)}
+        handleExport={handleExport}
+        expandedThCells={expandedThCells}
+        thCells={thCells}
+        withPager={withPager}
+      />
 
       <TableColumnSettings
         thCells={thCells}

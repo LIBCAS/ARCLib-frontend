@@ -8,7 +8,7 @@ import PageWrapper from '../../components/PageWrapper';
 import Table from '../../components/ingestBatches/Table';
 import Pagination from '../../components/Pagination';
 import SelectField from '../../components/SelectField';
-import { getBatches } from '../../actions/batchActions';
+import { exportBatches, getBatches } from '../../actions/batchActions';
 import { getUserNames } from '../../actions/usersActions';
 import { setFilter, setPager } from '../../actions/appActions';
 import { filterOperationsTypes } from '../../enums';
@@ -18,6 +18,7 @@ const enableUrl = `/ingest-batches`;
 const IngestBatches = ({
   history,
   batches,
+  exportBatches,
   getBatches,
   texts,
   language,
@@ -33,6 +34,17 @@ const IngestBatches = ({
   const onFilterUpdate = () => {
     setPager({ ...pager, page: 0 });
     setTimeout(handleUpdate);
+  };
+
+  const handleExport = (format, columns, header, ignorePagination) => {
+    const submitObject = {
+      format,
+      name: texts.INGEST_BATCHES,
+      columns,
+      header,
+      ignorePagination,
+    };
+    exportBatches(submitObject);
   };
 
   return (
@@ -77,6 +89,7 @@ const IngestBatches = ({
               texts,
               batches: get(batches, 'items'),
               handleUpdate: onFilterUpdate,
+              handleExport,
             }}
           />
           <Pagination
@@ -101,6 +114,7 @@ export default compose(
   withState('users', 'setUsers', null),
   withState('selectKey', 'setSelectKey', false),
   connect(({ app: { filter, pager }, batch: { batches } }) => ({ filter, pager, batches }), {
+    exportBatches,
     getBatches,
     getUserNames,
     setFilter,
@@ -117,12 +131,10 @@ export default compose(
           value: '',
           label: `-- ${texts.RESET} --`,
         },
-        ...((await getUserNames()) || []).map(
-          ({ id, fullName }) => ({
-            value: id,
-            label: fullName || 'Neznámý',
-          })
-        ),
+        ...((await getUserNames()) || []).map(({ id, fullName }) => ({
+          value: id,
+          label: fullName || 'Neznámý',
+        })),
       ]);
 
       const ok = await getBatches(true, enableUrl);

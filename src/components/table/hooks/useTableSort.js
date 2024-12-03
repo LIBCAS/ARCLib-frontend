@@ -1,3 +1,4 @@
+import debounce from 'lodash/debounce';
 import { useCallback } from 'react';
 
 /*
@@ -17,7 +18,9 @@ const useTableSort = ({ sorter, setSorter, handleUpdate }) => {
         : [...sorter.sorting, { sort: field, order: newOrder }];
 
       setSorter({ sorting: newSorting });
-      handleUpdate();
+      debounce(() => {
+        handleUpdate();
+      }, 300)();
     },
     [sorter, setSorter, handleUpdate]
   );

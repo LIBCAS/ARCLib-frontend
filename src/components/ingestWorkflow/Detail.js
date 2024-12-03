@@ -163,6 +163,7 @@ const Detail = ({ workflow, texts, history, showSwitchToAipDetail }) => (
               <ProcessVariables
                 {...{
                   processVariables: get(workflow, 'processVariables'),
+                  workflowId: get(workflow, 'ingestWorkflow.externalId'),
                   texts,
                 }}
               />

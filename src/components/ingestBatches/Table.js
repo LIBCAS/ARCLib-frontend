@@ -20,6 +20,7 @@ const IngestBatchesTable = ({
   history,
   batches,
   handleUpdate,
+  handleExport,
   language,
   texts,
   cancelBatch,
@@ -30,9 +31,9 @@ const IngestBatchesTable = ({
 }) => (
   <Table
     {...{
+      handleExport,
       handleUpdate,
       tableId: 'ingestBatches',
-      exportButtons: true,
       thCells: [
         { label: texts.ID, field: 'id' },
         { label: texts.PRODUCER, field: 'producerName' },

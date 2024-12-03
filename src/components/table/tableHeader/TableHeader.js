@@ -1,13 +1,14 @@
 import React from 'react';
-import _ from 'lodash';
+import map from 'lodash/map';
+import orderBy from 'lodash/orderBy';
 import classNames from 'classnames';
 import SortingIndication from './SortingIndication';
 
 const TableHeader = ({ expandedThCells, thCells, sorter, sortItems, handleSortClick }) => (
   <thead>
     <tr>
-      {_.map(
-        _.orderBy(expandedThCells, ['order'], ['asc']),
+      {map(
+        orderBy(expandedThCells, ['order'], ['asc']),
         ({ label, field, visible, order, ...props }, key) =>
           visible && (
             <th

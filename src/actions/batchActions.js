@@ -3,126 +3,130 @@ import { get } from 'lodash';
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createFilterPagerSorterParams } from '../utils';
+import { createFilterPagerSorterParams, downloadBlob } from '../utils';
 
-export const getBatches = (clearBeforeGet = true, enableUrl) => async (dispatch, getState) => {
-  if (clearBeforeGet) {
-    dispatch({
-      type: c.BATCH,
-      payload: {
-        batches: null,
-      },
-    });
-  }
-
-  try {
-    const response = await fetch('/api/batch/list_dtos', {
-      params: createFilterPagerSorterParams(getState),
-    });
-
-    if (enableUrl && enableUrl !== window.location.pathname) {
-      return false;
-    }
-
-    if (response.status === 200) {
-      const batches = await response.json();
-
+export const getBatches =
+  (clearBeforeGet = true, enableUrl) =>
+  async (dispatch, getState) => {
+    if (clearBeforeGet) {
       dispatch({
         type: c.BATCH,
         payload: {
-          batches,
+          batches: null,
         },
       });
-
-      return batches;
     }
 
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
+    try {
+      const response = await fetch('/api/batch/list_dtos', {
+        params: createFilterPagerSorterParams(getState),
+      });
 
-export const getBatch = (id, clearBeforeGet = true, withLoader = true, enableUrl) => async (
-  dispatch
-) => {
-  if (clearBeforeGet) {
-    dispatch({
-      type: c.BATCH,
-      payload: {
-        batch: null,
-      },
-    });
-  }
+      if (enableUrl && enableUrl !== window.location.pathname) {
+        return false;
+      }
 
-  if (withLoader) {
-    dispatch(showLoader());
-  }
+      if (response.status === 200) {
+        const batches = await response.json();
 
-  try {
-    const response = await fetch(`/api/batch/${id}`);
+        dispatch({
+          type: c.BATCH,
+          payload: {
+            batches,
+          },
+        });
 
-    if (enableUrl && enableUrl !== window.location.pathname) {
+        return batches;
+      }
+
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      dispatch(await openErrorDialogIfRequestFailed(error));
       return false;
     }
+  };
 
-    if (response.status === 200) {
-      const batch = await response.json();
-
+export const getBatch =
+  (id, clearBeforeGet = true, withLoader = true, enableUrl) =>
+  async (dispatch) => {
+    if (clearBeforeGet) {
       dispatch({
         type: c.BATCH,
         payload: {
-          batch,
+          batch: null,
         },
       });
+    }
+
+    if (withLoader) {
+      dispatch(showLoader());
+    }
+
+    try {
+      const response = await fetch(`/api/batch/${id}`);
+
+      if (enableUrl && enableUrl !== window.location.pathname) {
+        return false;
+      }
+
+      if (response.status === 200) {
+        const batch = await response.json();
+
+        dispatch({
+          type: c.BATCH,
+          payload: {
+            batch,
+          },
+        });
+
+        if (withLoader) {
+          dispatch(showLoader(false));
+        }
+        return batch;
+      }
 
       if (withLoader) {
         dispatch(showLoader(false));
       }
-      return batch;
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      if (withLoader) {
+        dispatch(showLoader(false));
+      }
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
     }
+  };
 
-    if (withLoader) {
+export const processOne =
+  ({ sipContent, ...params }) =>
+  async (dispatch, getState) => {
+    dispatch(showLoader(true, get(getState(), 'app.texts.BATCH_PROCESS_ONE_LOADER_TEXT')));
+    try {
+      const formData = new FormData();
+
+      formData.append('sipContent', sipContent);
+
+      const response = await fetch('/api/batch/process_one', {
+        params,
+        method: 'POST',
+        body: formData,
+      });
+
       dispatch(showLoader(false));
-    }
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    if (withLoader) {
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return response.ok;
+    } catch (error) {
+      console.log(error);
       dispatch(showLoader(false));
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
     }
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const processOne = ({ sipContent, ...params }) => async (dispatch, getState) => {
-  dispatch(showLoader(true, get(getState(), 'app.texts.BATCH_PROCESS_ONE_LOADER_TEXT')));
-  try {
-    const formData = new FormData();
-
-    formData.append('sipContent', sipContent);
-
-    const response = await fetch('/api/batch/process_one', {
-      params,
-      method: 'POST',
-      body: formData,
-    });
-
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return response.ok;
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
+  };
 
 export const cancelBatch = (id) => async (dispatch) => {
   dispatch(showLoader());
@@ -171,6 +175,68 @@ export const suspendBatch = (id) => async (dispatch) => {
   } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+/**
+ * Exports a batch table to the specified file format.
+ * @param {Object} submitObject - The parameters for the export request.
+ * @returns {Promise<boolean>} - Returns `true` if the export is successful, otherwise `false`.
+ */
+export const exportBatches = (submitObject) => async (dispatch, getState) => {
+  const { name, format } = submitObject;
+
+  try {
+    const response = await fetch('/api/batch/list_dtos/export', {
+      params: {
+        ...submitObject,
+        ...createFilterPagerSorterParams(getState),
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      downloadBlob(blob, `${name}.${format}`);
+      return true;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+/**
+ * Exports a ingestWorkflows table to the specified file format.
+ * @param {string} id - ID of specific batch.
+ * @param {Object} submitObject - The parameters for the export request.
+ * @returns {Promise<boolean>} - Returns `true` if the export is successful, otherwise `false`.
+ */
+export const exportBatchIngestWorkfow = (id, submitObject) => async (dispatch) => {
+  const { name, format } = submitObject;
+
+  try {
+    const response = await fetch(`/api/batch/${id}/ingest_workflow/export`, {
+      params: {
+        ...submitObject,
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      downloadBlob(blob, `${name}_${id}.${format}`);
+      return true;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }

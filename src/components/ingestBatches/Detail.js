@@ -207,6 +207,7 @@ const Detail = ({
                 {...{
                   history,
                   ingestWorkflows: get(batch, 'ingestWorkflows'),
+                  id: get(batch,'id'),
                   texts,
                 }}
               />

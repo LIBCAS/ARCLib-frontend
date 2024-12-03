@@ -11,8 +11,16 @@ import { getSavedQuery, setQuery } from '../../actions/queryActions';
 import { formatDateTime, hasPermission } from '../../utils';
 import { Permission } from '../../enums';
 
-const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user, loadQuery, reset }) => {
-
+const SearchQueriesTable = ({
+  history,
+  queries,
+  setDialog,
+  setQuery,
+  texts,
+  user,
+  loadQuery,
+  reset,
+}) => {
   return (
     <Table
       {...{
@@ -42,7 +50,8 @@ const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user
                           const actualQuery = await loadQuery(item.id);
                           // NOTE: everytime before dialog opens - clear the form
                           reset('SearchQueryExportConfigUpdDelDialogForm');
-                          setDialog('SearchQueryExportResults2', {   // remove 2 for default dialog
+                          setDialog('SearchQueryExportResults2', {
+                            // remove 2 for default dialog
                             aipQuery: actualQuery,
                           });
                         },
@@ -66,7 +75,9 @@ const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user
                           const query = await loadQuery(item.id);
                           setDialog('SearchQueryDetail', {
                             items: get(query, 'result.items'),
-                          });
+                            tableDialogId: item.id,
+                          }
+                        );
                         },
                         className: 'margin-left-small',
                         show: true,
@@ -125,17 +136,18 @@ const SearchQueriesTable = ({ history, queries, setDialog, setQuery, texts, user
       }}
     />
   );
-}
-
+};
 
 export default compose(
   connect(null, { setDialog, setQuery, getSavedQuery, showLoader, reset }),
   withHandlers({
-    loadQuery: ({ getSavedQuery, showLoader }) => async (id) => {
-      showLoader();
-      const query = await getSavedQuery(id);
-      showLoader(false);
-      return query;
-    },
+    loadQuery:
+      ({ getSavedQuery, showLoader }) =>
+      async (id) => {
+        showLoader();
+        const query = await getSavedQuery(id);
+        showLoader(false);
+        return query;
+      },
   })
 )(SearchQueriesTable);

@@ -10,7 +10,12 @@ import { SelectField, Checkbox, TagsField, TextField, DateTimeField, Validation 
 import ButtonComponent from '../Button';
 
 import { fetchExportTemplates } from '../../actions/exportTemplatesActions';
-import { downloadQueryFavorites, exportQueryFavorites } from '../../actions/queryActions';
+import {
+  downloadQueryFavorites,
+  exportQueryFavorites,
+  downloadSavedQuery,
+  exportSavedQuery,
+} from '../../actions/queryActions';
 import { putExportRoutine } from '../../actions/exportRoutineActions';
 import { closeDialog, openInfoOverlayDialog } from '../../actions/appActions';
 import { exportTypeOptions } from '../../enums/configExportRoutine';
@@ -500,6 +505,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchExportTemplates: () => dispatch(fetchExportTemplates()),
   downloadQueryFavorites: (submitObject) => dispatch(downloadQueryFavorites(submitObject)),
   exportQueryFavorites: (submitObject) => dispatch(exportQueryFavorites(submitObject)),
+  downloadSavedQuery: (id, submitObject) => dispatch(downloadSavedQuery(id, submitObject)),
+  exportSavedQuery: (id, submitObject) => dispatch(exportSavedQuery(id, submitObject)),
   putExportRoutine: (id, submitObject) => dispatch(putExportRoutine(id, submitObject)),
   closeDialog: () => dispatch(closeDialog()),
   openInfoOverlayDialog: (data) => dispatch(openInfoOverlayDialog(data)),
@@ -578,10 +585,28 @@ export default compose(
       // Handle different type of submits
       // 1. Download
       if (formData.exportType === 'DOWNLOAD') {
-        const submitObject = {
-          // NOTE: dataReduction with DOWNLOAD option is not enabled
-          // NOTE: generateInfoFile with DOWNLOAD option is not enabled
-          exportConfig: {
+        // NOTE: dataReduction with DOWNLOAD option is not enabled
+        // NOTE: generateInfoFile with DOWNLOAD option is not enabled
+
+        if (props.dialogAction === 'fromPile') {
+          // download from pile, uses different API endpoint
+          const submitObject = {
+            exportConfig: {
+              metadataSelection:
+                scope.includes('METADATA') &&
+                props.isMetadataSelectionSwitchChecked &&
+                formData.metadataSelection
+                  ? formData.metadataSelection
+                  : undefined,
+              scope: scope,
+              idExportType: formData.idType,
+            },
+            ids: props.data.aipIDs,
+          };
+
+          props.downloadQueryFavorites(submitObject);
+        } else {
+          const submitObject = {
             metadataSelection:
               scope.includes('METADATA') &&
               props.isMetadataSelectionSwitchChecked &&
@@ -590,18 +615,48 @@ export default compose(
                 : undefined,
             scope: scope,
             idExportType: formData.idType,
-          },
-          ids: props.data.aipIDs,
-        };
+          };
 
-        props.downloadQueryFavorites(submitObject);
+          props.downloadSavedQuery(aipQueryId, submitObject);
+        }
         props.resetThisForm();
         props.closeDialog();
       }
       // 2. Immediate EXPORT
       else if (formData.exportType === 'EXPORT') {
-        const submitObject = {
-          exportConfig: {
+        let workspacePath = null;
+
+        if (props.dialogAction === 'fromPile') {
+          // export from pile, uses different API endpoint
+          const submitObject = {
+            exportConfig: {
+              dataReduction:
+                (scope.includes('DATA_AND_LAST_XML') || scope.includes('DATA_AND_ALL_XMLS')) &&
+                props.isRegexesSwitchChecked
+                  ? {
+                      regexes: formData.regexes ? formData.regexes : [],
+                      mode: formData.mode ? formData.mode : 'INCLUDE',
+                    }
+                  : undefined,
+              generateInfoFile: !!formData.generateInfoFile,
+              metadataSelection:
+                scope.includes('METADATA') &&
+                props.isMetadataSelectionSwitchChecked &&
+                formData.metadataSelection
+                  ? formData.metadataSelection
+                  : undefined,
+              scope: scope,
+              idExportType: formData.idType,
+              exportFolder: exportFolder,
+            },
+            ids: props.data.aipIDs,
+            // NOTE: exportTime should not be part of the Immediate EXPORT
+          };
+
+          // Returns string if success, null otherwise
+          workspacePath = await props.exportQueryFavorites(submitObject);
+        } else {
+          const submitObject = {
             dataReduction:
               (scope.includes('DATA_AND_LAST_XML') || scope.includes('DATA_AND_ALL_XMLS')) &&
               props.isRegexesSwitchChecked
@@ -620,13 +675,12 @@ export default compose(
             scope: scope,
             idExportType: formData.idType,
             exportFolder: exportFolder,
-          },
-          ids: props.data.aipIDs,
-          // NOTE: exportTime should not be part of the Immediate EXPORT
-        };
+            // NOTE: exportTime should not be part of the Immediate EXPORT
+          };
 
-        // Returns string if success, null otherwise
-        const workspacePath = await props.exportQueryFavorites(submitObject);
+          // Returns string if success, null otherwise
+          workspacePath = await props.exportSavedQuery(aipQueryId, submitObject);
+        }
 
         if (workspacePath !== null) {
           props.setFailText(null);

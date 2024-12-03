@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import * as c from './constants';
 import fetch from '../utils/fetch';
 import { showLoader, openErrorDialogIfRequestFailed } from './appActions';
-import { createAipSearchParams, downloadBlob } from '../utils';
+import { createAipSearchParams, createSorterParams, downloadBlob } from '../utils';
 import { createPagerParams } from '../utils';
 
 export const getAipList = () => async (dispatch, getState) => {
@@ -103,114 +103,122 @@ export const setAipList = (aips) => ({
   },
 });
 
-export const getAip = (id, withLoader = true) => async (dispatch) => {
-  dispatch({
-    type: c.AIP,
-    payload: {
-      aip: null,
-    },
-  });
+export const getAip =
+  (id, withLoader = true) =>
+  async (dispatch) => {
+    dispatch({
+      type: c.AIP,
+      payload: {
+        aip: null,
+      },
+    });
 
-  withLoader && dispatch(showLoader());
-  try {
-    const response = await fetch(`/api/aip/${id}`);
+    withLoader && dispatch(showLoader());
+    try {
+      const response = await fetch(`/api/aip/${id}`);
 
-    if (response.status === 200) {
-      const aip = await response.json();
+      if (response.status === 200) {
+        const aip = await response.json();
 
-      dispatch({
-        type: c.AIP,
-        payload: {
-          aip,
-        },
-      });
+        dispatch({
+          type: c.AIP,
+          payload: {
+            aip,
+          },
+        });
+
+        withLoader && dispatch(showLoader(false));
+        return aip;
+      }
 
       withLoader && dispatch(showLoader(false));
-      return aip;
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      withLoader && dispatch(showLoader(false));
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
     }
+  };
 
-    withLoader && dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    withLoader && dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
+export const downloadAip =
+  (aipId, debug = false) =>
+  async (dispatch) => {
+    dispatch(showLoader());
 
-export const downloadAip = (aipId, debug = false) => async (dispatch) => {
-  dispatch(showLoader());
+    const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}?all=true`;
 
-  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}?all=true`;
+    try {
+      const response = await fetch(url);
 
-  try {
-    const response = await fetch(url);
+      if (response.ok) {
+        const blob = await response.blob();
+        dispatch(showLoader(false));
+        downloadBlob(blob, `${aipId}.zip`);
+        return true;
+      }
 
-    if (response.ok) {
-      const blob = await response.blob();
       dispatch(showLoader(false));
-      downloadBlob(blob, `${aipId}.zip`);
-      return true;
-    }
-
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const getXml = (aipId, xmlVersion, debug = false) => async (dispatch) => {
-  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
-
-  try {
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const text = await response.text();
-      return text;
-    }
-
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
-
-export const downloadXml = (aipId, xmlVersion, debug = false) => async (dispatch) => {
-  dispatch(showLoader());
-
-  const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
-
-  try {
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const blob = await response.blob();
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
       dispatch(showLoader(false));
-      downloadBlob(blob, `${aipId}_xml_${xmlVersion}.xml`);
-      return true;
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
     }
+  };
 
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(response));
-    return false;
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
-    dispatch(await openErrorDialogIfRequestFailed(error));
-    return false;
-  }
-};
+export const getXml =
+  (aipId, xmlVersion, debug = false) =>
+  async (dispatch) => {
+    const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
+
+    try {
+      const response = await fetch(url);
+
+      if (response.ok) {
+        const text = await response.text();
+        return text;
+      }
+
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
+    }
+  };
+
+export const downloadXml =
+  (aipId, xmlVersion, debug = false) =>
+  async (dispatch) => {
+    dispatch(showLoader());
+
+    const url = `/api${debug ? '/debug' : ''}/aip/export/${aipId}/xml?v=${xmlVersion}`;
+
+    try {
+      const response = await fetch(url);
+
+      if (response.ok) {
+        const blob = await response.blob();
+        dispatch(showLoader(false));
+        downloadBlob(blob, `${aipId}_xml_${xmlVersion}.xml`);
+        return true;
+      }
+
+      dispatch(showLoader(false));
+      dispatch(await openErrorDialogIfRequestFailed(response));
+      return false;
+    } catch (error) {
+      console.log(error);
+      dispatch(showLoader(false));
+      dispatch(await openErrorDialogIfRequestFailed(error));
+      return false;
+    }
+  };
 
 export const forgetAip = (id) => async (dispatch) => {
   dispatch(showLoader());
@@ -284,48 +292,47 @@ export const renewAip = (id) => async (dispatch) => {
   }
 };
 
-export const updateAip = (id, xmlId, version, reason, xml, hashType, hashValue) => async (
-  dispatch
-) => {
-  dispatch(showLoader());
-  try {
-    const response = await fetch(`/api/aip/${id}/update`, {
-      params: {
-        xmlId,
-        version,
-        reason,
-        hashType,
-        hashValue,
-      },
-      method: 'POST',
-      body: xml,
-    });
+export const updateAip =
+  (id, xmlId, version, reason, xml, hashType, hashValue) => async (dispatch) => {
+    dispatch(showLoader());
+    try {
+      const response = await fetch(`/api/aip/${id}/update`, {
+        params: {
+          xmlId,
+          version,
+          reason,
+          hashType,
+          hashValue,
+        },
+        method: 'POST',
+        body: xml,
+      });
 
-    dispatch(showLoader(false));
+      dispatch(showLoader(false));
 
-    const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type');
 
-    return {
-      ok: response.ok,
-      status: response.status,
-      message:
-        !response.ok && contentType
-          ? contentType.indexOf('text/plain') !== -1
-            ? await response.text()
-            : contentType.indexOf('application/json') !== -1
-            ? get(await response.json(), 'message', '')
-            : ''
-          : '',
-    };
-  } catch (error) {
-    console.log(error);
-    dispatch(showLoader(false));
-    return {
-      ok: false,
-      message: error,
-    };
-  }
-};
+      return {
+        ok: response.ok,
+        status: response.status,
+        message:
+          !response.ok && contentType
+            ? contentType.indexOf('text/plain') !== -1
+              ? await response.text()
+              : contentType.indexOf('application/json') !== -1
+              ? get(await response.json(), 'message', '')
+              : ''
+            : '',
+      };
+    } catch (error) {
+      console.log(error);
+      dispatch(showLoader(false));
+      return {
+        ok: false,
+        message: error,
+      };
+    }
+  };
 
 export const registerUpdate = (id) => async () => {
   try {
@@ -433,26 +440,24 @@ export const getAipInfo = (id, storageId) => async (dispatch) => {
 
 export const updateCheckedAipIds = (newAipIdsList) => (dispatch) => {
   dispatch({ type: c.AIP_CHECKED, payload: newAipIdsList });
-}
+};
 
 export const updatePileCheckedAipIds = (newAipIdsList) => (dispatch) => {
   dispatch({ type: c.PILE_AIP_CHECKED, payload: newAipIdsList });
-}
+};
 
 export const resetCheckedAipIDs = () => (dispatch) => {
-  dispatch({ type: c.AIP_CHECKED, payload: [] })
-}
+  dispatch({ type: c.AIP_CHECKED, payload: [] });
+};
 
 export const resetPileCheckedAipIDs = () => (dispatch) => {
   dispatch({ type: c.PILE_AIP_CHECKED, payload: [] });
-}
+};
 
 // GET at /api/favorites/ids -> result of fetch is array of string ids!
 export const fetchPileAipIDs = () => async (dispatch) => {
-
   dispatch({ type: c.PILE_AIP_IDS, payload: null });
   try {
-
     const response = await fetch('/api/favorites/ids');
     let pileAipIDs = null;
 
@@ -463,25 +468,22 @@ export const fetchPileAipIDs = () => async (dispatch) => {
 
     dispatch(await openErrorDialogIfRequestFailed(response));
     return response.status === 200;
-
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
-}
+};
 
 // POST at /api/favorites/ids
 export const savePileAipIDs = (newAipIDs) => async (dispatch) => {
-
   dispatch(showLoader());
   try {
-
     const response = await fetch('/api/favorites/ids', {
       method: 'POST',
       body: JSON.stringify(newAipIDs),
       headers: new Headers({ 'Content-Type': 'application/json' }),
-    })
+    });
 
     if (response.status === 200) {
       dispatch(showLoader(false));
@@ -491,27 +493,24 @@ export const savePileAipIDs = (newAipIDs) => async (dispatch) => {
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
-
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
-}
+};
 
 // GET at /api/favorites?page=0&pageSize=10 -> result of fetch is array of objects
 export const fetchPileAips = () => async (dispatch, getState) => {
-
   dispatch({ type: c.PILE_AIPS, payload: null });
   dispatch(showLoader());
 
   try {
-
     const response = await fetch('api/favorites', {
       params: {
         ...createPagerParams(getState),
-      }
+      },
     });
 
     if (response.status === 200) {
@@ -524,18 +523,78 @@ export const fetchPileAips = () => async (dispatch, getState) => {
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(response));
     return false;
-
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     dispatch(showLoader(false));
     dispatch(await openErrorDialogIfRequestFailed(error));
     return false;
   }
-}
+};
 
 // Setter according to the result of GET /api/favorites?page&pageSize
 // Used when updated pileAipIDs through fetchPileAipIDs is empty array
 // /api/favorites in this case does not return empty array as expected, but 400 status
 export const setPileAipsToEmptyObject = () => async (dispatch) => {
-  dispatch({ type: c.PILE_AIPS, payload: { items: [], count: 0 } })
-}
+  dispatch({ type: c.PILE_AIPS, payload: { items: [], count: 0 } });
+};
+
+/**
+ * Exports a aipSearch table to the specified file format.
+ * @param {Object} submitObject - The parameters for the export request.
+ * @returns {Promise<boolean>} - Returns `true` if the export is successful, otherwise `false`.
+ */
+export const exportAips = (submitObject) => async (dispatch, getState) => {
+  const { name, format } = submitObject;
+  try {
+    const response = await fetch('/api/aip/list/export', {
+      params: {
+        ...submitObject,
+        ...createPagerParams(getState),
+        ...createSorterParams(getState),
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      downloadBlob(blob, `${name}.${format}`);
+      return true;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+/**
+ * Exports a pile table to the specified file format.
+ * @param {Object} submitObject - The parameters for the export request.
+ * @returns {Promise<boolean>} - Returns `true` if the export is successful, otherwise `false`.
+ */
+export const exportFavorites = (submitObject) => async (dispatch, getState) => {
+  const { name, format } = submitObject;
+  try {
+    const response = await fetch('/api/favorites/export', {
+      params: {
+        ...submitObject,
+        ...createPagerParams(getState),
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      downloadBlob(blob, `${name}.${format}`);
+      return true;
+    }
+
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};

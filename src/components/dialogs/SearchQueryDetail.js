@@ -18,16 +18,28 @@ const SearchQueryDetail = ({ handleSubmit, data, history, texts }) => (
       large: true,
     }}
   >
-    <Table {...{ history, items: get(data, 'items'), texts, displayCheckboxes: false }} />
+    <Table
+      {...{
+        data,
+        history,
+        items: get(data, 'items'),
+        texts,
+        displayCheckboxes: false,
+        isTableInDialog: true,
+        tableDialogId: get(data, 'tableDialogId'),
+      }}
+    />
   </DialogContainer>
 );
 
 export default compose(
   withRouter,
   withHandlers({
-    onSubmit: ({ closeDialog }) => async () => {
-      closeDialog();
-    },
+    onSubmit:
+      ({ closeDialog }) =>
+      async () => {
+        closeDialog();
+      },
   }),
   reduxForm({
     form: 'SearchQueryDetailDialogForm',

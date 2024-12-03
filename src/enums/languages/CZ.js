@@ -170,6 +170,7 @@ export const CZ = {
   EXCEPTION_MESSAGE: 'Zpráva výjimky',
   EXCEPTION_STACKTRACE: 'StackTrace výjimky',
   EXPORT_AREA_PATH: 'Cesta do exportní lokace',
+  EXPORT_CURRENT_PAGE: 'Exportovat aktuální stránku',
   EXPORT_FAILED: 'Export se nezdařil!',
   EXPORT_FORMAT_DEFINITION: 'Exportovat definici formátu',
   EXPORT_FORMAT_DEFINITIONS: 'Exportovat definice formátu',

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
+import map from 'lodash/map';
+import orderBy from 'lodash/orderBy';
 import DraggableColumn from './DraggableColumn';
 import { Modal } from 'react-bootstrap';
 import ButtonComponent from '../../Button';
@@ -20,7 +21,7 @@ const TableColumnSettings = ({
 
   const handleVisible = (field) => {
     setNewThCells((prevCells) =>
-      _.map(prevCells, (cell) => {
+      map(prevCells, (cell) => {
         return cell.field === field ? { ...cell, visible: !cell.visible } : cell;
       })
     );
@@ -34,7 +35,7 @@ const TableColumnSettings = ({
       updatedCells.splice(fromIndex, 1);
       updatedCells.splice(toIndex, 0, draggedColumn);
 
-      return _.map(updatedCells, (cell, index) => ({
+      return map(updatedCells, (cell, index) => ({
         ...cell,
         order: index,
       }));
@@ -58,10 +59,11 @@ const TableColumnSettings = ({
       </Modal.Header>
       <Modal.Body>
         <div className="flex flex-col gap-very-small padding-small">
-          {_.map(_.orderBy(newThCells, ['order', 'asc']), (cell, index) => {
+          {map(orderBy(newThCells, ['order', 'asc']), (cell, index) => {
             const thCell = thCells.find((thCell) => thCell.field === cell.field);
             return (
               thCell &&
+              thCell.label &&
               cell.field !== 'actions' &&
               cell.field !== 'delete' &&
               cell.field !== 'checkbox' && (

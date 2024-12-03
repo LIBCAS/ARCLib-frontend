@@ -80,11 +80,12 @@ export const deleteQuery = (id) => async (dispatch) => {
   }
 };
 
-export const downloadQueryFavorites = (submitObject) => async (dispatch) => {
+//used for download of saved query
+export const downloadSavedQuery = (id, submitObject) => async (dispatch) => {
   dispatch(showLoader());
 
   try {
-    const response = await fetch(`/api/favorites/download`, {
+    const response = await fetch(`/api/saved_query/${id}/download`, {
       method: 'POST',
       body: JSON.stringify(submitObject),
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -100,7 +101,7 @@ export const downloadQueryFavorites = (submitObject) => async (dispatch) => {
 
       const blob = await response.blob();
       dispatch(showLoader(false));
-      downloadBlob(blob, fileName ? fileName : `.zip`);
+      downloadBlob(blob, fileName ? fileName : `${id}.zip`);
       return true;
     }
 
@@ -115,11 +116,72 @@ export const downloadQueryFavorites = (submitObject) => async (dispatch) => {
   }
 };
 
+//used for export of saved query
+export const exportSavedQuery = (id, submitObject) => async (dispatch) => {
+  dispatch(showLoader());
+
+  try {
+    const response = await fetch(`/api/saved_query/${id}/export`, {
+      method: 'POST',
+      body: JSON.stringify(submitObject),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
+
+    const workspacePath = await response.text();
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return workspacePath;
+  } catch (error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return null;
+  }
+};
+
+//used for download from pile
+export const downloadQueryFavorites = (submitObject) => async (dispatch) => {
+  dispatch(showLoader());
+
+  try {
+    const response = await fetch('/api/favorites/download', {
+      method: 'POST',
+      body: JSON.stringify(submitObject),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
+
+    if (response.ok) {
+      let fileName = null;
+
+      const headerValue = response.headers.get('content-disposition');
+      if (headerValue) {
+        fileName = headerValue.split('=')[1];
+      }
+
+      const blob = await response.blob();
+      dispatch(showLoader(false));
+      downloadBlob(blob, fileName ? fileName : 'favorites.zip');
+      return true;
+    }
+
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(response));
+    return false;
+  } catch (error) {
+    console.log(error);
+    dispatch(showLoader(false));
+    dispatch(await openErrorDialogIfRequestFailed(error));
+    return false;
+  }
+};
+
+//used for export from pile
 export const exportQueryFavorites = (submitObject) => async (dispatch) => {
   dispatch(showLoader());
 
   try {
-    const response = await fetch(`/api/favorites/export`, {
+    const response = await fetch('/api/favorites/export', {
       method: 'POST',
       body: JSON.stringify(submitObject),
       headers: new Headers({ 'Content-Type': 'application/json' }),

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { map } from 'lodash';
+import map from 'lodash/map';
+import isEqual from 'lodash/isEqual';
 
 /*
 hook is used to save table settings to userSettings,
@@ -37,6 +38,9 @@ const useTableInfoSave = ({
     };
 
     if (tableIndex > -1) {
+      if (isEqual(existingTables[tableIndex], newTable)) {
+        return;
+      }
       existingTables[tableIndex] = newTable;
     } else {
       existingTables.push(newTable);

@@ -3,8 +3,16 @@ import { forEach } from 'lodash';
 
 import Table from '../table/Table';
 import { formatDateTime, hasValue } from '../../utils';
+import { exportWorkflowProcessVariables } from '../../actions/workflowActions';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
 
-const ProcessVariables = ({ processVariables, texts }) => {
+const ProcessVariables = ({
+  processVariables,
+  texts,
+  workflowId,
+  exportWorkflowProcessVariables,
+}) => {
   const items = [];
 
   forEach(processVariables, (value, key) => {
@@ -30,11 +38,21 @@ const ProcessVariables = ({ processVariables, texts }) => {
     }
   });
 
+  const handleExport = (format, columns, header) => {
+    const submitObject = {
+      format,
+      name: texts.PROCESS_VARIABLES,
+      columns,
+      header,
+    };
+    exportWorkflowProcessVariables(workflowId, submitObject);
+  };
+
   return (
     <Table
       {...{
         tableId: 'processVariables',
-        exportButtons: true,
+        handleExport,
         thCells: [
           { label: texts.PROCESS_VARIABLE, field: 'key' },
           { label: texts.VALUE, field: 'value' },
@@ -45,4 +63,4 @@ const ProcessVariables = ({ processVariables, texts }) => {
   );
 };
 
-export default ProcessVariables;
+export default compose(connect(null, { exportWorkflowProcessVariables }))(ProcessVariables);
